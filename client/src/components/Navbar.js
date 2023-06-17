@@ -1,27 +1,79 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Navbar, Nav, Container } from 'react-bootstrap';
+import { Navbar, Nav, Container, Modal, Tab, Image } from 'react-bootstrap';
+import { Button } from 'primereact/button';
+
+
+import Auth from '../utils/auth';
 
 const AppNavbar = () => {
+  // set modal display state
+  const [showModal, setShowModal] = useState(false);
+
   return (
-    <Container fluid>
+    <>
       <Navbar bg='dark' variant='dark' expand='lg'>
-        <Navbar.Brand as={Link} to='/'>
-          Project 3
-        </Navbar.Brand>
-        <Navbar.Toggle aria-controls="basic-navbar-nav" className='mx-5' />
-        <Navbar.Collapse id="basic-navbar-nav" className="nav-icons mx-5">
-          <Nav className='ml-auto d-flex'>
-            <Nav.Link as={Link} to='/'>
-              Link
-            </Nav.Link>
-            <Nav.Link as={Link} to='/'>
-              Link
-            </Nav.Link>
-          </Nav>
-        </Navbar.Collapse>
+        <Container fluid>
+          <Navbar.Brand as={Link} to='/'>
+            <Image src='/images/logo-white.png' className='nav-img'></Image>
+          </Navbar.Brand>
+          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
+            <Nav className='ml-auto d-flex'>
+              <Nav.Link as={Link} to='/'>
+                Explore
+              </Nav.Link>
+              {/* if user is logged in show saved books and logout */}
+              {Auth.loggedIn() ? (
+                <>
+                  <Nav.Link as={Link} to='/saved'>
+                    See Your Books
+                  </Nav.Link>
+                  <Nav.Link onClick={Auth.logout}>Logout</Nav.Link>
+                </>
+              ) : (
+                <>
+                  <Nav.Link onClick={() => setShowModal(true)}>Sign in</Nav.Link>
+                  <Nav.Link onClick={() => setShowModal(true)}><Button label="Join" size='small' outlined /></Nav.Link>
+                </>
+              )}
+            </Nav>
+          </Navbar.Collapse>
+        </Container>
       </Navbar>
-    </Container>
+      {/* set modal data up */}
+      <Modal
+        size='lg'
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        aria-labelledby='signup-modal'>
+        {/* tab container to do either signup or login component */}
+        <Tab.Container defaultActiveKey='login'>
+          <Modal.Header closeButton>
+            <Modal.Title id='signup-modal'>
+              <Nav variant='pills'>
+                <Nav.Item>
+                  <Nav.Link eventKey='login'>Login</Nav.Link>
+                </Nav.Item>
+                <Nav.Item>
+                  <Nav.Link eventKey='signup'>Sign Up</Nav.Link>
+                </Nav.Item>
+              </Nav>
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Tab.Content>
+              <Tab.Pane eventKey='login'>
+                {/* <LoginForm handleModalClose={() => setShowModal(false)} /> */}
+              </Tab.Pane>
+              <Tab.Pane eventKey='signup'>
+                {/* <SignUpForm handleModalClose={() => setShowModal(false)} /> */}
+              </Tab.Pane>
+            </Tab.Content>
+          </Modal.Body>
+        </Tab.Container>
+      </Modal>
+    </>
   );
 };
 

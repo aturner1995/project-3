@@ -1,5 +1,5 @@
 body {
-  font-family: 'Rubik', sans-serif;
+  font-family: 'Rubik', sans-serif !important;
 }
 
 h1,
@@ -10,3 +10,47 @@ h5,
 h6 {
   font-family: 'Rubik Mono One', sans-serif;
 }
+
+.nav-img {
+  height: 30px;
+}
+
+.nav-link {
+  display: flex !important;
+  align-items: center;
+  color: white !important;
+}
+
+.p-button.p-button-outlined {
+  color: white !important;
+}
+
+.bg-yellow {
+  background-color: rgb(145, 145, 21) !important;
+}
+
+.row {
+  --bs-gutter-x: 0 !important;
+}
+
+.image-container {
+  overflow: hidden;
+  object-fit: cover;
+}
+
+.popular {
+  border: #ffffff solid 1px;
+  border-radius: 15px;
+  padding-left: 10px;
+  padding-right: 10px;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #ffffff00;
+}
+
+.popular:hover {
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+  box-shadow: 0 0 5px #292735;
+}
+
