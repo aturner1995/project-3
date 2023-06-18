@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { Navbar, Nav, Container, Modal, Tab, Image } from 'react-bootstrap';
 import { Button } from 'primereact/button';
+import { ThemeContext } from '../utils/themeContext';
 
 
 import Auth from '../utils/auth';
@@ -9,15 +10,16 @@ import Auth from '../utils/auth';
 const AppNavbar = () => {
   // set modal display state
   const [showModal, setShowModal] = useState(false);
+  const { currentImage } = useContext(ThemeContext);
 
   return (
     <>
-      <Navbar bg='dark' variant='dark' expand='lg'>
+      <Navbar className={`bg-${currentImage.color} nav-bar`} expand='lg'>
         <Container fluid>
           <Navbar.Brand as={Link} to='/'>
             <Image src='/images/logo-white.png' className='nav-img'></Image>
           </Navbar.Brand>
-          <Navbar.Toggle aria-controls="basic-navbar-nav" />
+          <Navbar.Toggle aria-controls="basic-navbar-nav" className='bg-white'/>
           <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
             <Nav className='ml-auto d-flex'>
               <Nav.Link as={Link} to='/'>

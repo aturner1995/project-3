@@ -21,12 +21,36 @@ h6 {
   color: white !important;
 }
 
+.nav-link:hover {
+  color: rgb(209, 209, 209) !important;
+}
+
 .p-button.p-button-outlined {
   color: white !important;
 }
 
-.bg-yellow {
-  background-color: rgb(145, 145, 21) !important;
+.p-button.p-button-outlined:hover {
+  color: rgb(209, 209, 209) !important;
+}
+
+.bg-purple {
+  background-color: #6C3483;
+}
+
+.bg-blue {
+  background-color: #2C2C54;
+}
+
+.bg-red {
+  background-color: #943126;
+}
+
+.bg-red2 {
+  background-color: #7B241C;
+}
+
+.bg-plum {
+  background-color:  #452E3C;
 }
 
 .row {
@@ -53,4 +77,14 @@ h6 {
   color: rgb(0, 0, 0);
   box-shadow: 0 0 5px #292735;
 }
+
+.hero,.nav-bar {
+  transition: background-color 1s ease;
+}
+
+.awards {
+  background-color: #e7e7e7;
+  margin: 0 !important;
+}
+
 
