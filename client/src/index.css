@@ -1,5 +1,5 @@
 body {
-  font-family: 'Rubik', sans-serif;
+  font-family: 'Rubik', sans-serif !important;
 }
 
 h1,
@@ -9,4 +9,93 @@ h4,
 h5,
 h6 {
   font-family: 'Rubik Mono One', sans-serif;
+}
+
+.nav-img {
+  height: 30px;
+}
+
+.nav-link {
+  display: flex !important;
+  align-items: center;
+}
+
+.bg-purple {
+  background-color: #6C3483;
+}
+
+.bg-blue {
+  background-color: #2C2C54;
+}
+
+.bg-red {
+  background-color: #943126;
+}
+
+.bg-red2 {
+  background-color: #7B241C;
+}
+
+.bg-plum {
+  background-color:  #452E3C;
+}
+
+.row {
+  --bs-gutter-x: 0 !important;
+}
+
+.image-container {
+  overflow: hidden;
+  object-fit: cover;
+}
+
+.popular {
+  border: #ffffff solid 1px;
+  border-radius: 15px;
+  padding-left: 10px;
+  padding-right: 10px;
+  cursor: pointer;
+  color: #ffffff;
+  background-color: #ffffff00;
+}
+
+.popular:hover {
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
+  box-shadow: 0 0 5px #292735;
+}
+
+.hero,.nav-bar {
+  transition: background-color 1s ease;
+}
+
+.awards {
+  background-color: #e7e7e7;
+  margin: 0 !important;
+}
+
+.p-carousel-indicators {
+  display: none !important;
+}
+
+
+.p-carousel-prev, .p-carousel-next {
+  border: black solid 2px !important;
+}
+
+.card-container {
+  opacity: 0.9;
+  transition: opacity 0.3s;
+}
+
+.card-container:hover {
+  opacity: 1;
+}
+
+.app-feat {
+  background-color: #f1fdf7;
+}
+
+.feature-list {
+  list-style-type: none;
 }

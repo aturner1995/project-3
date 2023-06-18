@@ -1,8 +1,17 @@
-import React from 'react'
+import React from 'react';
+import Hero from '../components/Hero';
+import Awards from '../components/Awards';
+import PopularServices from '../components/PopularServices';
+import AppFeatures from '../components/AppFeatures';
 
 const Home = () => {
   return (
-    <div>Home</div>
+    <>
+      <Hero />
+      <Awards />
+      <PopularServices />
+      <AppFeatures />
+    </>
   )
 }
 
