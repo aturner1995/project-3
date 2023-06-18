@@ -18,19 +18,6 @@ h6 {
 .nav-link {
   display: flex !important;
   align-items: center;
-  color: white !important;
-}
-
-.nav-link:hover {
-  color: rgb(209, 209, 209) !important;
-}
-
-.p-button.p-button-outlined {
-  color: white !important;
-}
-
-.p-button.p-button-outlined:hover {
-  color: rgb(209, 209, 209) !important;
 }
 
 .bg-purple {
@@ -87,4 +74,28 @@ h6 {
   margin: 0 !important;
 }
 
+.p-carousel-indicators {
+  display: none !important;
+}
 
+
+.p-carousel-prev, .p-carousel-next {
+  border: black solid 2px !important;
+}
+
+.card-container {
+  opacity: 0.9;
+  transition: opacity 0.3s;
+}
+
+.card-container:hover {
+  opacity: 1;
+}
+
+.app-feat {
+  background-color: #f1fdf7;
+}
+
+.feature-list {
+  list-style-type: none;
+}

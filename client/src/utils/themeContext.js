@@ -4,23 +4,23 @@ export const ThemeContext = createContext();
 
 const bgImages = [
   {
-    image: '/images/dog-walk.png',
+    image: '/images/dog-walk.avif',
     color: 'purple',
   },
   {
-    image: '/images/carpenter.png',
+    image: '/images/carpenter.avif',
     color: 'blue',
   },
   {
-    image: '/images/lawn.png',
+    image: '/images/lawn.avif',
     color: 'red',
   },
   {
-    image: '/images/moving.png',
+    image: '/images/moving.avif',
     color: 'red2',
   },
   {
-    image: '/images/massage.png',
+    image: '/images/massage.avif',
     color: 'plum',
   },
 ];

@@ -1,55 +1,75 @@
-import React, { useState, useContext } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Navbar, Nav, Container, Modal, Tab, Image } from 'react-bootstrap';
 import { Button } from 'primereact/button';
 import { ThemeContext } from '../utils/themeContext';
-
-
 import Auth from '../utils/auth';
 
 const AppNavbar = () => {
-  // set modal display state
   const [showModal, setShowModal] = useState(false);
   const { currentImage } = useContext(ThemeContext);
+  const [isTop, setIsTop] = useState(true);
+  const location = useLocation();
+  const isHomePage = location.pathname === '/';
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const isScrolled = window.scrollY > 0;
+      if (isScrolled) {
+        setIsTop(false);
+      } else {
+        setIsTop(true);
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  const navBarClasses = `bg-${isTop && isHomePage ? currentImage.color : 'white'} nav-bar`;
+  const logoSrc = isTop ? '/images/logo-white.avif' : '/images/logo-black.avif';
+  const navLinkColor = isTop ? 'text-white' : 'text-black';
+  const buttonColor = isTop ? 'p-button-outlined' : '';
+
 
   return (
     <>
-      <Navbar className={`bg-${currentImage.color} nav-bar`} expand='lg'>
+      <Navbar className={navBarClasses} expand='lg' sticky='top'>
         <Container fluid>
           <Navbar.Brand as={Link} to='/'>
-            <Image src='/images/logo-white.png' className='nav-img'></Image>
+            <Image src={logoSrc} className='nav-img'></Image>
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="basic-navbar-nav" className='bg-white'/>
           <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
             <Nav className='ml-auto d-flex'>
-              <Nav.Link as={Link} to='/'>
+              <Nav.Link as={Link} to='/' className={navLinkColor}>
                 Explore
               </Nav.Link>
-              {/* if user is logged in show saved books and logout */}
               {Auth.loggedIn() ? (
                 <>
-                  <Nav.Link as={Link} to='/saved'>
+                  <Nav.Link as={Link} to='/saved' className={navLinkColor}>
                     See Your Books
                   </Nav.Link>
-                  <Nav.Link onClick={Auth.logout}>Logout</Nav.Link>
+                  <Nav.Link onClick={Auth.logout} className={navLinkColor}>Logout</Nav.Link>
                 </>
               ) : (
                 <>
-                  <Nav.Link onClick={() => setShowModal(true)}>Sign in</Nav.Link>
-                  <Nav.Link onClick={() => setShowModal(true)}><Button label="Join" size='small' outlined /></Nav.Link>
+                  <Nav.Link onClick={() => setShowModal(true)} className={navLinkColor}>Sign in</Nav.Link>
+                  <Nav.Link onClick={() => setShowModal(true)}><Button label="Join" severity="success" size='small' className={buttonColor} /></Nav.Link>
                 </>
               )}
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      {/* set modal data up */}
       <Modal
         size='lg'
         show={showModal}
         onHide={() => setShowModal(false)}
         aria-labelledby='signup-modal'>
-        {/* tab container to do either signup or login component */}
         <Tab.Container defaultActiveKey='login'>
           <Modal.Header closeButton>
             <Modal.Title id='signup-modal'>
@@ -65,12 +85,8 @@ const AppNavbar = () => {
           </Modal.Header>
           <Modal.Body>
             <Tab.Content>
-              <Tab.Pane eventKey='login'>
-                {/* <LoginForm handleModalClose={() => setShowModal(false)} /> */}
-              </Tab.Pane>
-              <Tab.Pane eventKey='signup'>
-                {/* <SignUpForm handleModalClose={() => setShowModal(false)} /> */}
-              </Tab.Pane>
+              <Tab.Pane eventKey='login'>{/* <LoginForm handleModalClose={() => setShowModal(false)} /> */}</Tab.Pane>
+              <Tab.Pane eventKey='signup'>{/* <SignUpForm handleModalClose={() => setShowModal(false)} /> */}</Tab.Pane>
             </Tab.Content>
           </Modal.Body>
         </Tab.Container>

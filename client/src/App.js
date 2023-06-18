@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
 import { ThemeProvider } from './utils/themeContext';
+import Footer from './components/Footer';
 
 const httpLink = createHttpLink({
   uri: '/graphql',
@@ -40,6 +41,7 @@ function App() {
                 element={<Home />}
               />
             </Routes>
+            <Footer />
           </>
         </ThemeProvider>
       </Router>

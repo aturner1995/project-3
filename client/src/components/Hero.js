@@ -16,7 +16,7 @@ const Hero = () => {
                     </div>
                     <div className='d-flex justify-content-center'>
                         <div className="p-inputgroup mx-5 d-flex justify-content-center" style={{ width: '80%' }}>
-                            <InputText placeholder="Search for your Taskmaster" />
+                            <InputText placeholder="Search for your Task" />
                             <Button icon="pi pi-search" className="p-button-success" />
                         </div>
                     </div>
