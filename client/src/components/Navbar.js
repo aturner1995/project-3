@@ -32,7 +32,7 @@ const AppNavbar = () => {
   }, []);
 
   const navBarClasses = `nav-bar ${isTop && isHomePage ? `bg-${currentImage.color}` : 'bg-white'}`;
-  const logoSrc = isTop && isHomePage ? '/images/logo-white.avif' : '/images/logo-black.avif';
+  const logoSrc = isTop && isHomePage ? '/images/logo-white.webp' : '/images/logo-black.webp';
   const navLinkColor = isTop && isHomePage ? 'text-white' : 'text-black';
   const buttonColor = isTop && isHomePage ? 'p-button-outlined' : '';
 
@@ -46,7 +46,7 @@ const AppNavbar = () => {
           <Navbar.Toggle aria-controls="basic-navbar-nav" className='bg-white'/>
           <Navbar.Collapse id="basic-navbar-nav" className="justify-content-end">
             <Nav className='ml-auto d-flex'>
-              <Nav.Link as={Link} to='/' className={navLinkColor}>
+              <Nav.Link as={Link} to='/search' className={navLinkColor}>
                 Explore
               </Nav.Link>
               {Auth.loggedIn() ? (

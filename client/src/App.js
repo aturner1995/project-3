@@ -42,6 +42,10 @@ function App() {
                 element={<Home />}
               />
               <Route
+                path='/search/:query'
+                element={<Search />}
+              />
+              <Route
                 path='/search'
                 element={<Search />}
               />

@@ -1,6 +1,7 @@
 import React from 'react';
 import { Image, Row, Col, Container } from 'react-bootstrap';
 import { Button } from 'primereact/button';
+import { Link } from 'react-router-dom';
 
 const AppFeatures = () => {
     return (
@@ -41,8 +42,10 @@ const AppFeatures = () => {
                         </ul>
                     </Col>
                     <Col className='right-app-feat d-flex flex-column align-items-center justify-content-center position-relative'>
-                        <Image src='/images/family.avif' height='450' />
+                        <Image src='/images/family.webp' height='450' />
+                        <Link to='/search'>
                         <Button label='Explore Now' severity='success' className='position-absolute top-50 start-50 translate-middle' />
+                        </Link>
                     </Col>
                 </Row>
             </Container>

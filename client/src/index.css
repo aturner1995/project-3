@@ -36,8 +36,8 @@ h6 {
   background-color: #7B241C;
 }
 
-.bg-plum {
-  background-color:  #452E3C;
+.bg-green {
+  background-color:  #003610;
 }
 
 .row {
@@ -66,12 +66,11 @@ h6 {
 }
 
 .hero,.nav-bar {
-  transition: background-color 1s ease;
+  transition: background-color 0.5s ease;
 }
 
-.awards {
+.awards, .footer {
   background-color: #e7e7e7;
-  margin: 0 !important;
 }
 
 .p-carousel-indicators {
