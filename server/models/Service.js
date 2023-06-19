@@ -15,9 +15,16 @@ const optionSchema = new Schema({
     },
   });
 
+  const imageSchema = new Schema({
+    url: {
+      type: String,
+      required: true,
+    },
+  });
+
 const serviceSchema = new Schema(
     {
-        title: {
+        name: {
             type: String,
             required: true,
         },
@@ -30,6 +37,7 @@ const serviceSchema = new Schema(
             required: true
         },
         options: [optionSchema],
+        images: [imageSchema],
     },
     // set this to use virtual below
     {

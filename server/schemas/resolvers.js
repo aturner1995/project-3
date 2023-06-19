@@ -1,12 +1,12 @@
 const { AuthenticationError } = require('apollo-server-express');
-const { User } = require('../models');
+const { User, Service, Category } = require('../models');
 require('dotenv').config({ debug: true })
 const signToken = require('../utils/auth').signToken;
 
 
 const resolvers = {
     Query: {
-        me: async (parent, args, context) => {
+        user: async (parent, args, context) => {
             if (context.user) {
                 return User.findOne({ _id: context.user._id });
             }
@@ -23,9 +23,46 @@ const resolvers = {
                     return { city, state: state.split('/')[0].trim(), country };
                 }
             } catch (err) {
-                console.error('Error fetching geocoding data:', err);
+                throw new Error('Error fetching geocoding data');
             }
-        }
+        },
+        services: async (parent, { category, name }) => {
+            try {
+                const params = {};
+
+                if (category) {
+                    params.category = category;
+                }
+                if (name) {
+                    params.name = {
+                        $regex: name
+                    }
+                }
+                const services = await Service.find(params).populate('category');
+                return services;
+            }
+            catch (err) {
+                throw new Error('Failed to fetch services');
+            }
+        },
+        service: async (parent, { _id }) => {
+            try {
+                const service = await Service.findById(_id).populate('category');
+                return service;
+            }
+            catch (err) {
+                throw new Error('Failed to fetch services');
+            }
+        },
+        categories: async () => {
+            try {
+                const categories = await Category.find();
+                return categories;
+            }
+            catch (err) {
+                throw new Error('Failed to fetch categories');
+            }
+        },
     },
     Mutation: {
         addUser: async (parent, { username, email, password }) => {
@@ -49,6 +86,37 @@ const resolvers = {
             const token = signToken(user);
 
             return { token, user };
+        },
+        createService: async (parent, { input }) => {
+            try {
+                const service = new Service({
+                    name: input.name,
+                    description: input.description,
+                    category: input.categoryId,
+                    options: input.options,
+                    images: input.images,
+                });
+                const savedService = await service.save();
+                return savedService;
+            } catch (error) {
+                throw new Error('Failed to create service');
+            }
+        },
+        updateService: async (parent, { _id, input }) => {
+            try {
+                const service = await Service.findByIdAndUpdate(_id, input, { new: true });
+                return service;
+            } catch (error) {
+                throw new Error('Failed to update service');
+            }
+        },
+        deleteService: async (parent, { id }) => {
+            try {
+                const deletedService = await Service.findByIdAndDelete(id);
+                return deletedService;
+            } catch (error) {
+                throw new Error('Failed to delete service');
+            }
         },
     }
 }

@@ -21,7 +21,7 @@ const bgImages = [
   },
   {
     image: '/images/massage.webp',
-    color: 'plum',
+    color: 'green',
   },
 ];
 

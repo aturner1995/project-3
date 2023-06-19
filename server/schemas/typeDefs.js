@@ -6,6 +6,28 @@ const typeDefs = gql`
         username: String
         email: String
     }
+    type Option {
+        title: String
+        description: String
+        price: Float
+    }
+    type Service {
+        _id: ID
+        name: String
+        description: String
+        image: [Image]
+        options: [Option]
+        price: Float
+        category: [Category]
+    }
+    type Category {
+        _id: ID
+        name: String
+    }
+    type Image {
+        _id: ID
+        url: String
+    }
     type Location {
         city: String
         state: String
@@ -16,13 +38,38 @@ const typeDefs = gql`
         user: User
     }
     type Query {
-        me: User
+        user: User
         reverseGeocode(latitude: Float!, longitude: Float!): Location
+        services: [Service]
+        service(_id: ID!): Service
+        categories: [Category]
+
     }
     type Mutation {
         login(email: String!, password: String!): Auth
         addUser(username: String!, email: String!, password: String!): Auth
+        createService(input: ServiceInput): Service
+        updateService(_id: ID!, input: ServiceInput): Service
+        deleteService(_id: ID!): Service
     }
+
+    input ServiceInput {
+        name: String!
+        description: String
+        categoryId: ID
+        options: [OptionInput]
+        images: [ImageInput]
+      }
+    
+      input OptionInput {
+        title: String!
+        description: String
+        price: Float!
+      }
+    
+      input ImageInput {
+        url: String!
+      }
 `
 
 module.exports = typeDefs;
