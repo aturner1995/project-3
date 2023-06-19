@@ -9,6 +9,7 @@ import loginimage2 from "../../assets/loginimage2.png";
 import loginimage3 from "../../assets/loginimage3.png";
 import { ThemeContext } from '../../utils/themeContext';
 import logoImage from "../../assets/logo-white.avif";
+import Googlefacebook from "./Googlefacebook";
 
 
 
@@ -92,6 +93,7 @@ export default function LoginSignupIndex() {
           >
             {showLogin ? <Login /> : <Signup />}
           </motion.div>
+          <Googlefacebook />
         </div>
       </div>
     </div>
