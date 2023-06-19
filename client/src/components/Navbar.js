@@ -4,6 +4,8 @@ import { Navbar, Nav, Container, Modal, Tab, Image } from 'react-bootstrap';
 import { Button } from 'primereact/button';
 import { ThemeContext } from '../utils/themeContext';
 import Auth from '../utils/auth';
+import { motion } from 'framer-motion';
+import LoginSignupIndex from './login-signup/Login-Signup-index';
 
 const AppNavbar = () => {
   const [showModal, setShowModal] = useState(false);
@@ -34,7 +36,6 @@ const AppNavbar = () => {
   const navLinkColor = isTop && isHomePage ? 'text-white' : 'text-black';
   const buttonColor = isTop && isHomePage ? 'p-button-outlined' : '';
 
-
   return (
     <>
       <Navbar className={navBarClasses} expand='lg' sticky='top'>
@@ -50,47 +51,41 @@ const AppNavbar = () => {
               </Nav.Link>
               {Auth.loggedIn() ? (
                 <>
-                  <Nav.Link as={Link} to='/saved' className={navLinkColor}>
-                    See Your Books
-                  </Nav.Link>
                   <Nav.Link onClick={Auth.logout} className={navLinkColor}>Logout</Nav.Link>
                 </>
               ) : (
                 <>
                   <Nav.Link onClick={() => setShowModal(true)} className={navLinkColor}>Sign in</Nav.Link>
-                  <Nav.Link onClick={() => setShowModal(true)}><Button label="Join" severity="success" size='small' className={buttonColor} /></Nav.Link>
+                  <Nav.Link onClick={() => setShowModal(true)}>
+                    <Button label="Join" severity="success" size='small' className={buttonColor} />
+                  </Nav.Link>
                 </>
               )}
             </Nav>
           </Navbar.Collapse>
         </Container>
       </Navbar>
-      <Modal
-        size='lg'
-        show={showModal}
-        onHide={() => setShowModal(false)}
-        aria-labelledby='signup-modal'>
-        <Tab.Container defaultActiveKey='login'>
-          <Modal.Header closeButton>
-            <Modal.Title id='signup-modal'>
-              <Nav variant='pills'>
-                <Nav.Item>
-                  <Nav.Link eventKey='login'>Login</Nav.Link>
-                </Nav.Item>
-                <Nav.Item>
-                  <Nav.Link eventKey='signup'>Sign Up</Nav.Link>
-                </Nav.Item>
-              </Nav>
-            </Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <Tab.Content>
-              <Tab.Pane eventKey='login'>{/* <LoginForm handleModalClose={() => setShowModal(false)} /> */}</Tab.Pane>
-              <Tab.Pane eventKey='signup'>{/* <SignUpForm handleModalClose={() => setShowModal(false)} /> */}</Tab.Pane>
-            </Tab.Content>
-          </Modal.Body>
-        </Tab.Container>
-      </Modal>
+     
+        <Modal
+          as={motion.div}
+          size='xl'
+          show={showModal}
+          onHide={() => setShowModal(false)}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3, ease: 'easeInOut' }}
+          dialogClassName="custom-modal" 
+          
+          
+        >
+
+         <LoginSignupIndex />
+
+          
+      
+        </Modal>
+        
     </>
   );
 };
