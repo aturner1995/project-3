@@ -29,10 +29,10 @@ const AppNavbar = () => {
     };
   }, []);
 
-  const navBarClasses = `bg-${isTop && isHomePage ? currentImage.color : 'white'} nav-bar`;
-  const logoSrc = isTop ? '/images/logo-white.avif' : '/images/logo-black.avif';
-  const navLinkColor = isTop ? 'text-white' : 'text-black';
-  const buttonColor = isTop ? 'p-button-outlined' : '';
+  const navBarClasses = `nav-bar ${isTop && isHomePage ? `bg-${currentImage.color}` : 'bg-white'}`;
+  const logoSrc = isTop && isHomePage ? '/images/logo-white.avif' : '/images/logo-black.avif';
+  const navLinkColor = isTop && isHomePage ? 'text-white' : 'text-black';
+  const buttonColor = isTop && isHomePage ? 'p-button-outlined' : '';
 
 
   return (

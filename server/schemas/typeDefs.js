@@ -6,12 +6,18 @@ const typeDefs = gql`
         username: String
         email: String
     }
+    type Location {
+        city: String
+        state: String
+        country: String
+      }
     type Auth {
         token: ID!
         user: User
     }
     type Query {
         me: User
+        reverseGeocode(latitude: Float!, longitude: Float!): Location
     }
     type Mutation {
         login(email: String!, password: String!): Auth

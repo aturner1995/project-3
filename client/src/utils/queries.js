@@ -9,3 +9,13 @@ export const QUERY_ME = gql`
     }
   }
 `;
+
+export const QUERY_REVERSE_GEOCODE = gql`
+  query reverseGeocode($latitude: Float!, $longitude: Float!) {
+    reverseGeocode(latitude: $latitude, longitude: $longitude) {
+      city
+      state
+      country
+    }
+  }
+`;
