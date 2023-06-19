@@ -5,7 +5,7 @@ import { useQuery } from '@apollo/client';
 import { QUERY_REVERSE_GEOCODE } from '../utils/queries';
 import { Button } from 'primereact/button';
 
-const SearchForm = ({ handleSearch }) => {
+const SearchForm = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
@@ -47,34 +47,34 @@ const SearchForm = ({ handleSearch }) => {
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        handleSearch(searchQuery);
+        setSearchQuery('')
     };
 
     return (
-        <Container className='card mx-5'>
-            <Form onSubmit={handleSubmit}>
-            <Form.Group className='my-2'>
-                <Form.Control
-                    value={searchQuery}
-                    type="string"
-                    placeholder="Search for your task"
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                />
-            </Form.Group>
-            <Form.Group className='my-2'>
-                <Form.Control
-                    value={userAddress}
-                    type="string"
-                    placeholder="Address"
-                    onChange={(e) => setUserAddress(e.target.value)}
-                />
-            </Form.Group>
-            <div className='text-center'>
-                <Button type="submit" severity='success' className='mb-2'>Search</Button>
-            </div>
-        </Form>
+        <Container className='d-flex justify-content-center'>
+            <Form onSubmit={handleSubmit} className='card mx-5' style={{ width: '50%' }}>
+                <Form.Group className='m-2'>
+                    <Form.Control
+                        value={searchQuery}
+                        type="string"
+                        placeholder="Search for your task"
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                </Form.Group>
+                <Form.Group className='m-2'>
+                    <Form.Control
+                        value={userAddress}
+                        type="string"
+                        placeholder="Address"
+                        onChange={(e) => setUserAddress(e.target.value)}
+                    />
+                </Form.Group>
+                <div className='text-center'>
+                    <Button type="submit" severity='success' className='mb-2' size="small">Search</Button>
+                </div>
+            </Form>
         </Container>
-        
+
     );
 };
 
