@@ -6,35 +6,35 @@ import { Container } from 'react-bootstrap';
 const services = [
     {
         name: 'Landscaping',
-        image: '/images/landscape.avif'
+        image: '/images/landscape.webp'
     },
     {
         name: 'Dog Care',
-        image: '/images/dog.avif'
+        image: '/images/dog.webp'
     },
     {
         name: 'House Cleaning',
-        image: '/images/cleaning.avif'
+        image: '/images/cleaning.webp'
     },
     {
         name: 'Web Development',
-        image: '/images/web.avif'
+        image: '/images/web.webp'
     },
     {
         name: 'Renovations',
-        image: '/images/reno.avif'
+        image: '/images/reno.webp'
     },
     {
         name: 'Appliance Repair',
-        image: '/images/washer.avif'
+        image: '/images/washer.webp'
     },
     {
         name: 'Physical Therapy',
-        image: '/images/massage2.avif'
+        image: '/images/massage2.webp'
     },
     {
         name: 'Photography',
-        image: '/images/photo.avif'
+        image: '/images/photo.webp'
     }
 ];
 
