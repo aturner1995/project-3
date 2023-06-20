@@ -15,11 +15,10 @@ const typeDefs = gql`
         _id: ID
         name: String
         description: String
-        image: [Image]
+        images: [Image]
         options: [Option]
-        price: Float
-        category: [Category]
-    }
+        category: Category
+      }
     type Category {
         _id: ID
         name: String
@@ -40,7 +39,7 @@ const typeDefs = gql`
     type Query {
         user: User
         reverseGeocode(latitude: Float!, longitude: Float!): Location
-        services: [Service]
+        services(searchQuery: String, category: [String]): [Service]
         service(_id: ID!): Service
         categories: [Category]
 

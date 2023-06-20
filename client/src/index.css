@@ -15,29 +15,43 @@ h6 {
   height: 30px;
 }
 
+.search-form {
+  height: 100% !important;
+}
+
 .nav-link {
   display: flex !important;
   align-items: center;
 }
 
+a {
+  text-decoration: none !important;
+}
+
+.custom-card img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
 .bg-purple {
-  background-color: #6C3483;
+  background: linear-gradient(to right, #6C3483, #AB85A1, #6C3483);
 }
 
 .bg-blue {
-  background-color: #2C2C54;
+  background: linear-gradient(to right, #2C2C54, #5373A1, #2C2C54);
 }
 
 .bg-red {
-  background-color: #943126;
+  background: linear-gradient(to right, #943126, #C74C49, #943126);
 }
 
-.bg-red2 {
-  background-color: #7B241C;
+.bg-grey {
+  background: linear-gradient(to right, #333333, #999999, #333333);
 }
 
 .bg-green {
-  background-color:  #003610;
+  background: linear-gradient(to right, #003610, #116D32, #003610);
 }
 
 .row {
@@ -65,11 +79,13 @@ h6 {
   box-shadow: 0 0 5px #292735;
 }
 
-.hero,.nav-bar {
+.hero,
+.nav-bar {
   transition: background-color 0.5s ease;
 }
 
-.awards, .footer {
+.awards,
+.footer {
   background-color: #e7e7e7;
 }
 
@@ -78,7 +94,8 @@ h6 {
 }
 
 
-.p-carousel-prev, .p-carousel-next {
+.p-carousel-prev,
+.p-carousel-next {
   border: black solid 2px !important;
 }
 
