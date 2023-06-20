@@ -26,22 +26,32 @@ const resolvers = {
                 throw new Error('Error fetching geocoding data');
             }
         },
-        services: async (parent, { category, name }) => {
+        services: async (parent, { searchQuery, category }) => {
             try {
                 const params = {};
 
-                if (category) {
-                    params.category = category;
+                if (searchQuery) {
+                    const searchRegex = new RegExp(searchQuery, 'i');
+                    params.$or = [
+                        { name: { $regex: searchRegex } },
+                        { description: { $regex: searchRegex } }
+                    ];
                 }
-                if (name) {
-                    params.name = {
-                        $regex: name
-                    }
+
+                if (category.length) {
+                    // Convert category name to ObjectId before querying
+                    const categoryIds = await Category.find({ name: { $in: category } }).distinct('_id');
+                    params.category = { $in: categoryIds };
                 }
-                const services = await Service.find(params).populate('category');
+
+                console.log(params)
+
+                const services = await Service.find(params)
+                    .populate('category')
+                    .populate('images');
+
                 return services;
-            }
-            catch (err) {
+            } catch (err) {
                 throw new Error('Failed to fetch services');
             }
         },

@@ -13,15 +13,15 @@ const bgImages = [
   },
   {
     image: '/images/lawn.webp',
-    color: 'red',
+    color: 'grey',
   },
   {
     image: '/images/moving.webp',
-    color: 'red2',
+    color: 'green',
   },
   {
     image: '/images/massage.webp',
-    color: 'green',
+    color: 'red',
   },
 ];
 

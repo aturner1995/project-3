@@ -5,8 +5,9 @@ import { useQuery } from '@apollo/client';
 import { QUERY_REVERSE_GEOCODE } from '../utils/queries';
 import { Button } from 'primereact/button';
 import { useParams } from 'react-router-dom';
+import { MultiSelect } from 'primereact/multiselect';
 
-const SearchForm = () => {
+const SearchForm = ({ setUserSearchQuery, setSelectedCategories }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
@@ -14,6 +15,15 @@ const SearchForm = () => {
   const [state, setState] = useState('');
   const [country, setCountry] = useState('');
   const [userAddress, setUserAddress] = useState('');
+  const [categories, setCategories] = useState([]);
+
+  const categoriesList = [
+    { name: 'Dog Care' },
+    { name: 'Movers' },
+    { name: 'Cleaning' },
+    { name: 'Rennovations' },
+    { name: 'Landscaping' }
+];
 
   let { query } = useParams();
   useEffect(() => {
@@ -62,16 +72,21 @@ const SearchForm = () => {
     setUserAddress(e.target.value);
   };
 
+  const handleCategoryChange = (e) => {
+    setCategories(e.value);
+    setSelectedCategories(categories)
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    setSearchQuery('');
+    setUserSearchQuery(searchQuery);
+    setSelectedCategories(categories);
   };
 
   return (
-    <Container>
       <Form onSubmit={handleSubmit} className="mx-5">
         <Row className="m-2">
-          <Col xs={12} md={5} className="mb-2 mb-md-0 mx-2">
+          <Col className="mb-2 mb-md-0 mx-2">
             <Form.Control
               value={searchQuery || ''}
               type="string"
@@ -80,7 +95,7 @@ const SearchForm = () => {
               className='mt-1'
             />
           </Col>
-          <Col xs={12} md={5} className='mx-2'>
+          <Col className='mx-2'>
             <Form.Control
               value={userAddress}
               type="string"
@@ -90,13 +105,16 @@ const SearchForm = () => {
             />
           </Col>
           <Col>
+            <MultiSelect value={categories} onChange={handleCategoryChange} options={categoriesList} optionLabel="name" display="chip"
+              placeholder="Select Category" className='mx-2' />
+          </Col>
+          <Col>
             <Button type="submit" severity="success" className="mb-2" size="small">
               Search
             </Button>
           </Col>
         </Row>
       </Form>
-    </Container>
   );
 };
 
