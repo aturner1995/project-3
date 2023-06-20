@@ -8,13 +8,10 @@ import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { useMutation } from "@apollo/client";
 import { ADD_USER } from "../../utils/mutations";
 import Auth from "../../utils/auth";
-import Alert from 'react-bootstrap/Alert';
+import Alert from "react-bootstrap/Alert";
 import { useState } from "react";
 
-
-
 export default function Signup() {
-
   const [password, setPassword] = React.useState("");
   const [confirmPassword, setConfirmPassword] = React.useState("");
   const [hasCapital, setHasCapital] = React.useState(false);
@@ -30,21 +27,20 @@ export default function Signup() {
   });
 
   const [addUser, { error, data }] = useMutation(ADD_USER);
-  
+
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setUserFormData({ ...userFormData, [name]: value });
-  
+
     if (name === "password") {
       confirmPasswordChecker(event);
     }
   };
-  
 
   const handleFormSubmit = async (event) => {
     event.preventDefault();
     event.stopPropagation();
-    if(has8Chars && hasCapital && hasNumber && hasSpecial && hasLowerCase){
+    if (has8Chars && hasCapital && hasNumber && hasSpecial && hasLowerCase) {
       try {
         const { data } = await addUser({
           variables: {
@@ -52,24 +48,18 @@ export default function Signup() {
           },
         });
         Auth.login(data.addUser.token);
-  
       } catch (err) {
         console.error(err);
       }
-  
+
       setUserFormData({
         username: "",
         email: "",
         password: "",
       });
-
-    }else{
-      setShowAlert(true)
-
+    } else {
+      setShowAlert(true);
     }
-
-
-
   };
 
   function confirmPasswordChecker(event) {
@@ -114,143 +104,155 @@ export default function Signup() {
 
   return (
     <>
-              {showAlert &&  (
-      <Alert variant="danger">
-    Please fill out all the required fields with a minimum of 8 characters, one uppercase letter, one lowercase letter, one number
-      </Alert>
-    )}
-   
+      {showAlert && (
+        <Alert variant="danger">
+          Please fill out all the required fields with a minimum of 8
+          characters, one uppercase letter, one lowercase letter, one number
+        </Alert>
+      )}
 
-    <div className="m-4">
+      <div className="m-4">
+        <div className="">
+          <Card.Body>
+            <Card.Title
+              className="text-center p-4 "
+              style={{
+                fontSize: "50px",
+                fontStyle: "italic",
+                fontWeight: "bold",
+              }}
+            >
+              Sign up
+            </Card.Title>
+            <Card.Text>
+              <div className="formlogin">
+                <Form.Label>Username</Form.Label>
+                <Form.Group className="mb-3" controlId="formBasicEmailSignup">
+                  <Form.Control
+                    name="username"
+                    onChange={handleInputChange}
+                    value={userFormData.username}
+                    aria-describedby="basic-addon1"
+                    required
+                  />
+                  <Form.Label>Email address</Form.Label>
+                  <Form.Control
+                    type="email"
+                    placeholder="Your email address"
+                    name="email"
+                    onChange={handleInputChange}
+                    value={userFormData.email}
+                    required
+                  />
+                </Form.Group>
 
-      <div className="">
-        <Card.Body>
-        <Card.Title className="text-center p-4 " style={{fontSize:"50px",fontStyle:"italic",fontWeight:"bold"}}>Sign up</Card.Title>
-          <Card.Text>
-            <div className="formlogin">
-              <Form.Label>Username</Form.Label>
-              <Form.Group className="mb-3" controlId="formBasicEmailSignup">
-                <Form.Control
-                name="username"
-                  onChange={handleInputChange}
-                  value={userFormData.username}
-                  aria-describedby="basic-addon1"
-                  required
-                />
-                <Form.Label>Email address</Form.Label>
-                <Form.Control
-                  type="email"
-                  placeholder="Your email address"
-                  name="email"
-                  onChange={handleInputChange}
-                  value={userFormData.email}
-                  required
-                />
-              </Form.Group>
+                <Form.Group className="mb-3" controlId="formBasicPassword">
+                  <Form.Label>Password</Form.Label>
+                  <Form.Control
+                    type="password"
+                    placeholder="Password"
+                    onChange={passwordChecker}
+                  />
+                </Form.Group>
 
-              <Form.Group className="mb-3" controlId="formBasicPassword">
-                <Form.Label>Password</Form.Label>
-                <Form.Control
-                  type="password"
-                  placeholder="Password"
-                  onChange={passwordChecker}
-                />
-              </Form.Group>
+                {password.length > 0 && (
+                  <div>
+                    <div className="d-flex justify-content-start align-items-center">
+                      <div>Has capital letter?</div>
+                      <FontAwesomeIcon
+                        icon={hasCapital ? faCheck : faTimes}
+                        size="xl"
+                        style={{
+                          color: hasCapital ? "#06ea34" : "#ff0000",
+                          marginLeft: "10px",
+                        }}
+                      />
+                    </div>
 
-              {password.length > 0 && (
-                <div>
-                  <div className="d-flex justify-content-start align-items-center">
-                    <div>Has capital letter?</div>
-                    <FontAwesomeIcon
-                      icon={hasCapital ? faCheck : faTimes}
-                      size="xl"
-                      style={{
-                        color: hasCapital ? "#06ea34" : "#ff0000",
-                        marginLeft: "10px",
-                      }}
-                    />
+                    <div className="d-flex justify-content-start align-items-center">
+                      <div>Has number?</div>
+                      <FontAwesomeIcon
+                        icon={hasNumber ? faCheck : faTimes}
+                        size="xl"
+                        style={{
+                          color: hasNumber ? "#06ea34" : "#ff0000",
+                          marginLeft: "10px",
+                        }}
+                      />
+                    </div>
+
+                    <div className="d-flex justify-content-start align-items-center">
+                      <div>Has special character?</div>
+                      <FontAwesomeIcon
+                        icon={hasSpecial ? faCheck : faTimes}
+                        size="xl"
+                        style={{
+                          color: hasSpecial ? "#06ea34" : "#ff0000",
+                          marginLeft: "10px",
+                        }}
+                      />
+                    </div>
+
+                    <div className="d-flex justify-content-start align-items-center">
+                      <div>Has lowercase letter?</div>
+                      <FontAwesomeIcon
+                        icon={hasLowerCase ? faCheck : faTimes}
+                        size="xl"
+                        style={{
+                          color: hasLowerCase ? "#06ea34" : "#ff0000",
+                          marginLeft: "10px",
+                        }}
+                      />
+                    </div>
+                    <div className="d-flex justify-content-start align-items-center">
+                      <div>password length should be 8 or more?</div>
+                      <FontAwesomeIcon
+                        icon={has8Chars ? faCheck : faTimes}
+                        size="xl"
+                        style={{
+                          color: has8Chars ? "#06ea34" : "#ff0000",
+                          marginLeft: "10px",
+                        }}
+                      />
+                    </div>
                   </div>
+                )}
 
-                  <div className="d-flex justify-content-start align-items-center">
-                    <div>Has number?</div>
-                    <FontAwesomeIcon
-                      icon={hasNumber ? faCheck : faTimes}
-                      size="xl"
-                      style={{
-                        color: hasNumber ? "#06ea34" : "#ff0000",
-                        marginLeft: "10px",
-                      }}
-                    />
+                <Form.Group className="mb-3 mt-5" controlId="formBasicPassword">
+                  <Form.Label>Confirm password</Form.Label>
+                  <Form.Control
+                    name="password"
+                    type="password"
+                    placeholder="password"
+                    onChange={handleInputChange}
+                    value={confirmPassword}
+                    required
+                  />
+                </Form.Group>
+
+                {confirmPassword !== "" && confirmPassword !== password ? (
+                  <div className="alert alert-danger" role="alert">
+                    Passwords do not match
                   </div>
-
-                  <div className="d-flex justify-content-start align-items-center">
-                    <div>Has special character?</div>
-                    <FontAwesomeIcon
-                      icon={hasSpecial ? faCheck : faTimes}
-                      size="xl"
-                      style={{
-                        color: hasSpecial ? "#06ea34" : "#ff0000",
-                        marginLeft: "10px",
-                      }}
-                    />
+                ) : confirmPassword !== "" && confirmPassword === password ? (
+                  <div className="alert alert-success" role="alert">
+                    Passwords match
                   </div>
+                ) : null}
 
-                  <div className="d-flex justify-content-start align-items-center">
-                    <div>Has lowercase letter?</div>
-                    <FontAwesomeIcon
-                      icon={hasLowerCase ? faCheck : faTimes}
-                      size="xl"
-                      style={{
-                        color: hasLowerCase ? "#06ea34" : "#ff0000",
-                        marginLeft: "10px",
-                      }}
-                    />
-                  </div>
-                  <div className="d-flex justify-content-start align-items-center">
-                    <div>password length should be 8 or more?</div>
-                    <FontAwesomeIcon
-                      icon={has8Chars ? faCheck : faTimes}
-                      size="xl"
-                      style={{
-                        color: has8Chars ? "#06ea34" : "#ff0000",
-                        marginLeft: "10px",
-                      }}
-                    />
-                  </div>
-                </div>
-              )}
-
-              <Form.Group className="mb-3 mt-5" controlId="formBasicPassword">
-                <Form.Label>Confirm password</Form.Label>
-                <Form.Control
-                name = "password"
-                  type="password"
-                  placeholder="password"
-                  onChange={handleInputChange}
-                  value={confirmPassword}
-                  required
-             
-                />
-              </Form.Group>
-
-              {confirmPassword !== "" && confirmPassword !== password ? (
-                <div className="alert alert-danger" role="alert">
-                  Passwords do not match
-                </div>
-              ) : confirmPassword !== "" && confirmPassword === password ? (
-                <div className="alert alert-success" role="alert">
-                  Passwords match
-                </div>
-              ) : null}
-
-              <Button variant="primary" type="submit" className="mt-3" onClick={handleFormSubmit}>
-                Submit
-              </Button>
-            </div>
-          </Card.Text>
-        </Card.Body>
+                <Button
+                  variant="primary"
+                  type="submit"
+                  className="mt-3"
+                  onClick={handleFormSubmit}
+                >
+                  Submit
+                </Button>
+              </div>
+            </Card.Text>
+          </Card.Body>
+        </div>
       </div>
-    </div>
     </>
   );
 }
