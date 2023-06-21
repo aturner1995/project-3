@@ -8,15 +8,23 @@ import { QUERY_ALL_SERVICES } from '../utils/queries';
 import { Link, useLocation, useParams } from 'react-router-dom';
 
 const Search = () => {
+  const [services, setServices] = useState([]);
+  const [userSearchQuery, setUserSearchQuery] = useState('');
+  const [selectedFilter, setSelectedFilter] = useState([]);
+  const [selectedCategories, setSelectedCategories] = useState([]);
 
-    const [services, setServices] = useState([]);
-    const [userSearchQuery, setUserSearchQuery] = useState('')
-    const [selectedFilter, setSelectedFilter] = useState([]);
-    const [selectedCategories, setSelectedCategories] = useState([]);
+  const { loading, error, data } = useQuery(QUERY_ALL_SERVICES, {
+    variables: {
+      searchQuery: userSearchQuery,
+      category: selectedCategories.map((category) => category.name),
+    },
+  });
 
-    const { loading, error, data } = useQuery(QUERY_ALL_SERVICES, {
-        variables: { searchQuery: userSearchQuery, category: selectedCategories.map(category => category.name) },
-    });
+  useEffect(() => {
+    if (data) {
+      setServices(data.services);
+    }
+  }, [data]);
 
     const location = useLocation();
     const searchParams = useParams();
@@ -65,14 +73,25 @@ const Search = () => {
         );
     };
 
+  const itemTemplate = (item) => {
+    return (
+      <div>
+        <img
+          src={item.url}
+          alt="Item"
+          style={{ width: '100%', height: '150px', objectFit: 'cover' }}
+        />
+      </div>
+    );
+  };
 
-    const thumbnailTemplate = (item) => {
-        return (
-            <div>
-                <img src={item.url} alt="Thumbnail" />
-            </div>
-        );
-    };
+  const thumbnailTemplate = (item) => {
+    return (
+      <div>
+        <img src={item.url} alt="Thumbnail" />
+      </div>
+    );
+  };
 
     return (
         <div>
@@ -89,40 +108,44 @@ const Search = () => {
                         return option.price < minPrice ? option.price : minPrice;
                     }, Infinity);
 
-                    return (
-                        <Link key={service._id}>
-                            <Card className="m-2 custom-card" style={{ maxWidth: '300px' }}>
-                                <Galleria
-                                    value={service.images}
-                                    numVisible={5}
-                                    circular
-                                    showItemNavigators
-                                    showThumbnails={false}
-                                    item={itemTemplate}
-                                    thumbnail={thumbnailTemplate}
-                                />
-                                <Card.Body className="text-center">
-                                    <Card.Title><strong>{service.name}</strong></Card.Title>
-                                    <div className='text-start'>
-                                        <Card.Text>
-                                            {service.description.length > 100 ? (
-                                                <>
-                                                    {service.description.substring(0, 100)}...
-                                                </>
-                                            ) : (
-                                                service.description
-                                            )}
-                                        </Card.Text>
-                                    </div>
-                                    <Card.Text><strong>Starting from ${lowestPrice}</strong></Card.Text>
-                                </Card.Body>
-                            </Card>
-                        </Link>
-                    )
-                })}
-            </Container>
-        </div>
-    );
+          return (
+            <Link to={`/product/${service._id}`} key={service._id}>
+              <Card className="m-2 custom-card" style={{ maxWidth: '300px' }}>
+                <Galleria
+                  value={service.images}
+                  numVisible={5}
+                  circular
+                  showItemNavigators
+                  showThumbnails={false}
+                  item={itemTemplate}
+                  thumbnail={thumbnailTemplate}
+                />
+                <Card.Body className="text-center">
+                  <Card.Title>
+                    <strong>{service.name}</strong>
+                  </Card.Title>
+                  <div className="text-start">
+                    <Card.Text>
+                      {service.description.length > 100 ? (
+                        <>
+                          {service.description.substring(0, 100)}...
+                        </>
+                      ) : (
+                        service.description
+                      )}
+                    </Card.Text>
+                  </div>
+                  <Card.Text>
+                    <strong>Starting from ${lowestPrice}</strong>
+                  </Card.Text>
+                </Card.Body>
+              </Card>
+            </Link>
+          );
+        })}
+      </Container>
+    </div>
+  );
 };
 
 export default Search;

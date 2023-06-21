@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import Search from './pages/Search';
 import { ThemeProvider } from './utils/themeContext';
 import Footer from './components/Footer';
+import ProductDetails from './components/ProductDetails';
 
 const httpLink = createHttpLink({
   uri: '/graphql',
@@ -49,6 +50,7 @@ function App() {
                 path='/search'
                 element={<Search />}
               />
+                <Route path="/product/:id" element={<ProductDetails />} />
             </Routes>
             <Footer />
           </>
