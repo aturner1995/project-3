@@ -66,25 +66,20 @@ const AppNavbar = () => {
         </Container>
       </Navbar>
      
-        <Modal
-          as={motion.div}
-          size='xl'
-          show={showModal}
-          onHide={() => setShowModal(false)}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3, ease: 'easeInOut' }}
-          dialogClassName="custom-modal" 
-          
-          
-        >
-
-         <LoginSignupIndex />
-
-          
-      
-        </Modal>
+      <Modal
+        as={motion.div}
+        size='lg'
+        fullscreen= 'true'
+        show={showModal}
+        onHide={() => setShowModal(false)}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3, ease: 'easeInOut' }}
+        dialogClassName="custom-modal" 
+      >
+        <LoginSignupIndex />
+      </Modal>
         
     </>
   );

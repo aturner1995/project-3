@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faUser,
@@ -7,33 +7,16 @@ import {
   faArrowLeft,
   faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
-
-import loginimage1 from "../../assets/loginimage1.png";
-import loginimage2 from "../../assets/loginimage2.png";
-import loginimage3 from "../../assets/loginimage3.png";
-import { ThemeContext } from "../../utils/themeContext";
-import logoImage from "../../assets/logo-white.avif";
 import Googlefacebook from "./Googlefacebook";
 import Login from "./Login";
 import Signup from "./Signup";
-
-const images = [loginimage1, loginimage2, loginimage3];
+import { Row, Col } from 'react-bootstrap';
+import { Button } from "primereact/button";
 
 export default function LoginSignupIndex() {
   const [showLogin, setShowLogin] = useState(false);
   const [showSignup, setShowSignup] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
-  const { currentImage } = useContext(ThemeContext);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentImageIndex((prevIndex) =>
-        prevIndex === images.length - 1 ? 0 : prevIndex + 1
-      );
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, []);
 
   const handleFormSwitchLogin = () => {
     setShowLogin(!showLogin);
@@ -49,36 +32,39 @@ export default function LoginSignupIndex() {
   };
 
   return (
-    <div className={`hero bg-${currentImage.color} text-white`}>
-      <div className="d-flex flex-column flex-md-row align-items-center mt-5">
-        <div className="col-12 col-md-6">
-          <div className="left-side m-3">
-            <h2 className="text-center text-success mb-4">
-              <span>
-                <img className="img-fluid logo" src={logoImage} alt="Logo" />
-              </span>
-            </h2>
-            <p>
-              A marketplace for finding freelancers and becoming a freelancer.
-              It provides a platform for connecting businesses and individuals
-              with talented professionals from various fields.
-            </p>
-            <p>
-              Whether you need help with graphic design, web development,
-              writing, or any other freelance service, our app offers a diverse
-              pool of skilled freelancers ready to meet your needs.
-            </p>
+      <Row className="flex-column flex-md-row align-items-center bg-white text-dark">
+        <Col lg={5} md={0} className="left-login" style={{ position: "relative", height: "100%" }}>
+          <div className="image-container" style={{ height: "100%", overflow: "hidden" }}>
+            <img
+              src="/images/login.webp"
+              alt="Family using Taskmaster to create free time"
+              className="login-image"
+              style={{ height: "100%", width: "100%"}}
+            />
           </div>
-
-          <img
-            src={images[currentImageIndex]}
-            alt=""
-            className="col-12 login-image"
-            style={{ height: "auto", opacity: 1 }}
-          />
-        </div>
-
-        <div className="col-12 col-md-6 mb-5">
+          <div className="logo-text-container">
+            <div className="text-center">
+              <img className="logo" src='/images/logo-black.webp' alt="Logo" />
+            </div>
+            <div className="overlay-text text-white mt-1">
+              <ul>
+                <li className="d-flex">
+                  <i className="pi pi-check-circle mt-1"></i>
+                  <p className="mx-1">Pay per task, not per hour</p>
+                </li>
+                <li className="d-flex">
+                  <i className="pi pi-check-circle mt-1"></i>
+                  <p className="mx-1">Access to the best local services</p>
+                </li>
+                <li className="d-flex">
+                  <i className="pi pi-check-circle mt-1"></i>
+                  <p className="mx-1">Stick to your budget</p>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </Col>
+        <Col lg={7} md={12} className="right-login mb-2">
           {!showLogin && !showSignup ? (
             <>
               <div className="text-center mb-3">
@@ -87,7 +73,7 @@ export default function LoginSignupIndex() {
                   Sign in options
                 </p>
               </div>
-              <div className="text-center mb-3 d-flex justify-content-center align-items-center">
+              <div className="d-flex text-center mb-3 justify-content-center align-items-center">
                 <Googlefacebook />
               </div>
 
@@ -98,21 +84,9 @@ export default function LoginSignupIndex() {
                 </p>
               </div>
 
-              <div className="d-grid gap-2 col-12 justify-content-center mt-4">
-                <button
-                  className="manual-login-button btn btn-outline-info btn-lg"
-                  onClick={handleFormSwitchLogin}
-                >
-                  <FontAwesomeIcon icon={faSignInAlt} className="me-2" />
-                  Login
-                </button>
-                <button
-                  className="manual-signup-button btn btn-outline-info btn-lg mt-3"
-                  onClick={handleFormSwitchSignup}
-                >
-                  <FontAwesomeIcon icon={faUserPlus} className="me-2" />
-                  Signup
-                </button>
+              <div className="d-grid justify-content-center mt-4">
+              <Button className="my-2"  icon='pi pi-user' label="Login" severity="success" onClick={handleFormSwitchLogin} outlined />
+              <Button className="my-2" icon='pi pi-user-plus' label="Signup" severity="success" onClick={handleFormSwitchSignup} outlined />
               </div>
             </>
           ) : (
@@ -130,8 +104,7 @@ export default function LoginSignupIndex() {
               {showSignup && <Signup />}
             </>
           )}
-        </div>
-      </div>
-    </div>
+        </Col>
+      </Row>
   );
 }
