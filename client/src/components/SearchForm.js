@@ -6,9 +6,9 @@ import { QUERY_REVERSE_GEOCODE } from '../utils/queries';
 import { Button } from 'primereact/button';
 import { useParams } from 'react-router-dom';
 import { MultiSelect } from 'primereact/multiselect';
+import { useLocation } from 'react-router-dom';
 
-const SearchForm = ({ setUserSearchQuery, setSelectedCategories }) => {
-  const [searchQuery, setSearchQuery] = useState('');
+const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList }) => {
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [city, setCity] = useState('');
@@ -16,19 +16,25 @@ const SearchForm = ({ setUserSearchQuery, setSelectedCategories }) => {
   const [country, setCountry] = useState('');
   const [userAddress, setUserAddress] = useState('');
   const [categories, setCategories] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
-  const categoriesList = [
-    { name: 'Dog Care' },
-    { name: 'Movers' },
-    { name: 'Cleaning' },
-    { name: 'Rennovations' },
-    { name: 'Landscaping' }
-];
+  const location = useLocation();
+  const searchParams = useParams();
 
-  let { query } = useParams();
   useEffect(() => {
-    setSearchQuery(query)
-  }, [query]);
+    if (searchParams.query && searchParams.query.split('=')[0] === 'category') {
+      const categoryName = searchParams.query.split('=')[1];
+      const selectedCategory = categoriesList.find(category => category.name === categoryName);
+      if (selectedCategory) {
+        setCategories([selectedCategory]);
+        setSelectedCategories(categories)
+      }
+    } else if (searchParams.query) {
+      setSearchQuery(searchParams.query.split('=')[1]);
+      setUserSearchQuery(searchQuery)
+    }
+
+  }, [searchParams]);
 
 
   useEffect(() => {
@@ -85,31 +91,41 @@ const SearchForm = ({ setUserSearchQuery, setSelectedCategories }) => {
 
   return (
       <Form onSubmit={handleSubmit} className="mx-5">
-        <Row className="m-2">
-          <Col className="mb-2 mb-md-0 mx-2">
+        <Row className="m-2 justify-content-center align-items-center">
+          <Col xs={12} md={5} lg={4} className="mb-2 mx-2">
             <Form.Control
               value={searchQuery || ''}
               type="string"
               placeholder="Search for your task"
               onChange={handleSearchQueryChange}
               className='mt-1'
+              size="lg"
             />
           </Col>
-          <Col className='mx-2'>
+          <Col xs={12} md={5} lg={4} className='mb-2 mx-2'>
             <Form.Control
               value={userAddress}
               type="string"
               placeholder="Address"
               onChange={handleUserAddressChange}
               className='mt-1'
+              size="lg"
             />
           </Col>
-          <Col>
-            <MultiSelect value={categories} onChange={handleCategoryChange} options={categoriesList} optionLabel="name" display="chip"
-              placeholder="Select Category" className='mx-2' />
+          <Col xs={12} md={1} lg={2} className='mb-2'>
+            <MultiSelect
+              value={categories}
+              onChange={handleCategoryChange}
+              options={categoriesList}
+              optionLabel="name"
+              display="chip"
+              placeholder="Select Category"
+              className='mt-1'
+              maxSelectedLabels={1}
+            />
           </Col>
-          <Col>
-            <Button type="submit" severity="success" className="mb-2" size="small">
+          <Col xs={12} md={1} lg={2} className='mb-2 text-start'>
+            <Button type="submit" severity="success" size="small">
               Search
             </Button>
           </Col>

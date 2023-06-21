@@ -44,8 +44,6 @@ const resolvers = {
                     params.category = { $in: categoryIds };
                 }
 
-                console.log(params)
-
                 const services = await Service.find(params)
                     .populate('category')
                     .populate('images');

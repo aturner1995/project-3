@@ -5,7 +5,7 @@ import { Card, Container } from 'react-bootstrap';
 import { Dropdown } from 'primereact/dropdown';
 import { useQuery } from '@apollo/client';
 import { QUERY_ALL_SERVICES } from '../utils/queries';
-import { Link } from 'react-router-dom';
+import { Link, useLocation, useParams } from 'react-router-dom';
 
 const Search = () => {
 
@@ -18,13 +18,43 @@ const Search = () => {
         variables: { searchQuery: userSearchQuery, category: selectedCategories.map(category => category.name) },
     });
 
+    const location = useLocation();
+    const searchParams = useParams();
+
+    const categoriesList = [
+        { name: 'Dog Care' },
+        { name: 'Landscaping' },
+        { name: 'House Cleaning' },
+        { name: 'Rennovations' },
+        { name: 'Web Development' },
+        { name: 'Appliance Repair' },
+        { name: 'Physical Therapy' },
+        { name: 'Photography' }
+    ];
+
+    const filters = [
+        { name: 'Location' },
+        { name: 'Cost' },
+        { name: 'Highly Rated' },
+    ]
+
+    useEffect(() => {
+        if (searchParams.query && searchParams.query.split('=')[0] === 'category') {
+            const categoryName = searchParams.query.split('=')[1];
+            const category = categoriesList.find(category => category.name === categoryName);
+            if (category) {
+                setSelectedCategories([category])
+            }
+        } else if (searchParams.query) {
+            setUserSearchQuery(searchParams.query.split('=')[1]);
+        }
+    }, [location.search]);
+
     useEffect(() => {
         if (data) {
             setServices(data.services);
         }
     }, [data]);
-
-    console.log(userSearchQuery, selectedCategories)
 
 
     const itemTemplate = (item) => {
@@ -44,17 +74,11 @@ const Search = () => {
         );
     };
 
-    const filters = [
-        { name: 'Location' },
-        { name: 'Cost' },
-        { name: 'Highly Rated' },
-    ]
-
     return (
         <div>
             <h1 className='mx-5 my-3'>Search Tasks</h1>
-            <SearchForm setUserSearchQuery={setUserSearchQuery} setSelectedCategories={setSelectedCategories}/>
-            <Container className='d-flex justify-content-end' fluid>
+            <SearchForm setUserSearchQuery={setUserSearchQuery} setSelectedCategories={setSelectedCategories} categoriesList={categoriesList}/>
+            <Container className='d-flex justify-content-end'>
                 <Dropdown value={selectedFilter} onChange={(e) => setSelectedFilter(e.value)} options={filters} optionLabel="name" display="chip"
                     placeholder="Filter By" maxSelectedLabels={1} className='mx-2' />
             </Container>
