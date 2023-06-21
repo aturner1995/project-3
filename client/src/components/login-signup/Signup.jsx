@@ -111,11 +111,11 @@ export default function Signup() {
         </Alert>
       )}
 
-      <div className="m-4">
+      <div className="mx-4">
         <div className="">
           <Card.Body>
             <Card.Title
-              className="text-center p-4 "
+              className="text-center"
               style={{
                 fontSize: "50px",
                 fontStyle: "italic",
@@ -127,10 +127,11 @@ export default function Signup() {
             <Card.Text>
               <div className="formlogin">
                 <Form.Label>Username</Form.Label>
-                <Form.Group className="mb-3" controlId="formBasicEmailSignup">
+                <Form.Group controlId="formBasicEmailSignup">
                   <Form.Control
                     name="username"
                     onChange={handleInputChange}
+                    placeholder="Username"
                     value={userFormData.username}
                     aria-describedby="basic-addon1"
                     required
@@ -138,7 +139,7 @@ export default function Signup() {
                   <Form.Label>Email address</Form.Label>
                   <Form.Control
                     type="email"
-                    placeholder="Your email address"
+                    placeholder="Email address"
                     name="email"
                     onChange={handleInputChange}
                     value={userFormData.email}
@@ -146,7 +147,7 @@ export default function Signup() {
                   />
                 </Form.Group>
 
-                <Form.Group className="mb-3" controlId="formBasicPassword">
+                <Form.Group controlId="formBasicPassword">
                   <Form.Label>Password</Form.Label>
                   <Form.Control
                     type="password"
@@ -218,12 +219,12 @@ export default function Signup() {
                   </div>
                 )}
 
-                <Form.Group className="mb-3 mt-5" controlId="formBasicPassword">
+                <Form.Group controlId="formBasicPassword">
                   <Form.Label>Confirm password</Form.Label>
                   <Form.Control
                     name="password"
                     type="password"
-                    placeholder="password"
+                    placeholder="Confirm password"
                     onChange={handleInputChange}
                     value={confirmPassword}
                     required
@@ -243,7 +244,7 @@ export default function Signup() {
                 <Button
                   variant="primary"
                   type="submit"
-                  className="mt-3"
+                  className="my-2"
                   onClick={handleFormSubmit}
                 >
                   Submit
