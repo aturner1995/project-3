@@ -57,13 +57,21 @@ const resolvers = {
         },
         service: async (parent, { _id }) => {
             try {
-                const service = await Service.findById(_id).populate('category');
-                return service;
+              const service = await Service.findById(_id)
+                .populate('category')
+                .populate('images')
+                .populate('options');
+          
+              if (!service) {
+                throw new Error('Service not found');
+              }
+          
+              return service;
+            } catch (error) {
+              throw new Error('Failed to fetch service');
             }
-            catch (err) {
-                throw new Error('Failed to fetch services');
-            }
-        },
+          },
+          
         categories: async () => {
             try {
                 const categories = await Category.find();

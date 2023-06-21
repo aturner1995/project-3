@@ -46,13 +46,12 @@ export const QUERY_SERVICE = gql`
     service(_id: $id) {
       _id
       name
-      price
       description
       category {
         _id
         name
       }
-      image {
+      images {
         _id
         url
       }
