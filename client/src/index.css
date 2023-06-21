@@ -34,6 +34,20 @@ a {
   object-fit: cover !important;
 }
 
+.logo-text-container {
+  position: absolute;
+  top: 18%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 2;
+  width: 100%;
+}
+
+.logo {
+  max-width: 200px; /* Adjust the size as needed */
+}
+
+
 .bg-purple {
   background: linear-gradient(to right, #6C3483, #AB85A1, #6C3483);
 }
@@ -114,4 +128,10 @@ a {
 
 .feature-list {
   list-style-type: none;
+}
+
+@media only screen and (max-width: 992px) {
+  .left-login {
+    display: none;
+  }
 }

@@ -3,7 +3,7 @@ import { Image, Row, Col, Form } from 'react-bootstrap';
 import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { ThemeContext } from '../utils/themeContext';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 const Hero = () => {
   const { currentImage } = useContext(ThemeContext);
@@ -14,13 +14,8 @@ const Hero = () => {
     event.preventDefault();
     if (searchQuery) {
       // Redirect to /search page with the search query
-      navigate(`/search/${encodeURIComponent(searchQuery)}`);
+      navigate(`/search/query=${encodeURIComponent(searchQuery)}`);
     }
-  };
-
-  const handlePopularSearch = (term) => {
-    // Redirect to /search page with the popular search term
-    navigate(`/search/${encodeURIComponent(term)}`);
   };
 
   return (
@@ -42,10 +37,10 @@ const Hero = () => {
           </div>
           <div className='d-flex align-items-center mt-2 justify-content-center flex-wrap'>
             <h5 className='text-white mt-2 d-flex'>Popular:</h5>
-            <span className='popular mx-1 d-flex' onClick={() => handlePopularSearch('Landscaping')}>Landscaping</span>
-            <span className='popular mx-1 d-flex' onClick={() => handlePopularSearch('Carpenter')}>Carpenter</span>
-            <span className='popular mx-1 d-flex' onClick={() => handlePopularSearch('Massage')}>Massage</span>
-            <span className='popular mx-1 d-flex' onClick={() => handlePopularSearch('Movers')}>Movers</span>
+            <Link to={`/search/query=${encodeURIComponent('Landscaping')}`} className='popular mx-1 d-flex'>Landscaping</Link>
+            <Link to={`/search/query=${encodeURIComponent('Carpenter')}`} className='popular mx-1 d-flex'>Carpenter</Link>
+            <Link to={`/search/query=${encodeURIComponent('Massage')}`} className='popular mx-1 d-flex'>Massage</Link>
+            <Link to={`/search/query=${encodeURIComponent('Movers')}`} className='popular mx-1 d-flex'>Movers</Link>
           </div>
         </Col>
         <Col className='right d-flex justify-content-center image-container' lg={5}>

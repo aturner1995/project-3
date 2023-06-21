@@ -59,7 +59,7 @@ const PopularServices = () => {
 
     const serviceTemplate = (product) => {
         return (
-            <Link className="border-1 surface-border border-round m-2 text-center py-5 px-3">
+            <Link to={`/search/category=${encodeURIComponent(product.name)}`} className="border-1 surface-border border-round m-2 text-center py-5 px-3">
                 <div className="mb-3 position-relative card-container">
                     <img src={product.image} height="400" alt={product.name} className="w-6 shadow-2" />
                     <h4 className="mb-1 product-title-car position-absolute bottom-50 start-50 translate-middle-x text-white">
