@@ -73,18 +73,6 @@ const Search = () => {
         );
     };
 
-  const itemTemplate = (item) => {
-    return (
-      <div>
-        <img
-          src={item.url}
-          alt="Item"
-          style={{ width: '100%', height: '150px', objectFit: 'cover' }}
-        />
-      </div>
-    );
-  };
-
   const thumbnailTemplate = (item) => {
     return (
       <div>
