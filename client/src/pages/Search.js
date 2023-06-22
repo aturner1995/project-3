@@ -12,11 +12,15 @@ const Search = () => {
   const [userSearchQuery, setUserSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
+  const [searchLocation, setSearchLocation] = useState([]);
+  const [distance, setDistance] = useState(100);
 
   const { loading, error, data } = useQuery(QUERY_ALL_SERVICES, {
     variables: {
       searchQuery: userSearchQuery,
       category: selectedCategories.map((category) => category.name),
+      location: searchLocation,
+      distance: distance
     },
   });
 
@@ -84,10 +88,16 @@ const Search = () => {
     return (
         <div>
             <h1 className='mx-5 my-3'>Search Tasks</h1>
-            <SearchForm setUserSearchQuery={setUserSearchQuery} setSelectedCategories={setSelectedCategories} categoriesList={categoriesList}/>
+            <SearchForm 
+            setUserSearchQuery={setUserSearchQuery} 
+            setSelectedCategories={setSelectedCategories} 
+            categoriesList={categoriesList} 
+            setSearchLocation={setSearchLocation}
+            setDistance = {setDistance}
+            />
             <Container className='d-flex justify-content-end'>
                 <Dropdown value={selectedFilter} onChange={(e) => setSelectedFilter(e.value)} options={filters} optionLabel="name" display="chip"
-                    placeholder="Filter By" maxSelectedLabels={1} className='mx-2' />
+                    placeholder="Filter By" maxselectedlabels={1} className='mx-2' />
             </Container>
             <Container className="d-flex flex-wrap justify-content-center" fluid>
                 {services.map((service) => {

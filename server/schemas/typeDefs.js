@@ -18,7 +18,12 @@ const typeDefs = gql`
         images: [Image]
         options: [Option]
         category: Category
-      }
+        location: Location
+    }
+    type Location {
+      type: String!
+      coordinates: [Float]!
+    }    
     type Category {
         _id: ID
         name: String
@@ -27,19 +32,24 @@ const typeDefs = gql`
         _id: ID
         url: String
     }
-    type Location {
+    type ReverseGeocode {
         city: String
         state: String
         country: String
-      }
+    }
+    type Geocode {
+        latitude: Float
+        longitude: Float
+    }
     type Auth {
         token: ID!
         user: User
     }
     type Query {
         user: User
-        reverseGeocode(latitude: Float!, longitude: Float!): Location
-        services(searchQuery: String, category: [String]): [Service]
+        reverseGeocode(latitude: Float!, longitude: Float!): ReverseGeocode
+        geocode(address: String!): Geocode
+        services(searchQuery: String, category: [String], location:[Float], distance: Float): [Service]
         service(_id: ID!): Service
         categories: [Category]
 
@@ -58,17 +68,23 @@ const typeDefs = gql`
         categoryId: ID
         options: [OptionInput]
         images: [ImageInput]
-      }
+        location: LocationInput
+    }
+
+    input LocationInput {
+        type: String!
+        coordinates: [Float]!
+    }
     
-      input OptionInput {
+    input OptionInput {
         title: String!
         description: String
         price: Float!
-      }
+    }
     
-      input ImageInput {
+    input ImageInput {
         url: String!
-      }
+    }
 `
 
 module.exports = typeDefs;
