@@ -126,55 +126,55 @@ const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList,
   };
 
   return (
-    <Form onSubmit={handleSubmit} className="mx-5">
-      <Row className="m-2 justify-content-center align-items-center">
-        <Col xs={12} md={5} lg={5} className="mb-2 mx-2">
-          <Form.Control
-            value={searchQuery || ''}
-            type="string"
-            placeholder="Search for your task"
-            onChange={handleSearchQueryChange}
-            className='mt-1'
-            size="lg"
-          />
-        </Col>
-        <Col xs={12} md={5} lg={5} className='mb-2'>
-          <Form.Control
-            value={userAddress}
-            type="string"
-            placeholder="Address"
-            onChange={handleUserAddressChange}
-            className='mt-1'
-            size="lg"
-          />
-        </Col>
-        <Col xs={12} md={2} lg={2} className='text-center'>
-          <MultiSelect
-            value={categories}
-            onChange={handleCategoryChange}
-            options={categoriesList}
-            optionLabel="name"
-            display="chip"
-            placeholder="Select Category"
-            className='mt-1'
-            maxselectedlabels={1}
-          />
-        </Col>
-        <Col xs={12} md={2} lg={2} className='pt-1 text-center'>
-          <Dropdown
-            value={selectedDistance}
-            options={distanceOptions}
-            onChange={handleDistanceChange}
-            placeholder="Select Distance"
-          />
-        </Col>
-        <Col xs={12} md={2} lg={2} className='text-center mt-2'>
-          <Button type="submit" severity="success" size="small">
-            Search
-          </Button>
-        </Col>
-      </Row>
-    </Form>
+<Form onSubmit={handleSubmit} className="mx-5">
+  <Row className="m-2 justify-content-center align-items-center">
+    <Col xs={12} md={5} lg={5} className="mb-2 mx-2">
+      <Form.Control
+        value={searchQuery || ''}
+        type="string"
+        placeholder="Search for your task"
+        onChange={handleSearchQueryChange}
+        className='mt-1'
+        size="lg"
+      />
+    </Col>
+    <Col xs={12} md={5} lg={5} className='mb-2'>
+      <Form.Control
+        value={userAddress}
+        type="string"
+        placeholder="Address"
+        onChange={handleUserAddressChange}
+        className='mt-1'
+        size="lg"
+      />
+    </Col>
+    <Col xs={12} md={2} lg={2} className='text-center d-flex align-items-center'>
+      <MultiSelect
+        value={categories}
+        onChange={handleCategoryChange}
+        options={categoriesList}
+        optionLabel="name"
+        display="chip"
+        placeholder="Select Category"
+        className='mt-1'
+        maxselectedlabels={1}
+      />
+    </Col>
+    <Col xs={12} md={2} lg={2} className='pt-1 text-center d-flex align-items-center'>
+      <Dropdown
+        value={selectedDistance}
+        options={distanceOptions}
+        onChange={handleDistanceChange}
+        placeholder="Select Distance"
+      />
+    </Col>
+    <Col xs={12} md={2} lg={2} className='text-center mt-2 d-flex align-items-center'>
+      <Button type="submit" severity="success" size="small">
+        Search
+      </Button>
+    </Col>
+  </Row>
+</Form>
   );
 };
 
