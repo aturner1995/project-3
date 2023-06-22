@@ -28,8 +28,6 @@ const ProductDetails = () => {
         variables: { id },
     });
 
-    console.log(data)
-
     if (loading) {
         return <div>Loading...</div>;
     }

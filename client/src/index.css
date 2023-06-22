@@ -148,6 +148,18 @@ a {
   border-bottom-color: green;
 }
 
+.image-container {
+  max-width: 100%; /* Ensure the image container doesn't exceed its parent's width */
+  overflow: hidden; /* Hide any overflowing content */
+}
+
+.p-galleria-thumbnail-container {
+  background-color: rgb(0 0 0 / 0%) !important;
+}
+
+.p-galleria-thumbnail-prev, .p-galleria-thumbnail-next {
+  background-color: black !important;
+}
 
 @media only screen and (max-width: 992px) {
   .left-login {
