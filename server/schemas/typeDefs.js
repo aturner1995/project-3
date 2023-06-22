@@ -6,6 +6,13 @@ const typeDefs = gql`
         username: String
         email: String
     }
+    type Chat {
+        _id: ID
+        sender: User
+        receiver: User
+        message: String
+        timestamp: String
+    }
     type Option {
         title: String
         description: String
@@ -38,10 +45,6 @@ const typeDefs = gql`
         state: String
         country: String
     }
-    type Geocode {
-        latitude: Float
-        longitude: Float
-    }
     type Auth {
         token: ID!
         user: User
@@ -52,6 +55,7 @@ const typeDefs = gql`
         services(searchQuery: String, category: [String], userSearchAddress:String, distance: Float): [Service]
         service(_id: ID!): Service
         categories: [Category]
+        chatMessages(senderId: ID!, receiverId: ID!): [Chat]
 
     }
     type Mutation {
@@ -60,6 +64,7 @@ const typeDefs = gql`
         createService(input: ServiceInput): Service
         updateService(_id: ID!, input: ServiceInput): Service
         deleteService(_id: ID!): Service
+        sendChatMessage(senderId: ID!, receiverId: ID!, message: String): [Chat]
     }
 
     input ServiceInput {

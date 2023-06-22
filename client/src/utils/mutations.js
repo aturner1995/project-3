@@ -23,3 +23,19 @@ export const ADD_USER = gql`
     }
   }
 `;
+
+export const SEND_CHAT_MESSAGE = gql`
+  mutation SendChatMessage($senderId: ID!, $receiverId: ID!, $message: String!) {
+    sendChatMessage(senderId: $senderId, receiverId: $receiverId, message: $message) {
+      _id
+      sender {
+        username
+      }
+      receiver {
+        username
+      }
+      message
+      timestamp
+    }
+  }
+`;

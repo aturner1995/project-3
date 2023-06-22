@@ -17,8 +17,13 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
+    chats: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: 'Chat'
+      }
+    ]
   },
-  // set this to use virtual below
   {
     toJSON: {
       virtuals: true,

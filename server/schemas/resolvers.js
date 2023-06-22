@@ -1,5 +1,6 @@
 const { AuthenticationError } = require('apollo-server-express');
 const { User, Service, Category } = require('../models');
+const Chat = require('../models/Chat');
 require('dotenv').config({ debug: true })
 const signToken = require('../utils/auth').signToken;
 
@@ -113,6 +114,24 @@ const resolvers = {
                 throw new Error('Failed to fetch categories');
             }
         },
+        chatMessages: async (parent, { senderId, receiverId }) => {
+            try {
+                const chats = await Chat.find({
+                    $or: [
+                        { sender: senderId, receiver: receiverId },
+                        { sender: receiverId, receiver: senderId }
+                    ]
+                })
+                    .sort({ timestamp: 1 })
+                    .populate('sender')
+                    .populate('receiver')
+
+                return chats;
+            }
+            catch (error) {
+                throw new Error('Failed to fetch messages')
+            }
+        }
     },
     Mutation: {
         addUser: async (parent, { username, email, password }) => {
@@ -160,14 +179,35 @@ const resolvers = {
                 throw new Error('Failed to update service');
             }
         },
-        deleteService: async (parent, { id }) => {
+        deleteService: async (parent, { _id }) => {
             try {
-                const deletedService = await Service.findByIdAndDelete(id);
+                const deletedService = await Service.findByIdAndDelete(_id);
                 return deletedService;
             } catch (error) {
                 throw new Error('Failed to delete service');
             }
         },
+        sendChatMessage: async (parent, { senderId, receiverId, message }) => {
+            try {
+                const chat = new Chat({
+                    sender: senderId,
+                    receiver: receiverId,
+                    message
+                })
+
+                const savedChat = await chat.save();
+                // Update sender's and receiver's chats arrays
+                await User.updateMany(
+                    { _id: { $in: [senderId, receiverId] } },
+                    { $push: { chats: savedChat._id } }
+                );
+
+                return savedChat;
+            }
+            catch (error) {
+                throw new Error('Failed to send chat message');
+            }
+        }
     }
 }
 
