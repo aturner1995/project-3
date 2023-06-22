@@ -20,18 +20,9 @@ export const QUERY_REVERSE_GEOCODE = gql`
   }
 `;
 
-export const QUERY_GEOCODE = gql`
-  query Geocode($address: String!) {
-    geocode(address: $address) {
-      latitude
-      longitude
-    }
-  }
-`;
-
 export const QUERY_ALL_SERVICES = gql`
-  query services($searchQuery: String, $category: [String], $location: [Float], $distance: Float) {
-    services(searchQuery: $searchQuery, category: $category, location: $location, distance: $distance) {
+  query services($searchQuery: String, $category: [String], $userSearchAddress: String, $distance: Float) {
+    services(searchQuery: $searchQuery, category: $category, userSearchAddress: $userSearchAddress, distance: $distance) {
       _id
       name
       description

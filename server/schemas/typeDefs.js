@@ -49,8 +49,7 @@ const typeDefs = gql`
     type Query {
         user: User
         reverseGeocode(latitude: Float!, longitude: Float!): ReverseGeocode
-        geocode(address: String!): Geocode
-        services(searchQuery: String, category: [String], location:[Float], distance: Float): [Service]
+        services(searchQuery: String, category: [String], userSearchAddress:String, distance: Float): [Service]
         service(_id: ID!): Service
         categories: [Category]
 
