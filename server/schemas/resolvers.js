@@ -26,82 +26,84 @@ const resolvers = {
                 throw new Error('Error fetching geocoding data');
             }
         },
-        geocode: async (parent, { address }, context) => {
+        services: async (parent, { searchQuery, category, userSearchAddress, distance }) => {
             try {
-              const encodedAddress = encodeURIComponent(address);
-              const response = await fetch(
-                `https://api.opencagedata.com/geocode/v1/json?q=${encodedAddress}&key=${process.env.OpenCage_API_KEY}&pretty=1`
-              );
-              const data = await response.json();
-          
-              if (data.results.length > 0) {
-                const { geometry } = data.results[0];
-                const { lat, lng } = geometry;
-                return { latitude: lat, longitude: lng };
-              }
-            } catch (err) {
-              console.error('Error fetching geocoding data:', err);
-              throw new Error('Error fetching geocoding data');
-            }
-          },
-          services: async (parent, { searchQuery, category, location, distance }) => {
-            try {
-              const params = {};
-          
-              if (searchQuery) {
-                const searchRegex = new RegExp(searchQuery, 'i');
-                params.$or = [
-                  { name: { $regex: searchRegex } },
-                  { description: { $regex: searchRegex } }
-                ];
-              }
-          
-              if (category.length) {
-                // Convert category name to ObjectId before querying
-                const categoryIds = await Category.find({ name: { $in: category } }).distinct('_id');
-                params.category = { $in: categoryIds };
-              }
-          
-              if (location && location.length === 2) {
-                const [longitude, latitude] = location;
-                params.location = {
-                  $near: {
-                    $geometry: {
-                      type: 'Point',
-                      coordinates: [longitude, latitude],
-                    },
-                    $maxDistance: distance * 1000, // Convert km to meters
-                  },
-                };
-              }
-          
-              const services = await Service.find(params)
-                .populate('category')
-                .populate('images');
+                if (!distance) {
+                    distance = 100;
+                }
+                const params = {};
+                console.log('hitting')
+                console.log('Hey: ', userSearchAddress, distance)
 
-              return services;
+
+                if (searchQuery) {
+                    const searchRegex = new RegExp(searchQuery, 'i');
+                    params.$or = [
+                        { name: { $regex: searchRegex } },
+                        { description: { $regex: searchRegex } }
+                    ];
+                }
+
+                if (category.length) {
+                    // Convert category name to ObjectId before querying
+                    const categoryIds = await Category.find({ name: { $in: category } }).distinct('_id');
+                    params.category = { $in: categoryIds };
+                }
+
+                if (userSearchAddress.length) {
+                    try {
+                        const encodedAddress = encodeURIComponent(userSearchAddress);
+                        const response = await fetch(
+                            `https://api.opencagedata.com/geocode/v1/json?q=${encodedAddress}&key=${process.env.OpenCage_API_KEY}&pretty=1`
+                        );
+                        const data = await response.json();
+
+                        if (data.results.length > 0) {
+                            const { geometry } = data.results[0];
+                            const { lat, lng } = geometry;
+                            params.location = {
+                                $near: {
+                                    $geometry: {
+                                        type: 'Point',
+                                        coordinates: [lat, lng],
+                                    },
+                                    $maxDistance: distance * 1000, // Convert km to meters
+                                },
+                            };
+                        }
+                    } catch (err) {
+                        console.error('Error fetching geocoding data:', err);
+                        throw new Error('Error fetching geocoding data');
+                    }
+                }
+
+                const services = await Service.find(params)
+                    .populate('category')
+                    .populate('images');
+
+                return services;
             } catch (err) {
-              throw new Error('Failed to fetch services');
+                throw new Error('Failed to fetch services');
             }
-          },          
+        },
         service: async (parent, { _id }) => {
             try {
-              const service = await Service.findById(_id)
-                .populate('category')
-                .populate('images')
-                .populate('options')
-                .populate('user');
-          
-              if (!service) {
-                throw new Error('Service not found');
-              }
-          
-              return service;
+                const service = await Service.findById(_id)
+                    .populate('category')
+                    .populate('images')
+                    .populate('options')
+                    .populate('user');
+
+                if (!service) {
+                    throw new Error('Service not found');
+                }
+
+                return service;
             } catch (error) {
-              throw new Error('Failed to fetch service');
+                throw new Error('Failed to fetch service');
             }
-          },
-          
+        },
+
         categories: async () => {
             try {
                 const categories = await Category.find();
