@@ -18,6 +18,7 @@ const typeDefs = gql`
         images: [Image]
         options: [Option]
         category: Category
+        user: User
         location: Location
     }
     type Location {

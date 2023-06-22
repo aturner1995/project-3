@@ -5,6 +5,7 @@ const { User, Service, Category } = require('../models');
 db.once('open', async () => {
   await Category.deleteMany();
   await Service.deleteMany();
+  await User.deleteMany();
 
   const categories = await Category.insertMany([
     { name: 'Dog Care' },
@@ -19,16 +20,36 @@ db.once('open', async () => {
 
   console.log('Categories seeded');
 
+  const users = [
+    {
+      username: 'Pamela',
+      email: 'pamela@testmail.com',
+      password: 'password12345',
+    },
+    {
+      username: 'Elijah',
+      email: 'eholt@testmail.com',
+      password: 'password12345',
+    },
+  ];
+
+  const createdUsers = await User.insertMany(users);
+
+  console.log('Users seeded');
+
   const services = [];
 
   for (let i = 0; i < 20; i++) {
     const randomCategoryIndex = Math.floor(Math.random() * categories.length);
     const randomCategory = categories[randomCategoryIndex];
+    const randomUserIndex = Math.floor(Math.random() * createdUsers.length);
+    const randomUser = createdUsers[randomUserIndex];
 
     const service = {
       name: faker.commerce.productName(),
       description: faker.lorem.paragraph(),
       category: randomCategory._id,
+      user: randomUser._id, // Add the user ID
       options: [
         {
           title: faker.commerce.productName(),
@@ -57,22 +78,6 @@ db.once('open', async () => {
   const createdServices = await Service.insertMany(services);
 
   console.log(`${createdServices.length} services seeded`);
-
-  await User.deleteMany();
-
-  await User.create({
-    username: 'Pamela',
-    email: 'pamela@testmail.com',
-    password: 'password12345',
-  });
-
-  await User.create({
-    username: 'Elijah',
-    email: 'eholt@testmail.com',
-    password: 'password12345'
-  });
-
-  console.log('Users seeded');
 
   process.exit();
 });

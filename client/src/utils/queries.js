@@ -69,6 +69,11 @@ export const QUERY_SERVICE = gql`
         price
         title
       }
+      user {
+        _id
+        username
+        email
+      }
     }
   }
 `

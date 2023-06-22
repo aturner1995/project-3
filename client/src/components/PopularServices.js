@@ -41,6 +41,16 @@ const services = [
 const PopularServices = () => {
     const responsiveOptions = [
         {
+            breakpoint: '1800px',
+            numVisible: 5,
+            numScroll: 1
+        },
+        {
+            breakpoint: '1500px',
+            numVisible: 4,
+            numScroll: 1
+        },
+        {
             breakpoint: '1199px',
             numVisible: 3,
             numScroll: 1
@@ -76,7 +86,7 @@ const PopularServices = () => {
                 <h2 className="ms-5 mt-5">Popular Tasks:</h2>
                 <Carousel
                     value={services}
-                    numVisible={4}
+                    numVisible={6}
                     numScroll={1}
                     responsiveOptions={responsiveOptions}
                     className="custom-carousel"
