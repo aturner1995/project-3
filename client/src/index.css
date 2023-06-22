@@ -130,6 +130,25 @@ a {
   list-style-type: none;
 }
 
+.p-breadcrumb {
+  border: none !important;
+  padding-left: 0 !important;
+}
+
+.options-tab.active {
+  color: #22c55e !important;
+  border-color: #22c55e !important;
+}
+
+.options-tab {
+  color: black !important;
+}
+
+.mx-2.active {
+  border-bottom-color: green;
+}
+
+
 @media only screen and (max-width: 992px) {
   .left-login {
     display: none;

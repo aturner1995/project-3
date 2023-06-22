@@ -89,7 +89,8 @@ const resolvers = {
               const service = await Service.findById(_id)
                 .populate('category')
                 .populate('images')
-                .populate('options');
+                .populate('options')
+                .populate('user');
           
               if (!service) {
                 throw new Error('Service not found');
