@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState,useEffect } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client";
 import { Card, Col, Container, Row, Tab, Nav } from "react-bootstrap";
@@ -7,28 +7,37 @@ import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 import { Toast } from "primereact/toast";
 import { Galleria } from "primereact/galleria";
-import { Dialog } from "primereact/dialog";
 import { QUERY_SERVICE } from "../utils/queries";
 import { BreadCrumb } from "primereact/breadcrumb";
 import { CREATE_BOOKING } from "../utils/mutations";
 import { useMutation } from "@apollo/client";
+import { Dialog } from "primereact/dialog";
+import { InputTextarea } from "primereact/inputtextarea";
 
 const ProductDetails = () => {
+  
   const { id } = useParams();
   const toast = useRef(null);
   const nameInput = useRef(null);
   const numberInput = useRef(null);
-  const dateInput = useRef(null);
   const timeInput = useRef(null);
   const descriptionInput = useRef(null);
   const [activeTab, setActiveTab] = useState(0);
   const [createBooking, { loadingBooking, errorbooking }] =
     useMutation(CREATE_BOOKING);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [showBookingForm, setShowBookingForm] = useState(false); // Added state for modal visibility
+  const [showBookingForm, setShowBookingForm] = useState(false);
+  const [selectedPrice, setSelectedPrice] = useState(null);
+
+
+
+  
+
 
   const handleTabSelect = (index) => {
     setActiveTab(index);
+    const selectedOption = service.options[index];
+    setSelectedPrice(selectedOption.price);
   };
 
   const { loading, error, data } = useQuery(QUERY_SERVICE, {
@@ -46,6 +55,9 @@ const ProductDetails = () => {
   }
 
   const { service } = data;
+
+
+  
 
   const images = service.images.map((image) => ({
     itemImageSrc: image.url,
@@ -68,6 +80,7 @@ const ProductDetails = () => {
     },
   ];
 
+  
   const itemTemplate = (item) => {
     return (
       <img src={item.itemImageSrc} alt={item.alt} style={{ width: "100%" }} />
@@ -84,6 +97,7 @@ const ProductDetails = () => {
     );
   };
 
+  
   const showToast = () => {
     toast.current.show({
       severity: "success",
@@ -91,13 +105,19 @@ const ProductDetails = () => {
       life: 3000,
     });
   };
-
-  const bookService = async () => {
+  let selectedOption = service.options[activeTab];
+  
+  const bookService = async (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     const name = nameInput.current.value;
     const number = numberInput.current.value;
     const time = timeInput.current.value;
-    const date = selectedDate ? selectedDate.toISOString() : "";
+    const date = selectedDate ? selectedDate.toISOString() : null;
     const description = descriptionInput.current.value;
+
+    const selectedOption = service.options[activeTab];
+    const totalPrice = selectedOption.price
 
     try {
       const { data } = await createBooking({
@@ -114,6 +134,7 @@ const ProductDetails = () => {
 
       showToast();
       console.log("Booking created:", data.createBooking);
+      console.log("Total Price:", totalPrice);
     } catch (error) {
       console.error("Error creating booking:", error);
     }
@@ -179,15 +200,20 @@ const ProductDetails = () => {
                       className={`mx-2 ${activeTab === index ? "active" : ""}`}
                     >
                       <h4>
-                        <strong>${option.price}</strong>
+                        <strong>
+                          ${selectedOption.price}
+                        </strong>
                       </h4>
                       <Card.Text>{option.description}</Card.Text>
                       <div className="text-center">
                         <Button
                           label="Continue"
                           severity="success"
-                          onClick={() => setShowBookingForm(true)} // Open the modal when the button is clicked
+                          onClick={() => setShowBookingForm(true)}
                         />
+                        <br />
+                    
+                  
                       </div>
                     </Tab.Pane>
                   ))}
@@ -199,42 +225,37 @@ const ProductDetails = () => {
       </Row>
       <Dialog
         visible={showBookingForm}
-        onHide={() => setShowBookingForm(false)} // Close the modal when it's hidden
+        onHide={() => setShowBookingForm(false)}
         position="top"
-        draggable={false}
-        breakpoints={{ "960px": "80vw" }}
         className="booking-modal"
         style={{ width: "50vw" }}
       >
-        <Card className="booking-card">
+        <div className="booking-form">
           <h2 className="booking-title">Book Now</h2>
-          <div className="booking-form">
+          <h4>Selected Price: ${selectedPrice}</h4>
+          <form>
             <div className="form-group">
               <label htmlFor="name">Name</label>
               <InputText
-                ref={nameInput}
                 id="name"
                 placeholder="Name"
                 className="form-control"
+                ref={nameInput}
               />
             </div>
             <div className="form-group">
               <label htmlFor="number">Phone Number</label>
               <InputText
-                ref={numberInput}
                 id="number"
                 placeholder="Phone Number"
                 className="form-control"
+                ref={numberInput}
               />
             </div>
             <div className="form-group">
               <label htmlFor="date">Date</label>
               <Calendar
-                ref={dateInput}
                 id="date"
-                placeholder="Date"
-                dateFormat="dd/mm/yy"
-                showIcon={true}
                 className="form-control"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.value)}
@@ -243,30 +264,31 @@ const ProductDetails = () => {
             <div className="form-group">
               <label htmlFor="time">Time</label>
               <InputText
-                ref={timeInput}
                 id="time"
                 placeholder="Time"
                 className="form-control"
+                ref={timeInput}
               />
             </div>
             <div className="form-group">
               <label htmlFor="description">Additional Description</label>
-              <InputText
-                ref={descriptionInput}
+              <InputTextarea
                 id="description"
                 placeholder="Additional Description"
                 className="form-control"
+                rows={5}
+                ref={descriptionInput}
               />
             </div>
             <Button
               label="Book Now"
-              className="btn btn-success"
-              style={{ width: "100%" }}
+              className="btn btn-primary"
               onClick={bookService}
             />
-          </div>
-        </Card>
+          </form>
+        </div>
       </Dialog>
+
       <Toast ref={toast}></Toast>
     </Container>
   );
