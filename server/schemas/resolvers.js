@@ -1,5 +1,5 @@
 const { AuthenticationError } = require('apollo-server-express');
-const { User, Service, Category } = require('../models');
+const { User, Service, Category, Booking } = require('../models');
 require('dotenv').config({ debug: true })
 const signToken = require('../utils/auth').signToken;
 
@@ -168,6 +168,29 @@ const resolvers = {
                 throw new Error('Failed to delete service');
             }
         },
+        createBooking: async (_, { name, number, date, time, description, serviceId }) => {
+            console.log(name,number,date,time,description,serviceId)
+            try {
+                const service = await Service.findById(serviceId);
+                if (!service) {
+                  throw new Error('Service not found');
+                }
+            
+                const booking = await Booking.create({
+                  name,
+                  number,
+                  date,
+                  time,
+                  description,
+                  service: serviceId,
+                });
+            
+                return booking;
+              } catch (error) {
+                console.error(error);
+                throw new Error('Booking failed');
+              }
+          },
     }
 }
 
