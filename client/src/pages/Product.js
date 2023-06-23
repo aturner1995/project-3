@@ -7,6 +7,7 @@ import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 import { Toast } from "primereact/toast";
 import { Galleria } from "primereact/galleria";
+import { Dialog } from "primereact/dialog";
 import { QUERY_SERVICE } from "../utils/queries";
 import { BreadCrumb } from "primereact/breadcrumb";
 import { CREATE_BOOKING } from "../utils/mutations";
@@ -24,6 +25,7 @@ const ProductDetails = () => {
   const [createBooking, { loadingBooking, errorbooking }] =
     useMutation(CREATE_BOOKING);
   const [selectedDate, setSelectedDate] = useState(null);
+  const [showBookingForm, setShowBookingForm] = useState(false); // Added state for modal visibility
 
   const handleTabSelect = (index) => {
     setActiveTab(index);
@@ -124,7 +126,7 @@ const ProductDetails = () => {
   const home = { icon: "pi pi-home", url: "http://localhost:3000/" };
 
   return (
-    <Container fluid>
+    <Container>
       <Row>
         <Col lg={7}>
           <BreadCrumb model={items} home={home} className="ms-0" />
@@ -181,7 +183,11 @@ const ProductDetails = () => {
                       </h4>
                       <Card.Text>{option.description}</Card.Text>
                       <div className="text-center">
-                        <Button label="Continue" severity="success" />
+                        <Button
+                          label="Continue"
+                          severity="success"
+                          onClick={() => setShowBookingForm(true)} // Open the modal when the button is clicked
+                        />
                       </div>
                     </Tab.Pane>
                   ))}
@@ -190,69 +196,77 @@ const ProductDetails = () => {
             </Card.Body>
           </Card>
         </Col>
-        <Col>
-          <Card className="booking-card">
-            <h2 className="booking-title">Book Now</h2>
-            <div className="booking-form">
-              <div className="form-group">
-                <label htmlFor="name">Name</label>
-                <InputText
-                  ref={nameInput}
-                  id="name"
-                  placeholder="Name"
-                  className="form-control"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="number">Phone Number</label>
-                <InputText
-                  ref={numberInput}
-                  id="number"
-                  placeholder="Phone Number"
-                  className="form-control"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="date">Date</label>
-                <Calendar
-                  ref={dateInput}
-                  id="date"
-                  placeholder="Date"
-                  dateFormat="dd/mm/yy"
-                  showIcon={true}
-                  className="form-control"
-                  value={selectedDate}
-                  onChange={(e) => setSelectedDate(e.value)}
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="time">Time</label>
-                <InputText
-                  ref={timeInput}
-                  id="time"
-                  placeholder="Time"
-                  className="form-control"
-                />
-              </div>
-              <div className="form-group">
-                <label htmlFor="description">Additional Description</label>
-                <InputText
-                  ref={descriptionInput}
-                  id="description"
-                  placeholder="Additional Description"
-                  className="form-control"
-                />
-              </div>
-              <Button
-                label="Book Now"
-                className="btn btn-success"
-                style={{ width: "100%" }}
-                onClick={bookService}
+      </Row>
+      <Dialog
+        visible={showBookingForm}
+        onHide={() => setShowBookingForm(false)} // Close the modal when it's hidden
+        position="top"
+        draggable={false}
+        breakpoints={{ "960px": "80vw" }}
+        className="booking-modal"
+        style={{ width: "50vw" }}
+      >
+        <Card className="booking-card">
+          <h2 className="booking-title">Book Now</h2>
+          <div className="booking-form">
+            <div className="form-group">
+              <label htmlFor="name">Name</label>
+              <InputText
+                ref={nameInput}
+                id="name"
+                placeholder="Name"
+                className="form-control"
               />
             </div>
-          </Card>
-        </Col>
-      </Row>
+            <div className="form-group">
+              <label htmlFor="number">Phone Number</label>
+              <InputText
+                ref={numberInput}
+                id="number"
+                placeholder="Phone Number"
+                className="form-control"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="date">Date</label>
+              <Calendar
+                ref={dateInput}
+                id="date"
+                placeholder="Date"
+                dateFormat="dd/mm/yy"
+                showIcon={true}
+                className="form-control"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.value)}
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="time">Time</label>
+              <InputText
+                ref={timeInput}
+                id="time"
+                placeholder="Time"
+                className="form-control"
+              />
+            </div>
+            <div className="form-group">
+              <label htmlFor="description">Additional Description</label>
+              <InputText
+                ref={descriptionInput}
+                id="description"
+                placeholder="Additional Description"
+                className="form-control"
+              />
+            </div>
+            <Button
+              label="Book Now"
+              className="btn btn-success"
+              style={{ width: "100%" }}
+              onClick={bookService}
+            />
+          </div>
+        </Card>
+      </Dialog>
       <Toast ref={toast}></Toast>
     </Container>
   );
