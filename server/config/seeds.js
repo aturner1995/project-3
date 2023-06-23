@@ -1,11 +1,12 @@
 const db = require('./connection');
 const { faker } = require('@faker-js/faker');
-const { User, Service, Category } = require('../models');
+const { User, Service, Category, Listing } = require('../models');
 
 db.once('open', async () => {
   await Category.deleteMany();
   await Service.deleteMany();
   await User.deleteMany();
+  await Listing.deleteMany();
 
   const categories = await Category.insertMany([
     { name: 'Dog Care' },
@@ -49,7 +50,7 @@ db.once('open', async () => {
       name: faker.commerce.productName(),
       description: faker.lorem.paragraph(),
       category: randomCategory._id,
-      user: randomUser._id, // Add the user ID
+      user: randomUser._id,
       options: [
         {
           title: faker.commerce.productName(),
@@ -78,6 +79,31 @@ db.once('open', async () => {
   const createdServices = await Service.insertMany(services);
 
   console.log(`${createdServices.length} services seeded`);
+
+  const listings = [];
+
+  for (let i = 0; i < 10; i++) {
+    const randomServiceIndex = Math.floor(Math.random() * createdServices.length);
+    const randomService = createdServices[randomServiceIndex];
+    const randomUserIndex = Math.floor(Math.random() * createdUsers.length);
+    const randomUser = createdUsers[randomUserIndex];
+
+    const listing = {
+      name: randomService.name,
+      description: randomService.description,
+      category: randomService.category,
+      user: randomUser._id,
+      options: randomService.options,
+      images: randomService.images,
+      location: randomService.location
+    };
+
+    listings.push(listing);
+  }
+
+  const createdListings = await Listing.insertMany(listings);
+
+  console.log(`${createdListings.length} listings seeded`);
 
   process.exit();
 });

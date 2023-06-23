@@ -8,15 +8,11 @@ import {
   QUERY_BOOKINGS,
   QUERY_PURCHASES,
 } from "../utils/queries";
+import PopularServices from "../components/PopularServices";
 
 const Profile = () => {
   const [user, setUser] = useState({});
   const { loading: userLoading, data: userData } = useQuery(QUERY_USER);
-  const {
-    loading: listingsLoading,
-    error: listingsError,
-    data: listingsData,
-  } = useQuery(QUERY_LISTINGS);
   const {
     loading: bookingsLoading,
     error: bookingsError,
@@ -42,18 +38,6 @@ const Profile = () => {
         <Row>
           <Col>
             <h1>{user.username}'s Profile</h1>
-            <h2>Listings</h2>
-            {listingsLoading ? (
-              <p>Loading listings...</p>
-            ) : listingsError ? (
-              <p>Error loading listings: {listingsError.message}</p>
-            ) : (
-              <ul>
-                {listingsData.listings.map((listing) => (
-                  <li key={listing.id}>{listing.title}</li>
-                ))}
-              </ul>
-            )}
             <h2>Bookings</h2>
             {bookingsLoading ? (
               <p>Loading bookings...</p>
@@ -83,6 +67,7 @@ const Profile = () => {
               </ul>
             )}
           </Col>
+          <PopularServices />
         </Row>
       </Container>
       <Footer />
