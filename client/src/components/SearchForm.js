@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import Form from 'react-bootstrap/Form';
-import { Container, Row, Col } from 'react-bootstrap';
+import { Row, Col, Spinner } from 'react-bootstrap';
 import { useQuery } from '@apollo/client';
 import { QUERY_REVERSE_GEOCODE } from '../utils/queries';
 import { Button } from 'primereact/button';
@@ -10,7 +10,7 @@ import { useLocation } from 'react-router-dom';
 import { Dropdown } from 'primereact/dropdown';
 import { QUERY_GEOCODE } from '../utils/queries';
 
-const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList, setSearchLocation, setDistance }) => {
+const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList, setUserSearchAddress, setDistance, isLoading }) => {
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
   const [city, setCity] = useState('');
@@ -20,9 +20,7 @@ const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList,
   const [categories, setCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedDistance, setSelectedDistance] = useState(null);
-  const [formSubmitted, setFormSubmitted] = useState(false);
 
-  const location = useLocation();
   const searchParams = useParams();
 
   useEffect(() => {
@@ -47,7 +45,6 @@ const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList,
         (position) => {
           setLatitude(position.coords.latitude);
           setLongitude(position.coords.longitude);
-          setSearchLocation([position.coords.latitude, position.coords.longitude])
         },
         (error) => {
           console.error('Error getting geolocation:', error);
@@ -62,12 +59,6 @@ const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList,
     variables: { latitude, longitude },
   });
 
-  const { data: geoData } = useQuery(QUERY_GEOCODE, {
-    variables: { address: userAddress },
-    skip: !formSubmitted,
-    onCompleted: () => setFormSubmitted(false),
-  });
-
   useEffect(() => {
     if (data) {
       if (data.reverseGeocode) {
@@ -80,12 +71,6 @@ const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList,
       }
     }
   }, [data]);
-
-  useEffect(() => {
-    if (geoData) {
-      setSearchLocation([geoData.geocode.latitude, geoData.geocode.longitude])
-    }
-  }, [geoData])
 
   const handleSearchQueryChange = (e) => {
     setSearchQuery(e.target.value);
@@ -104,13 +89,8 @@ const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList,
     e.preventDefault();
     setUserSearchQuery(searchQuery);
     setSelectedCategories(categories);
-
-    if (userAddress === `${city}, ${state}, ${country}`) {
-      setSearchLocation([latitude, longitude]);
-      setDistance(selectedDistance);
-    } else {
-      setFormSubmitted(true);
-    }
+    setUserSearchAddress(userAddress);
+    setDistance(selectedDistance)
   };
 
 
@@ -126,55 +106,62 @@ const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList,
   };
 
   return (
-<Form onSubmit={handleSubmit} className="mx-5">
-  <Row className="m-2 justify-content-center align-items-center">
-    <Col xs={12} md={5} lg={5} className="mb-2 mx-2">
-      <Form.Control
-        value={searchQuery || ''}
-        type="string"
-        placeholder="Search for your task"
-        onChange={handleSearchQueryChange}
-        className='mt-1'
-        size="lg"
-      />
-    </Col>
-    <Col xs={12} md={5} lg={5} className='mb-2'>
-      <Form.Control
-        value={userAddress}
-        type="string"
-        placeholder="Address"
-        onChange={handleUserAddressChange}
-        className='mt-1'
-        size="lg"
-      />
-    </Col>
-    <Col xs={12} md={2} lg={2} className='text-center d-flex align-items-center'>
-      <MultiSelect
-        value={categories}
-        onChange={handleCategoryChange}
-        options={categoriesList}
-        optionLabel="name"
-        display="chip"
-        placeholder="Select Category"
-        className='mt-1'
-        maxselectedlabels={1}
-      />
-    </Col>
-    <Col xs={12} md={2} lg={2} className='pt-1 text-center d-flex align-items-center'>
-      <Dropdown
-        value={selectedDistance}
-        options={distanceOptions}
-        onChange={handleDistanceChange}
-        placeholder="Select Distance"
-      />
-    </Col>
-    <Col xs={12} md={2} lg={2} className='text-center mt-2 d-flex align-items-center'>
-      <Button type="submit" severity="success" size="small">
-        Search
-      </Button>
-    </Col>
-  </Row>
-</Form>
+    <Form onSubmit={handleSubmit} className="mx-5">
+      <Row className="m-2 justify-content-center align-items-center">
+        <Col xs={12} md={5} lg={5} className="mb-2 mx-2">
+          <Form.Control
+            value={searchQuery || ''}
+            type="string"
+            placeholder="Search for your task"
+            onChange={handleSearchQueryChange}
+            className='mt-1'
+            size="lg"
+          />
+        </Col>
+        <Col xs={12} md={5} lg={5} className='mb-2'>
+          <Form.Control
+            value={userAddress}
+            type="string"
+            placeholder="Address"
+            onChange={handleUserAddressChange}
+            className='mt-1'
+            size="lg"
+          />
+        </Col>
+        <Col xs={12} md={2} lg={2} className='text-center d-flex align-items-center'>
+          <MultiSelect
+            value={categories}
+            onChange={handleCategoryChange}
+            options={categoriesList}
+            optionLabel="name"
+            display="chip"
+            placeholder="Select Category"
+            className='mt-1'
+            maxselectedlabels={1}
+          />
+        </Col>
+        <Col xs={12} md={2} lg={2} className='pt-1 text-center d-flex align-items-center'>
+          <Dropdown
+            value={selectedDistance}
+            options={distanceOptions}
+            onChange={handleDistanceChange}
+            placeholder="Select Distance"
+          />
+        </Col>
+        <Col xs={12} md={2} lg={2} className='text-center mt-2 d-flex align-items-center'>
+          <Button type="submit" disabled={isLoading} severity='success'>
+            {isLoading ? (
+              <>
+                <Spinner animation="border" size="sm" className="me-2" />
+                Loading...
+              </>
+            ) : (
+              'Search'
+            )}
+          </Button>
+        </Col>
+      </Row>
+    </Form>
   );
 };
 

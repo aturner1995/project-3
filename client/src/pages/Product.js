@@ -87,30 +87,32 @@ const ProductDetails = () => {
     const home = { icon: 'pi pi-home', url: 'http://localhost:3000/' }
 
     return (
-        <Container>
+        <Container fluid>
             <Row>
-                <Col md={8}>
+                <Col lg={7}>
                     <BreadCrumb model={items} home={home} className='ms-0' />
-                    <div className="product-details">
-                        <h2 className="product-name">{service.name}</h2>
-                        <p>{service.user.username} - {service.user.email}</p>
-                    </div>
-                    <Galleria
-                        value={images}
-                        responsiveOptions={responsiveOptions}
-                        numVisible={5}
-                        style={{ maxWidth: '640px' }}
-                        item={itemTemplate}
-                        thumbnail={thumbnailTemplate}
-                    />
-                    <div>
-                        <div className='my-4'>
-                            <h4 className="product-section-heading">Product Description</h4>
-                            <p className="product-description">{service.description}</p>
+                    <div className='ms-2'>
+                        <div className="product-details">
+                            <h2 className="product-name">{service.name}</h2>
+                            <p>{service.user.username} - {service.user.email}</p>
+                        </div>
+                        <Galleria
+                            value={images}
+                            responsiveOptions={responsiveOptions}
+                            numVisible={5}
+                            style={{ maxWidth: '90%' }}
+                            item={itemTemplate}
+                            thumbnail={thumbnailTemplate}
+                        />
+                        <div>
+                            <div className='my-4'>
+                                <h4 className="product-section-heading">Product Description</h4>
+                                <p className="product-description">{service.description}</p>
+                            </div>
                         </div>
                     </div>
                 </Col>
-                <Col>
+                <Col lg={5}>
                     <Card>
                         <Card.Body>
                             <Tab.Container activeKey={activeTab} onSelect={handleTabSelect}>
@@ -145,7 +147,7 @@ const ProductDetails = () => {
                         </Card.Body>
                     </Card>
                 </Col>
-                <Col md={4}>
+                <Col>
                     <Card className="booking-card">
                         <h2 className="booking-title">Book Now</h2>
                         <div className="booking-form">

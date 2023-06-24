@@ -12,17 +12,18 @@ const Search = () => {
   const [userSearchQuery, setUserSearchQuery] = useState('');
   const [selectedFilter, setSelectedFilter] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
-  const [searchLocation, setSearchLocation] = useState([]);
+  const [userSearchAddress, setUserSearchAddress] = useState('');
   const [distance, setDistance] = useState(100);
 
   const { loading, error, data } = useQuery(QUERY_ALL_SERVICES, {
     variables: {
       searchQuery: userSearchQuery,
       category: selectedCategories.map((category) => category.name),
-      location: searchLocation,
+      userSearchAddress: userSearchAddress,
       distance: distance
     },
   });
+
 
   useEffect(() => {
     if (data) {
@@ -92,8 +93,9 @@ const Search = () => {
             setUserSearchQuery={setUserSearchQuery} 
             setSelectedCategories={setSelectedCategories} 
             categoriesList={categoriesList} 
-            setSearchLocation={setSearchLocation}
+            setUserSearchAddress={setUserSearchAddress}
             setDistance = {setDistance}
+            isLoading={loading}
             />
             <Container className='d-flex justify-content-end'>
                 <Dropdown value={selectedFilter} onChange={(e) => setSelectedFilter(e.value)} options={filters} optionLabel="name" display="chip"
