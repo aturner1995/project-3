@@ -1,12 +1,17 @@
 const db = require('./connection');
 const { faker } = require('@faker-js/faker');
-const { User, Service, Category, Listing } = require('../models');
+// const faker = require('@faker-js/faker');
+
+// const faker = require('faker');
+const { User, Service, Category, Listing, Booking, Purchase } = require('../models');
 
 db.once('open', async () => {
   await Category.deleteMany();
   await Service.deleteMany();
   await User.deleteMany();
   await Listing.deleteMany();
+  await Booking.deleteMany();
+  await Purchase.deleteMany();
 
   const categories = await Category.insertMany([
     { name: 'Dog Care' },
@@ -105,5 +110,59 @@ db.once('open', async () => {
 
   console.log(`${createdListings.length} listings seeded`);
 
-  process.exit();
+  const bookings = [];
+
+for (let user of createdUsers) {
+  for (let service of createdServices) {
+    const booking = {
+      service: service._id,
+      user: user._id,
+      date: faker.date.future(),
+      status: 'pending'
+    };
+
+    bookings.push(booking);
+  }
+}
+
+const createdBookings = await Booking.insertMany(bookings);
+
+console.log(`${createdBookings.length} bookings seeded`);
+
+const purchases = [];
+
+for (let user of createdUsers) {
+  for (let service of createdServices) {
+    const randomOptionIndex = Math.floor(Math.random() * service.options.length);
+    const randomOption = service.options[randomOptionIndex];
+    const randomQuantity = faker.datatype.number({ min: 1, max: 5 });
+    const randomTotal = randomQuantity * randomOption.price;
+    const randomDate = faker.date.future();
+    const purchaseStatus = 'completed';
+
+    const option = {
+      title: faker.commerce.productName(),
+      description: faker.commerce.productDescription(),
+      price: faker.commerce.price({ min: 10, max: 100 })
+    };
+
+    const purchase = {
+      service: service._id,
+      user: user._id,
+      option: option,
+      quantity: randomQuantity,
+      total: randomTotal,
+      date: randomDate,
+      status: purchaseStatus,
+    };
+
+    purchases.push(purchase);
+  }
+}
+
+const createdPurchases = await Purchase.insertMany(purchases);
+
+console.log(`${createdPurchases.length} purchases seeded`);
+
+process.exit();
 });
