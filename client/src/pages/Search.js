@@ -38,7 +38,7 @@ const Search = () => {
         { name: 'Dog Care' },
         { name: 'Landscaping' },
         { name: 'House Cleaning' },
-        { name: 'Rennovations' },
+        { name: 'Renovations' },
         { name: 'Web Development' },
         { name: 'Appliance Repair' },
         { name: 'Physical Therapy' },

@@ -16,6 +16,7 @@ import Footer from "./Footer";
 import { motion } from "framer-motion";
 import LoginSignupIndex from "./login-signup/Login-Signup-index";
 
+
 const AppNavbar = () => {
   const [showModal, setShowModal] = useState(false);
   const { currentImage } = useContext(ThemeContext);
@@ -82,7 +83,7 @@ const AppNavbar = () => {
                   >
                     <NavDropdown.Item
                       as={Link}
-                      to="/profile"
+                      to="/Profile.js"
                       className={navLinkColor}
                     >
                       {link}

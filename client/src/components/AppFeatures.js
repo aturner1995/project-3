@@ -4,12 +4,11 @@ import { Button } from 'primereact/button';
 import { Link } from 'react-router-dom';
 
 const AppFeatures = () => {
-    
     return (
         <div className='app-feat'>
-            <Container fluid>
+            <Container>
                 <Row className='py-5'>
-                    <Col className='left-app-feat mx-5 justify-content-center'>
+                    <Col className='mx-5 justify-content-center'>
                         <h2 className='mb-4'>Taskmaster: Your Productivity Assistant</h2>
                         <ul className='feature-list list-unstyled'>
                             <li className='d-flex align-items-start'>
@@ -43,10 +42,12 @@ const AppFeatures = () => {
                         </ul>
                     </Col>
                     <Col className='right-app-feat d-flex flex-column align-items-center justify-content-center position-relative'>
-                        <Image src='/images/family.webp' height='450' />
-                        <Link to='/search'>
-                        <Button label='Explore Now' severity='success' className='position-absolute top-50 start-50 translate-middle' />
-                        </Link>
+                        <div className='image-container'>
+                            <Image src='/images/family.webp' height='450' />
+                            <Link to='/search'>
+                                <Button label='Explore Now' severity='success' className='position-absolute top-50 start-50 translate-middle' />
+                            </Link>
+                        </div>
                     </Col>
                 </Row>
             </Container>

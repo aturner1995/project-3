@@ -6,6 +6,19 @@ const typeDefs = gql`
         username: String
         email: String
     }
+    type Chat {
+        _id: ID
+        sender: User
+        receiver: User
+        message: String
+        timestamp: String
+        conversationId: Conversation
+    }
+    type Conversation {
+        _id: ID
+        participants: [User]
+        messages: [Chat]
+    }
     type Option {
         title: String
         description: String
@@ -38,20 +51,26 @@ const typeDefs = gql`
         state: String
         country: String
     }
-    type Geocode {
-        latitude: Float
-        longitude: Float
-    }
     type Auth {
         token: ID!
         user: User
     }
+    type Booking {
+        id: ID!
+        name: String!
+        number: String!
+        date: String!
+        time: String!
+        description: String!
+        service: Service!
+      }
     type Query {
         user: User
         reverseGeocode(latitude: Float!, longitude: Float!): ReverseGeocode
         services(searchQuery: String, category: [String], userSearchAddress:String, distance: Float): [Service]
         service(_id: ID!): Service
         categories: [Category]
+        chatMessages: [Conversation]
 
     }
     type Mutation {
@@ -60,7 +79,19 @@ const typeDefs = gql`
         createService(input: ServiceInput): Service
         updateService(_id: ID!, input: ServiceInput): Service
         deleteService(_id: ID!): Service
+        sendChatMessage(receiverId: ID!, message: String): Chat
     }
+    type Mutation {
+        createBooking(
+          name: String!
+          number: String!
+          date: String!
+          time: String!
+          description: String!
+          serviceId: ID!
+        ): Booking!
+      }
+      
 
     input ServiceInput {
         name: String!

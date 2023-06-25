@@ -128,7 +128,7 @@ const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList,
             size="lg"
           />
         </Col>
-        <Col xs={12} md={2} lg={2} className='text-center d-flex align-items-center'>
+        <Col xs={12} md={3} lg={3} className='text-center d-flex align-items-center'>
           <MultiSelect
             value={categories}
             onChange={handleCategoryChange}
@@ -140,7 +140,7 @@ const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList,
             maxselectedlabels={1}
           />
         </Col>
-        <Col xs={12} md={2} lg={2} className='pt-1 text-center d-flex align-items-center'>
+        <Col xs={12} md={3} lg={3} className='pt-1 text-center d-flex align-items-center'>
           <Dropdown
             value={selectedDistance}
             options={distanceOptions}
