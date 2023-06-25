@@ -29,11 +29,6 @@ const ProductDetails = () => {
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [selectedPrice, setSelectedPrice] = useState(null);
 
-
-
-  
-
-
   const handleTabSelect = (index) => {
     setActiveTab(index);
     const selectedOption = service.options[index];

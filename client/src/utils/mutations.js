@@ -24,6 +24,22 @@ export const ADD_USER = gql`
   }
 `;
 
+export const SEND_CHAT_MESSAGE = gql`
+  mutation SendChatMessage($receiverId: ID!, $message: String!) {
+    sendChatMessage(receiverId: $receiverId, message: $message) {
+      _id
+      sender {
+        username
+      }
+      receiver {
+        username
+      }
+      message
+      timestamp
+    }
+  }
+`;
+
 export const CREATE_BOOKING = gql`
   mutation CreateBooking(
     $name: String!

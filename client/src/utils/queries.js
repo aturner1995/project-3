@@ -77,6 +77,29 @@ export const QUERY_CATEGORY = gql`
     }
   }
 `
+export const GET_CHAT_MESSAGES = gql`
+  query {
+    chatMessages {
+      _id
+      participants {
+        _id
+        username
+      }
+      messages {
+        sender {
+          username
+          _id
+        }
+        receiver {
+          _id
+          username
+        }
+        message
+        timestamp
+      }
+    }
+  }
+`;
 
 export const GET_BOOKINGS = gql`
   query GetBookings {

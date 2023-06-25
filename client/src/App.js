@@ -1,18 +1,14 @@
-import {
-  ApolloClient,
-  InMemoryCache,
-  ApolloProvider,
-  createHttpLink,
-} from "@apollo/client";
-import { setContext } from "@apollo/client/link/context";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import Search from "./pages/Search";
-import { ThemeProvider } from "./utils/themeContext";
-import Footer from "./components/Footer";
-import Product from "./pages/Product";
-// import Profile from "./pages/Profile";
+import { ApolloClient, InMemoryCache, ApolloProvider, createHttpLink } from '@apollo/client';
+import { setContext } from '@apollo/client/link/context';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import Navbar from './components/Navbar';
+import Home from './pages/Home';
+import Search from './pages/Search';
+import { ThemeProvider } from './utils/themeContext';
+import Footer from './components/Footer';
+import Product from './pages/Product';
+import Chat from './components/Chat';
+import Profile from "./pages/Profile";
 
 const httpLink = createHttpLink({
   uri: "/graphql",
@@ -43,11 +39,27 @@ function App() {
           <>
             <Navbar />
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/search/:query" element={<Search />} />
-              <Route path="/search" element={<Search />} />
-              <Route path="/product/:id" element={<Product />} />
-              {/* <Route path="/profile" element={<Profile />} /> */}
+              <Route
+                path='/'
+                element={<Home />}
+              />
+              <Route
+                path='/search/:query'
+                element={<Search />}
+              />
+              <Route
+                path='/search'
+                element={<Search />}
+              />
+              <Route
+                path="/product/:id"
+                element={<Product />} />
+              <Route
+                path="/chat"
+                element={<Chat />} />
+              <Route 
+                path="/profile" 
+                element={<Profile />} />
             </Routes>
             <Footer />
           </>

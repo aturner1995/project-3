@@ -1,5 +1,5 @@
 const { AuthenticationError } = require('apollo-server-express');
-const { User, Service, Category, Booking } = require('../models');
+const { User, Service, Category, Conversation, Chat, Booking } = require('../models');
 require('dotenv').config({ debug: true })
 const signToken = require('../utils/auth').signToken;
 
@@ -32,9 +32,6 @@ const resolvers = {
                     distance = 100;
                 }
                 const params = {};
-                console.log('hitting')
-                console.log('Hey: ', userSearchAddress, distance)
-
 
                 if (searchQuery) {
                     const searchRegex = new RegExp(searchQuery, 'i');
@@ -104,13 +101,29 @@ const resolvers = {
             }
         },
 
-        categories: async () => {
+        categories: async (parent, args, context) => {
             try {
                 const categories = await Category.find();
                 return categories;
             }
             catch (err) {
                 throw new Error('Failed to fetch categories');
+            }
+        },
+        chatMessages: async (parent, args, context) => {
+            try {
+                const conversations = await Conversation.find().populate({
+                    path: 'messages',
+                    populate: [
+                        { path: 'sender', select: 'username' },
+                        { path: 'receiver', select: 'username' }
+                    ]
+                }).populate('participants', 'username');
+
+                return conversations;
+            } catch (error) {
+                console.error(error);
+                throw new Error('Failed to fetch chat messages.');
             }
         },
     },
@@ -160,14 +173,66 @@ const resolvers = {
                 throw new Error('Failed to update service');
             }
         },
-        deleteService: async (parent, { id }) => {
+        deleteService: async (parent, { _id }) => {
             try {
-                const deletedService = await Service.findByIdAndDelete(id);
+                const deletedService = await Service.findByIdAndDelete(_id);
                 return deletedService;
             } catch (error) {
                 throw new Error('Failed to delete service');
             }
         },
+
+        sendChatMessage: async (parent, { receiverId, message }, context) => {
+            try {
+                let conversationId;
+                const senderId = context.user._id;
+
+                // Check if a conversation already exists between the sender and receiver
+                const existingConversation = await Conversation.findOne({
+                    participants: {
+                        $all: [senderId, receiverId]
+                    }
+                });
+
+                if (existingConversation) {
+                    conversationId = existingConversation._id;
+                } else {
+                    // If conversation doesn't exist, create a new conversation
+                    const newConversation = new Conversation({
+                        participants: [senderId, receiverId]
+                    });
+
+                    const savedConversation = await newConversation.save();
+                    conversationId = savedConversation._id;
+                }
+
+                const chat = new Chat({
+                    sender: senderId,
+                    conversationId: conversationId,
+                    receiver: receiverId,
+                    message
+                })
+
+                const savedChat = await chat.save();
+                // Update sender's and receiver's chats arrays
+                await User.updateMany(
+                    { _id: { $in: [context.user._id, receiverId] } },
+                    { $push: { chats: savedChat._id } }
+                );
+
+                await Conversation.findByIdAndUpdate(conversationId, {
+                    $push: { messages: savedChat._id },
+                    updatedAt: Date.now(),
+                });
+
+                return savedChat;
+            }
+            catch (error) {
+                console.error(error);
+                throw new Error('Failed to send chat message');
+            }
+        }
+
         createBooking: async (_, { name, number, date, time, description, serviceId }) => {
             console.log(name,number,date,time,description,serviceId)
             try {
