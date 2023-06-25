@@ -1,5 +1,6 @@
 const User = require('./User');
 const Service = require('./Service');
-const Category = require('./Category')
+const Category = require('./Category');
+const Conversation = require('./Conversation');
 
-module.exports = { User, Service, Category };
+module.exports = { User, Service, Category, Conversation };

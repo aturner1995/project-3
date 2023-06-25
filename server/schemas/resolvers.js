@@ -1,5 +1,5 @@
 const { AuthenticationError } = require('apollo-server-express');
-const { User, Service, Category } = require('../models');
+const { User, Service, Category, Conversation } = require('../models');
 const Chat = require('../models/Chat');
 require('dotenv').config({ debug: true })
 const signToken = require('../utils/auth').signToken;
@@ -33,9 +33,6 @@ const resolvers = {
                     distance = 100;
                 }
                 const params = {};
-                console.log('hitting')
-                console.log('Hey: ', userSearchAddress, distance)
-
 
                 if (searchQuery) {
                     const searchRegex = new RegExp(searchQuery, 'i');
@@ -105,7 +102,7 @@ const resolvers = {
             }
         },
 
-        categories: async () => {
+        categories: async (parent, args, context) => {
             try {
                 const categories = await Category.find();
                 return categories;
@@ -114,24 +111,23 @@ const resolvers = {
                 throw new Error('Failed to fetch categories');
             }
         },
-        chatMessages: async (parent, { senderId, receiverId }) => {
+        chatMessages: async (parent, args, context) => {
+            console.log(context.user)
             try {
-                const chats = await Chat.find({
-                    $or: [
-                        { sender: senderId, receiver: receiverId },
-                        { sender: receiverId, receiver: senderId }
+                const conversations = await Conversation.find().populate({
+                    path: 'messages',
+                    populate: [
+                        { path: 'sender', select: 'username' },
+                        { path: 'receiver', select: 'username' }
                     ]
-                })
-                    .sort({ timestamp: 1 })
-                    .populate('sender')
-                    .populate('receiver')
+                }).populate('participants', 'username');
 
-                return chats;
+                return conversations;
+            } catch (error) {
+                console.error(error);
+                throw new Error('Failed to fetch chat messages.');
             }
-            catch (error) {
-                throw new Error('Failed to fetch messages')
-            }
-        }
+        },
     },
     Mutation: {
         addUser: async (parent, { username, email, password }) => {
@@ -187,10 +183,34 @@ const resolvers = {
                 throw new Error('Failed to delete service');
             }
         },
-        sendChatMessage: async (parent, { senderId, receiverId, message }) => {
+        sendChatMessage: async (parent, { receiverId, message }, context) => {
+            console.log('test')
             try {
+                let conversationId;
+                const senderId = context.user._id;
+
+                // Check if a conversation already exists between the sender and receiver
+                const existingConversation = await Conversation.findOne({
+                    participants: {
+                        $all: [senderId, receiverId]
+                    }
+                });
+
+                if (existingConversation) {
+                    conversationId = existingConversation._id;
+                } else {
+                    // If conversation doesn't exist, create a new conversation
+                    const newConversation = new Conversation({
+                        participants: [senderId, receiverId]
+                    });
+
+                    const savedConversation = await newConversation.save();
+                    conversationId = savedConversation._id;
+                }
+
                 const chat = new Chat({
                     sender: senderId,
+                    conversationId: conversationId,
                     receiver: receiverId,
                     message
                 })
@@ -198,13 +218,19 @@ const resolvers = {
                 const savedChat = await chat.save();
                 // Update sender's and receiver's chats arrays
                 await User.updateMany(
-                    { _id: { $in: [senderId, receiverId] } },
+                    { _id: { $in: [context.user._id, receiverId] } },
                     { $push: { chats: savedChat._id } }
                 );
+
+                await Conversation.findByIdAndUpdate(conversationId, {
+                    $push: { messages: savedChat._id },
+                    updatedAt: Date.now(),
+                });
 
                 return savedChat;
             }
             catch (error) {
+                console.error(error);
                 throw new Error('Failed to send chat message');
             }
         }

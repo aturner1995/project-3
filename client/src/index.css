@@ -103,6 +103,7 @@ a {
   background-color: #e7e7e7;
 }
 
+
 .p-carousel-indicators {
   display: none !important;
 }
@@ -160,6 +161,50 @@ a {
 .p-galleria-thumbnail-prev, .p-galleria-thumbnail-next {
   background-color: black !important;
 }
+
+.chat-item {
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.chat-item:hover {
+  background-color: rgb(241, 241, 241);
+}
+
+.profile-pic {
+  width: 40px;
+  height: 40px;
+  background-color: #ccc;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+/* Chat bubble styles */
+.message-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.message-bubble {
+  display: inline-block;
+  padding: 2px 12px;
+  border-radius: 20px;
+  margin-bottom: 8px;
+  max-width: 70%;
+}
+
+.message-bubble.left {
+  background-color: #f2f2f2;
+  align-self: flex-start;
+}
+
+.message-bubble.right {
+  background-color: #007bff;
+  color: #fff;
+  align-self: flex-end;
+}
+
+
 
 @media only screen and (max-width: 992px) {
   .left-login {
