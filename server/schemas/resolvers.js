@@ -231,8 +231,7 @@ const resolvers = {
                 console.error(error);
                 throw new Error('Failed to send chat message');
             }
-        }
-
+        },
         createBooking: async (_, { name, number, date, time, description, serviceId }) => {
             console.log(name,number,date,time,description,serviceId)
             try {

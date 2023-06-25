@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { Container, Row, Col } from "react-bootstrap";
-import Footer from "./Footer";
 import {
   QUERY_USER,
   QUERY_LISTINGS,
@@ -10,37 +9,35 @@ import {
 } from "../utils/queries";
 
 const Profile = () => {
-  const [user, setUser] = useState({});
-  const { loading: userLoading, data: userData } = useQuery(QUERY_USER);
-  const {
-    loading: listingsLoading,
-    error: listingsError,
-    data: listingsData,
-  } = useQuery(QUERY_LISTINGS);
-  const {
-    loading: bookingsLoading,
-    error: bookingsError,
-    data: bookingsData,
-  } = useQuery(QUERY_BOOKINGS);
-  const {
-    loading: purchasesLoading,
-    error: purchasesError,
-    data: purchasesData,
-  } = useQuery(QUERY_PURCHASES);
+  // const [user, setUser] = useState({});
+  // const { loading: userLoading, data: userData } = useQuery(QUERY_USER);
+  // const {
+  //   loading: listingsLoading,
+  //   error: listingsError,
+  //   data: listingsData,
+  // } = useQuery(QUERY_LISTINGS);
+  // const {
+  //   loading: bookingsLoading,
+  //   error: bookingsError,
+  //   data: bookingsData,
+  // } = useQuery(QUERY_BOOKINGS);
+  // const {
+  //   loading: purchasesLoading,
+  //   error: purchasesError,
+  //   data: purchasesData,
+  // } = useQuery(QUERY_PURCHASES);
 
-  useEffect(() => {
-    if (userData) {
-      setUser(userData.user);
-    }
-  }, [userData]);
+  // useEffect(() => {
+  //   if (userData) {
+  //     setUser(userData.user);
+  //   }
+  // }, [userData]);
 
   return (
     <div>
-      <Hero />
-
       <Container>
         <Row>
-          <Col>
+          {/* <Col>
             <h1>{user.username}'s Profile</h1>
             <h2>Listings</h2>
             {listingsLoading ? (
@@ -82,10 +79,9 @@ const Profile = () => {
                 ))}
               </ul>
             )}
-          </Col>
+          </Col> */}
         </Row>
       </Container>
-      <Footer />
     </div>
   );
 };
