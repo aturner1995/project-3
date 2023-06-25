@@ -112,7 +112,6 @@ const resolvers = {
             }
         },
         chatMessages: async (parent, args, context) => {
-            console.log(context.user)
             try {
                 const conversations = await Conversation.find().populate({
                     path: 'messages',

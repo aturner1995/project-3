@@ -42,7 +42,7 @@ const startApolloServer = async () => {
     socket.on('message', (message) => {
       // Handle the incoming message event
       console.log('Received message:', message);
-      // Emit the message to other connected clients if needed
+      // Emit the message to other connected client
       socket.broadcast.emit('message', message);
     });
 
