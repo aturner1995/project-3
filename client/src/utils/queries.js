@@ -77,3 +77,20 @@ export const QUERY_CATEGORY = gql`
     }
   }
 `
+
+export const GET_BOOKINGS = gql`
+  query GetBookings {
+    bookings {
+      id
+      name
+      number
+      date
+      time
+      description
+      service {
+        id
+        title
+      }
+    }
+  }
+`;
