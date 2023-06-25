@@ -183,7 +183,6 @@ const resolvers = {
             }
         },
         sendChatMessage: async (parent, { receiverId, message }, context) => {
-            console.log('test')
             try {
                 let conversationId;
                 const senderId = context.user._id;
