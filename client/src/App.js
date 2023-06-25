@@ -8,19 +8,20 @@ import { ThemeProvider } from './utils/themeContext';
 import Footer from './components/Footer';
 import Product from './pages/Product';
 import Chat from './components/Chat';
+import Profile from "./pages/Profile";
 
 const httpLink = createHttpLink({
-  uri: '/graphql',
+  uri: "/graphql",
 });
 
 const authLink = setContext((_, { headers }) => {
   // get the authentication token from local storage if it exists
-  const token = localStorage.getItem('id_token');
+  const token = localStorage.getItem("id_token");
   // return the headers to the context so httpLink can read them
   return {
     headers: {
       ...headers,
-      authorization: token ? `Bearer ${token}` : '',
+      authorization: token ? `Bearer ${token}` : "",
     },
   };
 });
@@ -29,7 +30,6 @@ const client = new ApolloClient({
   link: authLink.concat(httpLink),
   cache: new InMemoryCache(),
 });
-
 
 function App() {
   return (
@@ -57,6 +57,9 @@ function App() {
               <Route
                 path="/chat"
                 element={<Chat />} />
+              <Route 
+                path="/profile" 
+                element={<Profile />} />
             </Routes>
             <Footer />
           </>

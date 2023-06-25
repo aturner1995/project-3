@@ -77,7 +77,6 @@ export const QUERY_CATEGORY = gql`
     }
   }
 `
-
 export const GET_CHAT_MESSAGES = gql`
   query {
     chatMessages {
@@ -102,4 +101,19 @@ export const GET_CHAT_MESSAGES = gql`
   }
 `;
 
-
+export const GET_BOOKINGS = gql`
+  query GetBookings {
+    bookings {
+      id
+      name
+      number
+      date
+      time
+      description
+      service {
+        id
+        title
+      }
+    }
+  }
+`;
