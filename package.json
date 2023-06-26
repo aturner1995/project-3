@@ -20,7 +20,7 @@
   "dependencies": {
     "@stripe/stripe-js": "^1.54.1",
     "primeicons": "^6.0.1",
-    "stripe": "^12.10.0"
+    "stripe": "^12.10.0",
     "faker": "^6.6.6",
     "react-icons": "^4.10.1"
   }
