@@ -14,7 +14,6 @@ import { loadStripe } from "@stripe/stripe-js";
 import { QUERY_SERVICE } from "../utils/queries";
 import { CREATE_BOOKING } from "../utils/mutations";
 import { QUERY_CHECKOUT } from "../utils/queries";
-const stripePromise = loadStripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
 import ChatPopup from "../components/ChatPopup";
 
 
@@ -23,6 +22,7 @@ const ProductDetails = () => {
   const toast = useRef(null);
   const nameInput = useRef(null);
   const numberInput = useRef(null);
+  const stripePromise = loadStripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
   const timeInput = useRef(null);
   const descriptionInput = useRef(null);
   const [activeTab, setActiveTab] = useState(0);
