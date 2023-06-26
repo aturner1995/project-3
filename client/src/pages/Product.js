@@ -1,21 +1,23 @@
-import React, { useRef, useState,useEffect } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
-import { useQuery } from "@apollo/client";
+import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import { Card, Col, Container, Row, Tab, Nav } from "react-bootstrap";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Calendar } from "primereact/calendar";
 import { Toast } from "primereact/toast";
 import { Galleria } from "primereact/galleria";
-import { QUERY_SERVICE } from "../utils/queries";
 import { BreadCrumb } from "primereact/breadcrumb";
-import { CREATE_BOOKING } from "../utils/mutations";
-import { useMutation } from "@apollo/client";
 import { Dialog } from "primereact/dialog";
 import { InputTextarea } from "primereact/inputtextarea";
+import { loadStripe } from "@stripe/stripe-js";
+import { QUERY_SERVICE } from "../utils/queries";
+import { CREATE_BOOKING } from "../utils/mutations";
+import { QUERY_CHECKOUT } from "../utils/queries";
+
+const stripePromise = loadStripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
 
 const ProductDetails = () => {
-  
   const { id } = useParams();
   const toast = useRef(null);
   const nameInput = useRef(null);
@@ -23,23 +25,41 @@ const ProductDetails = () => {
   const timeInput = useRef(null);
   const descriptionInput = useRef(null);
   const [activeTab, setActiveTab] = useState(0);
-  const [createBooking, { loadingBooking, errorbooking }] =
-    useMutation(CREATE_BOOKING);
+  const [createBooking, { loadingBooking, errorbooking }] = useMutation(
+    CREATE_BOOKING
+  );
   const [selectedDate, setSelectedDate] = useState(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [selectedPrice, setSelectedPrice] = useState(null);
+  const [getCheckout, { data: dataCheckOut }] = useLazyQuery(QUERY_CHECKOUT);
 
-  const handleTabSelect = (index) => {
-    setActiveTab(index);
-    const selectedOption = service.options[index];
-    setSelectedPrice(selectedOption.price);
-  };
+  useEffect(() => {
+    if (dataCheckOut) {
+      stripePromise.then((res) => {
+        res.redirectToCheckout({ sessionId: dataCheckOut.checkout.session });
+      });
+    }
+
+  }, [dataCheckOut]);
+
+const handleTabSelect = (index) => {
+  setActiveTab(index);
+  const selectedOption = service.options[index];
+  setSelectedPrice(selectedOption.price);
+};
+
+const handleContinueClick = () => {
+  setShowBookingForm(true)
+  const selectedOption = service.options[activeTab];
+  setSelectedPrice(selectedOption.price);
+  setShowBookingForm(true);
+};
+
 
   const { loading, error, data } = useQuery(QUERY_SERVICE, {
     variables: { id },
   });
 
-  console.log(data);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -50,9 +70,6 @@ const ProductDetails = () => {
   }
 
   const { service } = data;
-
-
-  
 
   const images = service.images.map((image) => ({
     itemImageSrc: image.url,
@@ -75,7 +92,6 @@ const ProductDetails = () => {
     },
   ];
 
-  
   const itemTemplate = (item) => {
     return (
       <img src={item.itemImageSrc} alt={item.alt} style={{ width: "100%" }} />
@@ -92,16 +108,14 @@ const ProductDetails = () => {
     );
   };
 
-  
   const showToast = () => {
     toast.current.show({
       severity: "success",
-      summary: "Booking Successful",
+      summary: "Redirecting to payment portal...",
       life: 3000,
     });
   };
-  let selectedOption = service.options[activeTab];
-  
+
   const bookService = async (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -112,7 +126,7 @@ const ProductDetails = () => {
     const description = descriptionInput.current.value;
 
     const selectedOption = service.options[activeTab];
-    const totalPrice = selectedOption.price
+    const totalPrice = selectedOption.price;
 
     try {
       const { data } = await createBooking({
@@ -127,9 +141,16 @@ const ProductDetails = () => {
         refetchQueries: [{ query: QUERY_SERVICE, variables: { id } }],
       });
 
+      getCheckout({
+        variables: { id, price: selectedPrice },
+      });
+      
       showToast();
       console.log("Booking created:", data.createBooking);
       console.log("Total Price:", totalPrice);
+
+
+    
     } catch (error) {
       console.error("Error creating booking:", error);
     }
@@ -195,20 +216,16 @@ const ProductDetails = () => {
                       className={`mx-2 ${activeTab === index ? "active" : ""}`}
                     >
                       <h4>
-                        <strong>
-                          ${selectedOption.price}
-                        </strong>
+                        <strong>${option.price}</strong>
                       </h4>
                       <Card.Text>{option.description}</Card.Text>
                       <div className="text-center">
                         <Button
                           label="Continue"
                           severity="success"
-                          onClick={() => setShowBookingForm(true)}
+                          onClick={handleContinueClick}
                         />
                         <br />
-                    
-                  
                       </div>
                     </Tab.Pane>
                   ))}
@@ -227,7 +244,7 @@ const ProductDetails = () => {
       >
         <div className="booking-form">
           <h2 className="booking-title">Book Now</h2>
-          <h4>Selected Price: ${selectedPrice}</h4>
+          <h4>Selected Price: {selectedPrice}</h4>
           <form>
             <div className="form-group">
               <label htmlFor="name">Name</label>

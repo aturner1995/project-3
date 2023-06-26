@@ -117,3 +117,12 @@ export const GET_BOOKINGS = gql`
     }
   }
 `;
+
+
+export const QUERY_CHECKOUT = gql`
+  query getCheckout($id: ID!, $price: Float!) {
+    checkout(id: $id, price: $price) {
+      session
+    }
+  }
+`;

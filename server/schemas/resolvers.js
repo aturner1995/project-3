@@ -1,7 +1,9 @@
 const { AuthenticationError } = require('apollo-server-express');
-const { User, Service, Category, Conversation, Chat, Booking } = require('../models');
+const { User, Service, Category, Conversation, Chat, Booking, Order } = require('../models');
 require('dotenv').config({ debug: true })
 const signToken = require('../utils/auth').signToken;
+const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
+
 
 
 const resolvers = {
@@ -126,6 +128,47 @@ const resolvers = {
                 throw new Error('Failed to fetch chat messages.');
             }
         },
+
+          checkout: async (parent, { id, price }, context) => {
+            const url = new URL(context.headers.referer).origin;
+            
+            try {
+              const service = await Service.findById(id).populate('options');
+          
+              const product = await stripe.products.create({
+                name: service.name,
+                description: service.description,
+              });
+          
+              const lineItems = service.options
+              .filter((option) => option.price === price)
+              .map((option) => ({
+                price_data: {
+                  currency: 'cad',
+                  product: product.id,
+                  unit_amount: option.price * 100,
+                },
+                quantity: 1,
+              }));
+            
+            
+          
+              const session = await stripe.checkout.sessions.create({
+                payment_method_types: ['card'],
+                line_items: lineItems,
+                mode: 'payment',
+                success_url: `${url}/success?session_id={CHECKOUT_SESSION_ID}`,
+                cancel_url: `${url}/`,
+              });
+          
+              return { session: session.id };
+            } catch (error) {
+              console.error('Error during checkout:', error);
+              throw new Error('An error occurred during checkout.');
+            }
+          }
+          
+          
     },
     Mutation: {
         addUser: async (parent, { username, email, password }) => {
