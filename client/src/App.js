@@ -57,9 +57,9 @@ function App() {
               <Route
                 path="/chat"
                 element={<Chat />} />
-              {/* <Route 
+              <Route 
                 path="/profile" 
-                element={<Profile />} /> */}
+                element={<Profile />} />
             </Routes>
             <Footer />
           </>
