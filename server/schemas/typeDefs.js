@@ -71,6 +71,7 @@ const typeDefs = gql`
         service(_id: ID!): Service
         categories: [Category]
         chatMessages: [Conversation]
+        conversation(receiverId: ID!): [Conversation]
 
     }
     type Mutation {

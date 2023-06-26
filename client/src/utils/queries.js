@@ -101,6 +101,30 @@ export const GET_CHAT_MESSAGES = gql`
   }
 `;
 
+export const GET_CONVERSATION = gql`
+  query conversation($receiverId: ID!) {
+    conversation(receiverId: $receiverId) {
+      _id
+      participants {
+        _id
+        username
+      }
+      messages {
+        sender {
+          username
+          _id
+        }
+        receiver {
+          _id
+          username
+        }
+        message
+        timestamp
+      }
+    }
+  }
+`;
+
 export const GET_BOOKINGS = gql`
   query GetBookings {
     bookings {

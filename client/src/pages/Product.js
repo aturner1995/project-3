@@ -13,6 +13,7 @@ import { CREATE_BOOKING } from "../utils/mutations";
 import { useMutation } from "@apollo/client";
 import { Dialog } from "primereact/dialog";
 import { InputTextarea } from "primereact/inputtextarea";
+import ChatPopup from "../components/ChatPopup";
 
 const ProductDetails = () => {
   
@@ -283,7 +284,7 @@ const ProductDetails = () => {
           </form>
         </div>
       </Dialog>
-
+        <ChatPopup seller={data.service.user}/>
       <Toast ref={toast}></Toast>
     </Container>
   );
