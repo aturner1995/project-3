@@ -10,9 +10,6 @@ const Footer = () => {
           <h4>Taskmaster</h4>
           <p>Your Personal Productivity Assistant</p>
         </div>
-        <div>
-          <Button label="Get Started" className="mr-3" severity='success'/>
-        </div>
       </Container>
     </footer>
   );

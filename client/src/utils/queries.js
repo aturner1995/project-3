@@ -68,27 +68,6 @@ export const QUERY_SERVICE = gql`
     }
   }
 `
-export const QUERY_USER_SERVICES = gql`
-  query userServices($userId: ID!) {
-    userServices(userId: $userId) {
-      _id
-      name
-      description
-      options {
-        title
-        description
-        price
-      }
-      images {
-        url
-      }
-      category {
-        name
-      }
-    }
-  }
-`;
-
 
 export const QUERY_CATEGORY = gql`
   query categories {
@@ -122,6 +101,30 @@ export const GET_CHAT_MESSAGES = gql`
   }
 `;
 
+export const GET_CONVERSATION = gql`
+  query conversation($receiverId: ID!) {
+    conversation(receiverId: $receiverId) {
+      _id
+      participants {
+        _id
+        username
+      }
+      messages {
+        sender {
+          username
+          _id
+        }
+        receiver {
+          _id
+          username
+        }
+        message
+        timestamp
+      }
+    }
+  }
+`;
+
 export const GET_BOOKINGS = gql`
   query GetBookings {
     bookings {
@@ -134,6 +137,28 @@ export const GET_BOOKINGS = gql`
       service {
         id
         title
+      }
+    }
+  }
+`;
+
+
+export const QUERY_USER_SERVICES = gql`
+  query userServices($userId: ID!) {
+    userServices(userId: $userId) {
+      _id
+      name
+      description
+      options {
+        title
+        description
+        price
+      }
+      images {
+        url
+      }
+      category {
+        name
       }
     }
   }
