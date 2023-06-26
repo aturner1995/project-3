@@ -1,87 +1,212 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
-import { Container, Row, Col } from "react-bootstrap";
+import { FaUser, FaList, FaClipboardList, FaShoppingCart } from "react-icons/fa";
+import PopularServices from '../components/PopularServices';
 import {
   QUERY_USER,
-  QUERY_LISTINGS,
-  QUERY_BOOKINGS,
-  QUERY_PURCHASES,
+  QUERY_USER_SERVICES,
+  GET_BOOKINGS,
+  QUERY_USER_LISTINGS,
+  QUERY_USER_PURCHASES,
 } from "../utils/queries";
 
 const Profile = () => {
-  // const [user, setUser] = useState({});
-  // const { loading: userLoading, data: userData } = useQuery(QUERY_USER);
-  // const {
-  //   loading: listingsLoading,
-  //   error: listingsError,
-  //   data: listingsData,
-  // } = useQuery(QUERY_LISTINGS);
-  // const {
-  //   loading: bookingsLoading,
-  //   error: bookingsError,
-  //   data: bookingsData,
-  // } = useQuery(QUERY_BOOKINGS);
-  // const {
-  //   loading: purchasesLoading,
-  //   error: purchasesError,
-  //   data: purchasesData,
-  // } = useQuery(QUERY_PURCHASES);
+  const [activeTab, setActiveTab] = useState("userInfo");
+  const [userProfile, setUserProfile] = useState(null);
+  const [userListings, setUserListings] = useState([]);
+  const [userBookings, setUserBookings] = useState([]);
+  const [userPurchases, setUserPurchases] = useState([]);
 
-  // useEffect(() => {
-  //   if (userData) {
-  //     setUser(userData.user);
-  //   }
-  // }, [userData]);
+  const { loading: userLoading, data: userData } = useQuery(QUERY_USER);
+  const { loading: listingsLoading, data: listingsData } = useQuery(QUERY_USER_LISTINGS, {
+    variables: { userId: userData?.user?._id },
+  });
+  const { loading: bookingsLoading, data: bookingsData } = useQuery(GET_BOOKINGS);
+  const { loading: purchasesLoading, data: purchasesData } = useQuery(QUERY_USER_PURCHASES, {
+    variables: { userId: userData?.user?._id },
+  });
+
+  useEffect(() => {
+    if (userData) {
+      setUserProfile(userData.user);
+    }
+  }, [userData]);
+
+  useEffect(() => {
+    if (listingsData) {
+      setUserListings(listingsData.userListings);
+    }
+  }, [listingsData]);
+
+  useEffect(() => {
+    if (bookingsData) {
+      setUserBookings(bookingsData.bookings);
+    }
+  }, [bookingsData]);
+
+  useEffect(() => {
+    if (purchasesData) {
+      setUserPurchases(purchasesData.userPurchases);
+    }
+  }, [purchasesData]);
+
+  if (userLoading || listingsLoading || bookingsLoading || purchasesLoading) {
+    return <div>Loading...</div>;
+  }
+
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+  };
+
+  const tabStyles = {
+    container: {
+      width: "85%",
+      margin: "0 auto",
+      marginTop: "30px",
+    },
+    header: {
+      backgroundColor: "rgb(151,151,151)",
+      height: "120px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    heading: {
+      color: "black",
+      fontSize: "24px",
+    },
+    tabsContainer: {
+      display: "flex",
+      justifyContent: "space-between",
+      marginTop: "-20px",
+    },
+    tab: {
+      width: "20%",
+      minHeight: "50px",
+      padding: "10px 20px",
+      backgroundColor: "rgb(62,62,62)",
+      color: "white",
+      cursor: "pointer",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    activeTab: {
+      backgroundColor: "lightblue",
+    },
+    contentContainer: {
+      marginTop: "40px",
+    },
+  };
 
   return (
-    <div>
-      <Container>
-        <Row>
-          {/* <Col>
-            <h1>{user.username}'s Profile</h1>
+    <div style={tabStyles.container}>
+      <div style={tabStyles.header}>
+        <h1 style={tabStyles.heading}>Welcome, {userProfile.username}!</h1>
+      </div>
+
+      <div style={tabStyles.tabsContainer}>
+        <div
+          style={activeTab === "userInfo" ? { ...tabStyles.tab, ...tabStyles.activeTab } : tabStyles.tab}
+          onClick={() => handleTabClick("userInfo")}
+        >
+          <FaUser size={24} />
+          <span>User Information</span>
+        </div>
+        <div
+          style={activeTab === "listings" ? { ...tabStyles.tab, ...tabStyles.activeTab } : tabStyles.tab}
+          onClick={() => handleTabClick("listings")}
+        >
+          <FaList size={24} />
+          <span>Listings</span>
+        </div>
+        <div
+          style={activeTab === "bookings" ? { ...tabStyles.tab, ...tabStyles.activeTab } : tabStyles.tab}
+          onClick={() => handleTabClick("bookings")}
+        >
+          <FaClipboardList size={24} />
+          <span>Bookings</span>
+        </div>
+        <div
+          style={activeTab === "purchases" ? { ...tabStyles.tab, ...tabStyles.activeTab } : tabStyles.tab}
+          onClick={() => handleTabClick("purchases")}
+        >
+          <FaShoppingCart size={24} />
+          <span>Purchases</span>
+        </div>
+      </div>
+
+      <div style={tabStyles.contentContainer}>
+        {activeTab === "userInfo" && (
+          <>
+            <h2>User Information</h2>
+            <p>Email: {userProfile.email}</p>
+          </>
+        )}
+
+        {activeTab === "listings" && (
+          <>
             <h2>Listings</h2>
-            {listingsLoading ? (
-              <p>Loading listings...</p>
-            ) : listingsError ? (
-              <p>Error loading listings: {listingsError.message}</p>
-            ) : (
+            {userListings.length > 0 ? (
               <ul>
-                {listingsData.listings.map((listing) => (
-                  <li key={listing.id}>{listing.title}</li>
+                {userListings.map((listing) => (
+                  <li key={listing._id}>
+                    <h3>{listing.name}</h3>
+                    <p>Description: {listing.description}</p>
+                    <p>Category: {listing.category.name}</p>
+                    <p>Price: {listing.price}</p>
+                  </li>
                 ))}
               </ul>
+            ) : (
+              <p>You do not have any listings.</p>
             )}
+          </>
+        )}
+
+        {activeTab === "bookings" && (
+          <>
             <h2>Bookings</h2>
-            {bookingsLoading ? (
-              <p>Loading bookings...</p>
-            ) : bookingsError ? (
-              <p>Error loading bookings: {bookingsError.message}</p>
-            ) : (
+            {userBookings.length > 0 ? (
               <ul>
-                {bookingsData.bookings.map((booking) => (
+                {userBookings.map((booking) => (
                   <li key={booking.id}>
-                    {booking.service.title} - {booking.date}
+                    <h3>{booking.name}</h3>
+                    <p>Date: {booking.date}</p>
+                    <p>Time: {booking.time}</p>
+                    <p>Description: {booking.description}</p>
                   </li>
                 ))}
               </ul>
-            )}
-            <h2>Purchases</h2>
-            {purchasesLoading ? (
-              <p>Loading purchases...</p>
-            ) : purchasesError ? (
-              <p>Error loading purchases: {purchasesError.message}</p>
             ) : (
+              <p>You do not have any bookings.</p>
+            )}
+          </>
+        )}
+
+        {activeTab === "purchases" && (
+          <>
+            <h2>Purchases</h2>
+            {userPurchases.length > 0 ? (
               <ul>
-                {purchasesData.purchases.map((purchase) => (
-                  <li key={purchase.id}>
-                    {purchase.service.title} - {purchase.date}
+                {userPurchases.map((purchase) => (
+                  <li key={purchase._id}>
+                    <h3>{purchase.service.name}</h3>
+                    <p>Option: {purchase.option.title}</p>
+                    <p>Quantity: {purchase.quantity}</p>
+                    <p>Total: {purchase.total}</p>
+                    {/* Render other purchase information as needed */}
                   </li>
                 ))}
               </ul>
+            ) : (
+              <p>You do not have any purchases.</p>
             )}
-          </Col> */}
-        </Row>
-      </Container>
+          </>
+        )}
+        <PopularServices />
+      </div>
     </div>
   );
 };

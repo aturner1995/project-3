@@ -14,8 +14,9 @@ import { loadStripe } from "@stripe/stripe-js";
 import { QUERY_SERVICE } from "../utils/queries";
 import { CREATE_BOOKING } from "../utils/mutations";
 import { QUERY_CHECKOUT } from "../utils/queries";
-
 const stripePromise = loadStripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
+import ChatPopup from "../components/ChatPopup";
+
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -300,7 +301,7 @@ const handleContinueClick = () => {
           </form>
         </div>
       </Dialog>
-
+        <ChatPopup seller={data.service.user}/>
       <Toast ref={toast}></Toast>
     </Container>
   );

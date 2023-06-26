@@ -1,11 +1,17 @@
 const db = require('./connection');
 const { faker } = require('@faker-js/faker');
-const { User, Service, Category } = require('../models');
+// const faker = require('@faker-js/faker');
+
+// const faker = require('faker');
+const { User, Service, Category, Listing, Booking, Purchase } = require('../models');
 
 db.once('open', async () => {
   await Category.deleteMany();
   await Service.deleteMany();
   await User.deleteMany();
+  await Listing.deleteMany();
+  await Booking.deleteMany();
+  await Purchase.deleteMany();
 
   const categories = await Category.insertMany([
     { name: 'Dog Care' },
@@ -49,7 +55,7 @@ db.once('open', async () => {
       name: faker.commerce.productName(),
       description: faker.lorem.paragraph(),
       category: randomCategory._id,
-      user: randomUser._id, // Add the user ID
+      user: randomUser._id,
       options: [
         {
           title: faker.commerce.productName(),
@@ -79,5 +85,84 @@ db.once('open', async () => {
 
   console.log(`${createdServices.length} services seeded`);
 
-  process.exit();
+  const listings = [];
+
+  for (let i = 0; i < 10; i++) {
+    const randomServiceIndex = Math.floor(Math.random() * createdServices.length);
+    const randomService = createdServices[randomServiceIndex];
+    const randomUserIndex = Math.floor(Math.random() * createdUsers.length);
+    const randomUser = createdUsers[randomUserIndex];
+
+    const listing = {
+      name: randomService.name,
+      description: randomService.description,
+      category: randomService.category,
+      user: randomUser._id,
+      options: randomService.options,
+      images: randomService.images,
+      location: randomService.location
+    };
+
+    listings.push(listing);
+  }
+
+  const createdListings = await Listing.insertMany(listings);
+
+  console.log(`${createdListings.length} listings seeded`);
+
+  const bookings = [];
+
+for (let user of createdUsers) {
+  for (let service of createdServices) {
+    const booking = {
+      service: service._id,
+      user: user._id,
+      date: faker.date.future(),
+      status: 'pending'
+    };
+
+    bookings.push(booking);
+  }
+}
+
+const createdBookings = await Booking.insertMany(bookings);
+
+console.log(`${createdBookings.length} bookings seeded`);
+
+const purchases = [];
+
+for (let user of createdUsers) {
+  for (let service of createdServices) {
+    const randomOptionIndex = Math.floor(Math.random() * service.options.length);
+    const randomOption = service.options[randomOptionIndex];
+    const randomQuantity = faker.datatype.number({ min: 1, max: 5 });
+    const randomTotal = randomQuantity * randomOption.price;
+    const randomDate = faker.date.future();
+    const purchaseStatus = 'completed';
+
+    const option = {
+      title: faker.commerce.productName(),
+      description: faker.commerce.productDescription(),
+      price: faker.commerce.price({ min: 10, max: 100 })
+    };
+
+    const purchase = {
+      service: service._id,
+      user: user._id,
+      option: option,
+      quantity: randomQuantity,
+      total: randomTotal,
+      date: randomDate,
+      status: purchaseStatus,
+    };
+
+    purchases.push(purchase);
+  }
+}
+
+const createdPurchases = await Purchase.insertMany(purchases);
+
+console.log(`${createdPurchases.length} purchases seeded`);
+
+process.exit();
 });

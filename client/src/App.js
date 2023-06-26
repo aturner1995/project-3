@@ -7,7 +7,7 @@ import Search from './pages/Search';
 import { ThemeProvider } from './utils/themeContext';
 import Footer from './components/Footer';
 import Product from './pages/Product';
-import Chat from './components/Chat';
+import Chat from './pages/Chat';
 import Profile from "./pages/Profile";
 
 const httpLink = createHttpLink({
@@ -57,9 +57,9 @@ function App() {
               <Route
                 path="/chat"
                 element={<Chat />} />
-              {/* <Route 
+              <Route 
                 path="/profile" 
-                element={<Profile />} /> */}
+                element={<Profile />} />
             </Routes>
             <Footer />
           </>

@@ -80,6 +80,7 @@ const typeDefs = gql`
         categories: [Category]
         chatMessages: [Conversation]
         checkout(id: ID!, price: Float): Checkout
+        conversation(receiverId: ID!): [Conversation]
 
     }
     type Mutation {

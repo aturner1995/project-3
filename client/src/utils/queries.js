@@ -101,6 +101,30 @@ export const GET_CHAT_MESSAGES = gql`
   }
 `;
 
+export const GET_CONVERSATION = gql`
+  query conversation($receiverId: ID!) {
+    conversation(receiverId: $receiverId) {
+      _id
+      participants {
+        _id
+        username
+      }
+      messages {
+        sender {
+          username
+          _id
+        }
+        receiver {
+          _id
+          username
+        }
+        message
+        timestamp
+      }
+    }
+  }
+`;
+
 export const GET_BOOKINGS = gql`
   query GetBookings {
     bookings {
@@ -118,11 +142,68 @@ export const GET_BOOKINGS = gql`
   }
 `;
 
-
 export const QUERY_CHECKOUT = gql`
   query getCheckout($id: ID!, $price: Float!) {
     checkout(id: $id, price: $price) {
       session
+    }
+  }
+`;
+
+export const QUERY_USER_SERVICES = gql`
+  query userServices($userId: ID!) {
+    userServices(userId: $userId) {
+      _id
+      name
+      description
+      options {
+        title
+        description
+        price
+      }
+      images {
+        url
+      }
+      category {
+        name
+      }
+    }
+  }
+`;
+
+export const QUERY_USER_LISTINGS = gql`
+  query userListings($userId: ID!) {
+    userListings(userId: $userId) {
+      _id
+      name
+      description
+      options {
+        title
+        description
+        price
+      }
+      images {
+        url
+      }
+      category {
+        name
+      }
+    }
+  }
+`;
+
+export const QUERY_USER_PURCHASES = gql`
+  query userPurchases($userId: ID!) {
+    userPurchases(userId: $userId) {
+      _id
+      service {
+        name
+      }
+      option {
+        title
+      }
+      quantity
+      total
     }
   }
 `;
