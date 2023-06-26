@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
-import { FaUser, FaList, FaClipboardList, FaShoppingCart } from "react-icons/fa";
+import { FaUser, FaList, FaClipboardList, FaShoppingCart, FaSignOutAlt } from "react-icons/fa";
+import { Link, useNavigate } from "react-router-dom";
 import PopularServices from '../components/PopularServices';
 import {
   QUERY_USER,
@@ -9,8 +10,10 @@ import {
   QUERY_USER_LISTINGS,
   QUERY_USER_PURCHASES,
 } from "../utils/queries";
+import Auth from "../utils/auth";
 
 const Profile = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("userInfo");
   const [userProfile, setUserProfile] = useState(null);
   const [userListings, setUserListings] = useState([]);
@@ -58,6 +61,11 @@ const Profile = () => {
     setActiveTab(tab);
   };
 
+  const logoutUser = () => {
+    Auth.logout();
+    navigate("/login");
+  }
+
   const tabStyles = {
     container: {
       width: "85%",
@@ -77,11 +85,11 @@ const Profile = () => {
     },
     tabsContainer: {
       display: "flex",
-      justifyContent: "space-between",
+      justifyContent: "space-around", 
       marginTop: "-30px",
     },
     tab: {
-      width: "22%",
+      width: "16%", 
       minHeight: "100px",
       padding: "10px 20px",
       backgroundColor: "rgb(150,150,150)",
@@ -134,6 +142,21 @@ const Profile = () => {
         >
           <FaShoppingCart size={24} />
           <span>Purchases</span>
+        </div>
+        <div
+          style={activeTab === "postService" ? { ...tabStyles.tab, ...tabStyles.activeTab } : tabStyles.tab}
+          onClick={() => handleTabClick("postService")}
+        >
+          <Link to="/post-service" style={{ color: "white", textDecoration: "none" }}>
+            <span>Post a Service</span>
+          </Link>
+        </div>
+        <div
+          style={activeTab === "logout" ? { ...tabStyles.tab, ...tabStyles.activeTab } : tabStyles.tab}
+          onClick={logoutUser}
+        >
+          <FaSignOutAlt size={24} />
+          <span>Logout</span>
         </div>
       </div>
 
@@ -196,13 +219,19 @@ const Profile = () => {
                     <p>Option: {purchase.option.title}</p>
                     <p>Quantity: {purchase.quantity}</p>
                     <p>Total: {purchase.total}</p>
-                    {/* Render other purchase information as needed */}
                   </li>
                 ))}
               </ul>
             ) : (
               <p>You do not have any purchases.</p>
             )}
+          </>
+        )}
+
+        {activeTab === "postService" && (
+          <>
+            <h2>Post a Service</h2>
+            <p>This is the PostService component.</p>
           </>
         )}
         <PopularServices />
