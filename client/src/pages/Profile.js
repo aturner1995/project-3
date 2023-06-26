@@ -65,8 +65,8 @@ const Profile = () => {
       marginTop: "30px",
     },
     header: {
-      backgroundColor: "rgb(151,151,151)",
-      height: "120px",
+      backgroundColor: "rgb(220,220,220)",
+      height: "200px",
       display: "flex",
       alignItems: "center",
       justifyContent: "center",
@@ -78,13 +78,13 @@ const Profile = () => {
     tabsContainer: {
       display: "flex",
       justifyContent: "space-between",
-      marginTop: "-20px",
+      marginTop: "-30px",
     },
     tab: {
-      width: "20%",
-      minHeight: "50px",
+      width: "22%",
+      minHeight: "100px",
       padding: "10px 20px",
-      backgroundColor: "rgb(62,62,62)",
+      backgroundColor: "rgb(150,150,150)",
       color: "white",
       cursor: "pointer",
       display: "flex",
@@ -93,7 +93,7 @@ const Profile = () => {
       justifyContent: "center",
     },
     activeTab: {
-      backgroundColor: "lightblue",
+      backgroundColor: "rgb(110,110,110)",
     },
     contentContainer: {
       marginTop: "40px",
