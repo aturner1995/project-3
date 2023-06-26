@@ -112,20 +112,46 @@ const resolvers = {
         },
         chatMessages: async (parent, args, context) => {
             try {
-                const conversations = await Conversation.find().populate({
+                const senderId = context?.user?._id;
+                if (!senderId) {
+                    return;
+                }
+                const conversations = await Conversation.find({
+                    participants: senderId // Filter conversations where the senderId is one of the participants
+                }).populate({
                     path: 'messages',
                     populate: [
                         { path: 'sender', select: 'username' },
                         { path: 'receiver', select: 'username' }
                     ]
                 }).populate('participants', 'username');
-
+        
                 return conversations;
             } catch (error) {
                 console.error(error);
                 throw new Error('Failed to fetch chat messages.');
             }
         },
+        conversation: async (parent, { receiverId }, context) => {
+            console.log(receiverId)
+            try {
+                const senderId = context?.user?._id;
+                const conversations = await Conversation.find({
+                    participants: [senderId, receiverId] // Filter conversations where the senderId is one of the participants
+                }).populate({
+                    path: 'messages',
+                    populate: [
+                        { path: 'sender', select: 'username' },
+                        { path: 'receiver', select: 'username' }
+                    ]
+                }).populate('participants', 'username');
+        
+                return conversations;
+            } catch (error) {
+                console.error(error);
+                throw new Error('Failed to fetch chat messages.');
+            }
+        },         
     },
     Mutation: {
         addUser: async (parent, { username, email, password }) => {

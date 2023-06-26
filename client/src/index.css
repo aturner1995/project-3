@@ -28,6 +28,10 @@ a {
   text-decoration: none !important;
 }
 
+.dropdown-toggle {
+  color: inherit !important;
+}
+
 .custom-card img {
   width: 100% !important;
   height: 100% !important;
@@ -47,6 +51,20 @@ a {
   max-width: 200px; /* Adjust the size as needed */
 }
 
+.chat-popup-container {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 9999;
+  background-color: white;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.message-container {
+  max-height: 60vh; /* Set the desired maximum height */
+  overflow-y: auto; /* Enable vertical scrolling */
+}
 
 .bg-purple {
   background: linear-gradient(to right, #6C3483, #AB85A1, #6C3483);

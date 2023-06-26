@@ -40,9 +40,8 @@ const AppNavbar = () => {
     };
   }, []);
 
-  const navBarClasses = `nav-bar ${
-    isTop && isHomePage ? `bg-${currentImage.color}` : "bg-white"
-  }`;
+  const navBarClasses = `nav-bar ${isTop && isHomePage ? `bg-${currentImage.color}` : "bg-white"
+    }`;
   const logoSrc =
     isTop && isHomePage ? "/images/logo-white.webp" : "/images/logo-black.webp";
   const navLinkColor = isTop && isHomePage ? "text-white" : "text-black";
@@ -75,6 +74,9 @@ const AppNavbar = () => {
               </Nav.Link>
               {Auth.loggedIn() ? (
                 <>
+                  <Nav.Link as={Link} to="/chat" className={navLinkColor}>
+                    Messages
+                  </Nav.Link>
                   <NavDropdown
                     title="My Account"
                     id="basic-nav-dropdown"
