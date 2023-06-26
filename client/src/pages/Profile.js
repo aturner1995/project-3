@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
+import { FaUser, FaList, FaClipboardList, FaShoppingCart } from "react-icons/fa";
+import PopularServices from '../components/PopularServices';
 import {
   QUERY_USER,
   QUERY_USER_SERVICES,
@@ -9,6 +11,7 @@ import {
 } from "../utils/queries";
 
 const Profile = () => {
+  const [activeTab, setActiveTab] = useState("userInfo");
   const [userProfile, setUserProfile] = useState(null);
   const [userListings, setUserListings] = useState([]);
   const [userBookings, setUserBookings] = useState([]);
@@ -51,61 +54,159 @@ const Profile = () => {
     return <div>Loading...</div>;
   }
 
+  const handleTabClick = (tab) => {
+    setActiveTab(tab);
+  };
+
+  const tabStyles = {
+    container: {
+      width: "85%",
+      margin: "0 auto",
+      marginTop: "30px",
+    },
+    header: {
+      backgroundColor: "rgb(151,151,151)",
+      height: "120px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    heading: {
+      color: "black",
+      fontSize: "24px",
+    },
+    tabsContainer: {
+      display: "flex",
+      justifyContent: "space-between",
+      marginTop: "-20px",
+    },
+    tab: {
+      width: "20%",
+      minHeight: "50px",
+      padding: "10px 20px",
+      backgroundColor: "rgb(62,62,62)",
+      color: "white",
+      cursor: "pointer",
+      display: "flex",
+      flexDirection: "column",
+      alignItems: "center",
+      justifyContent: "center",
+    },
+    activeTab: {
+      backgroundColor: "lightblue",
+    },
+    contentContainer: {
+      marginTop: "40px",
+    },
+  };
+
   return (
-    <div>
-      <h1>Welcome, {userProfile.username}!</h1>
-      <h2>User Information</h2>
-      <p>Email: {userProfile.email}</p>
+    <div style={tabStyles.container}>
+      <div style={tabStyles.header}>
+        <h1 style={tabStyles.heading}>Welcome, {userProfile.username}!</h1>
+      </div>
 
-      <h2>Listings</h2>
-      {userListings.length > 0 ? (
-        <ul>
-          {userListings.map((listing) => (
-            <li key={listing._id}>
-              <h3>{listing.name}</h3>
-              <p>Description: {listing.description}</p>
-              <p>Category: {listing.category.name}</p>
-              {/* Render other listing information as needed */}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>You do not have any listings.</p>
-      )}
+      <div style={tabStyles.tabsContainer}>
+        <div
+          style={activeTab === "userInfo" ? { ...tabStyles.tab, ...tabStyles.activeTab } : tabStyles.tab}
+          onClick={() => handleTabClick("userInfo")}
+        >
+          <FaUser size={24} />
+          <span>User Information</span>
+        </div>
+        <div
+          style={activeTab === "listings" ? { ...tabStyles.tab, ...tabStyles.activeTab } : tabStyles.tab}
+          onClick={() => handleTabClick("listings")}
+        >
+          <FaList size={24} />
+          <span>Listings</span>
+        </div>
+        <div
+          style={activeTab === "bookings" ? { ...tabStyles.tab, ...tabStyles.activeTab } : tabStyles.tab}
+          onClick={() => handleTabClick("bookings")}
+        >
+          <FaClipboardList size={24} />
+          <span>Bookings</span>
+        </div>
+        <div
+          style={activeTab === "purchases" ? { ...tabStyles.tab, ...tabStyles.activeTab } : tabStyles.tab}
+          onClick={() => handleTabClick("purchases")}
+        >
+          <FaShoppingCart size={24} />
+          <span>Purchases</span>
+        </div>
+      </div>
 
-      <h2>Bookings</h2>
-      {userBookings.length > 0 ? (
-        <ul>
-          {userBookings.map((booking) => (
-            <li key={booking.id}>
-              <h3>{booking.name}</h3>
-              <p>Date: {booking.date}</p>
-              <p>Time: {booking.time}</p>
-              <p>Description: {booking.description}</p>
-              {/* Render other booking information as needed */}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>You do not have any bookings.</p>
-      )}
+      <div style={tabStyles.contentContainer}>
+        {activeTab === "userInfo" && (
+          <>
+            <h2>User Information</h2>
+            <p>Email: {userProfile.email}</p>
+          </>
+        )}
 
-      <h2>Purchases</h2>
-      {userPurchases.length > 0 ? (
-        <ul>
-          {userPurchases.map((purchase) => (
-            <li key={purchase._id}>
-              <h3>{purchase.service.name}</h3>
-              <p>Option: {purchase.option.title}</p>
-              <p>Quantity: {purchase.quantity}</p>
-              <p>Total: {purchase.total}</p>
-              {/* Render other purchase information as needed */}
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>You do not have any purchases.</p>
-      )}
+        {activeTab === "listings" && (
+          <>
+            <h2>Listings</h2>
+            {userListings.length > 0 ? (
+              <ul>
+                {userListings.map((listing) => (
+                  <li key={listing._id}>
+                    <h3>{listing.name}</h3>
+                    <p>Description: {listing.description}</p>
+                    <p>Category: {listing.category.name}</p>
+                    <p>Price: {listing.price}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>You do not have any listings.</p>
+            )}
+          </>
+        )}
+
+        {activeTab === "bookings" && (
+          <>
+            <h2>Bookings</h2>
+            {userBookings.length > 0 ? (
+              <ul>
+                {userBookings.map((booking) => (
+                  <li key={booking.id}>
+                    <h3>{booking.name}</h3>
+                    <p>Date: {booking.date}</p>
+                    <p>Time: {booking.time}</p>
+                    <p>Description: {booking.description}</p>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>You do not have any bookings.</p>
+            )}
+          </>
+        )}
+
+        {activeTab === "purchases" && (
+          <>
+            <h2>Purchases</h2>
+            {userPurchases.length > 0 ? (
+              <ul>
+                {userPurchases.map((purchase) => (
+                  <li key={purchase._id}>
+                    <h3>{purchase.service.name}</h3>
+                    <p>Option: {purchase.option.title}</p>
+                    <p>Quantity: {purchase.quantity}</p>
+                    <p>Total: {purchase.total}</p>
+                    {/* Render other purchase information as needed */}
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p>You do not have any purchases.</p>
+            )}
+          </>
+        )}
+        <PopularServices />
+      </div>
     </div>
   );
 };
