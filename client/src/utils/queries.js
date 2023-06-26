@@ -142,6 +142,13 @@ export const GET_BOOKINGS = gql`
   }
 `;
 
+export const QUERY_CHECKOUT = gql`
+  query getCheckout($id: ID!, $price: Float!) {
+    checkout(id: $id, price: $price) {
+      session
+    }
+  }
+`;
 
 export const QUERY_USER_SERVICES = gql`
   query userServices($userId: ID!) {
@@ -200,4 +207,3 @@ export const QUERY_USER_PURCHASES = gql`
     }
   }
 `;
-

@@ -64,6 +64,14 @@ const typeDefs = gql`
         description: String!
         service: Service!
       }
+    
+      type Checkout {
+        session: ID
+      }
+    
+
+
+
     type Query {
         user: User
         reverseGeocode(latitude: Float!, longitude: Float!): ReverseGeocode
@@ -71,6 +79,7 @@ const typeDefs = gql`
         service(_id: ID!): Service
         categories: [Category]
         chatMessages: [Conversation]
+        checkout(id: ID!, price: Float): Checkout
         conversation(receiverId: ID!): [Conversation]
 
     }
