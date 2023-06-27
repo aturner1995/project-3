@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import SearchForm from '../components/SearchForm';
 import { Galleria } from 'primereact/galleria';
 import { Card, Container } from 'react-bootstrap';
-import { Dropdown } from 'primereact/dropdown';
 import { useQuery } from '@apollo/client';
-import { QUERY_ALL_SERVICES } from '../utils/queries';
+import { QUERY_ALL_SERVICES, QUERY_CATEGORY } from '../utils/queries';
 import { Link, useLocation, useParams } from 'react-router-dom';
 
 const Search = () => {
+  // State variables
   const [services, setServices] = useState([]);
   const [userSearchQuery, setUserSearchQuery] = useState('');
-  const [selectedFilter, setSelectedFilter] = useState([]);
   const [selectedCategories, setSelectedCategories] = useState([]);
   const [userSearchAddress, setUserSearchAddress] = useState('');
   const [distance, setDistance] = useState(100);
+  const [addressSet, setAddressSet] = useState(false);
 
-  const { loading, error, data } = useQuery(QUERY_ALL_SERVICES, {
+  // Query data using Apollo useQuery hook
+  const { loading, data } = useQuery(QUERY_ALL_SERVICES, {
+    skip: !addressSet, // Skip the query if addressSet is false
     variables: {
       searchQuery: userSearchQuery,
       category: selectedCategories.map((category) => category.name),
@@ -24,60 +26,52 @@ const Search = () => {
     },
   });
 
-
+  // Set the services when data is fetched
   useEffect(() => {
     if (data) {
       setServices(data.services);
     }
   }, [data]);
 
-    const location = useLocation();
-    const searchParams = useParams();
+  // Get location and search params
+  const location = useLocation();
+  const searchParams = useParams();
 
-    const categoriesList = [
-        { name: 'Dog Care' },
-        { name: 'Landscaping' },
-        { name: 'House Cleaning' },
-        { name: 'Renovations' },
-        { name: 'Web Development' },
-        { name: 'Appliance Repair' },
-        { name: 'Physical Therapy' },
-        { name: 'Photography' }
-    ];
+  // Query category data
+  const { data: catData } = useQuery(QUERY_CATEGORY);
+  const categoriesList = useMemo(() => catData?.categories || [], [catData]);
 
-    const filters = [
-        { name: 'Location' },
-        { name: 'Cost' },
-        { name: 'Highly Rated' },
-    ]
+  // Update selected categories or user search query based on search params
+  useEffect(() => {
+    if (searchParams.query && searchParams.query.split('=')[0] === 'category') {
+      const categoryName = searchParams.query.split('=')[1];
+      const category = categoriesList.find(category => category.name === categoryName);
+      if (category) {
+        setSelectedCategories([category])
+      }
+    } else if (searchParams.query) {
+      setUserSearchQuery(searchParams.query.split('=')[1]);
+    }
+  }, [location.search, categoriesList, searchParams.query]);
+ 
 
-    useEffect(() => {
-        if (searchParams.query && searchParams.query.split('=')[0] === 'category') {
-            const categoryName = searchParams.query.split('=')[1];
-            const category = categoriesList.find(category => category.name === categoryName);
-            if (category) {
-                setSelectedCategories([category])
-            }
-        } else if (searchParams.query) {
-            setUserSearchQuery(searchParams.query.split('=')[1]);
-        }
-    }, [location.search]);
+  // Set the services when data is fetched
+  useEffect(() => {
+    if (data) {
+      setServices(data.services);
+    }
+  }, [data]);
 
-    useEffect(() => {
-        if (data) {
-            setServices(data.services);
-        }
-    }, [data]);
+  // Template for the item in the Galleria
+  const itemTemplate = (item) => {
+    return (
+      <div>
+        <img src={item.url} alt="Item" style={{ width: '100%', height: '150px', objectFit: 'cover' }} />
+      </div>
+    );
+  };
 
-
-    const itemTemplate = (item) => {
-        return (
-            <div>
-                <img src={item.url} alt="Item" style={{ width: '100%', height: '150px', objectFit: 'cover' }} />
-            </div>
-        );
-    };
-
+  // Template for the thumbnail in the Galleria
   const thumbnailTemplate = (item) => {
     return (
       <div>
@@ -86,31 +80,31 @@ const Search = () => {
     );
   };
 
-    return (
-        <div>
-            <h1 className='mx-5 my-3'>Search Tasks</h1>
-            <SearchForm 
-            setUserSearchQuery={setUserSearchQuery} 
-            setSelectedCategories={setSelectedCategories} 
-            categoriesList={categoriesList} 
-            setUserSearchAddress={setUserSearchAddress}
-            setDistance = {setDistance}
-            isLoading={loading}
-            />
-            <Container className='d-flex justify-content-end'>
-                <Dropdown value={selectedFilter} onChange={(e) => setSelectedFilter(e.value)} options={filters} optionLabel="name" display="chip"
-                    placeholder="Filter By" maxselectedlabels={1} className='mx-2' />
-            </Container>
-            <Container className="d-flex flex-wrap justify-content-center" fluid>
-                {services.map((service) => {
-                    // Find the lowest price among the options
-                    const lowestPrice = service.options.reduce((minPrice, option) => {
-                        return option.price < minPrice ? option.price : minPrice;
-                    }, Infinity);
+  return (
+    <div>
+      <h1 className='mx-5 my-3'>Search Tasks</h1>
+      {/* Render the SearchForm component */}
+      <SearchForm
+        setUserSearchQuery={setUserSearchQuery}
+        setSelectedCategories={setSelectedCategories}
+        categoriesList={categoriesList}
+        setUserSearchAddress={setUserSearchAddress}
+        setDistance={setDistance}
+        isLoading={loading}
+        setAddressSet={setAddressSet}
+      />
+      <Container className="d-flex flex-wrap justify-content-center" fluid>
+        {services.map((service) => {
+          // Find the lowest price among the options
+          const lowestPrice = service.options.reduce((minPrice, option) => {
+            return option.price < minPrice ? option.price : minPrice;
+          }, Infinity);
 
           return (
+            // Render a Card component for each service
             <Link to={`/product/${service._id}`} key={service._id}>
               <Card className="m-2 custom-card" style={{ maxWidth: '300px' }}>
+                {/* Render the Galleria component */}
                 <Galleria
                   value={service.images}
                   numVisible={5}

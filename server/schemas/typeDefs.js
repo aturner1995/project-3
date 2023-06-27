@@ -43,8 +43,8 @@ const typeDefs = gql`
       }
       
     type Location {
-      type: String!
-      coordinates: [Float]!
+        type: String!
+        coordinates: [Float]!
     }    
     type Category {
         _id: ID
@@ -71,15 +71,21 @@ const typeDefs = gql`
         time: String!
         description: String!
         service: Service!
-      }
-    
-      type Checkout {
+    }
+    type Checkout {
         session: ID
-      }
+    }
+    type Purchase {
+        _id: ID!
+        user: User!
+        service: Service!
+        option: Option!
+        quantity: Int!
+        total: Float!
+        date: String!
+        status: String!
+    }
     
-
-
-
     type Query {
         user: User
         reverseGeocode(latitude: Float!, longitude: Float!): ReverseGeocode
@@ -90,8 +96,11 @@ const typeDefs = gql`
         checkout(id: ID!, price: Float): Checkout
         conversation(receiverId: ID!): [Conversation]
         bookingByServiceId(serviceId: ID!): [Booking]
-
+        userServices(userId: ID!): [Service]
+        bookings(userId: ID!): [Booking]
+        userPurchases(userId: ID!): [Purchase]
     }
+    
     type Mutation {
         login(email: String!, password: String!): Auth
         addUser(username: String!, email: String!, password: String!): Auth
@@ -101,31 +110,20 @@ const typeDefs = gql`
         sendChatMessage(receiverId: ID!, message: String): Chat
         addComment(serviceId: ID!, commentText: String!, userId: ID!): Service
         removeComment(serviceId: ID!, commentId: ID!): Service
+        createBooking(name: String!, number: String!, date: String!, time: String!, description: String!, serviceId: ID!): Booking!
     }
-    type Mutation {
-        createBooking(
-          name: String!
-          number: String!
-          date: String!
-          time: String!
-          description: String!
-          serviceId: ID!
-        ): Booking!
-      }
-      
-
+    
     input ServiceInput {
         name: String!
         description: String
         categoryId: ID
         options: [OptionInput]
         images: [ImageInput]
-        location: LocationInput
+        location: LocationInput!
     }
-
+    
     input LocationInput {
-        type: String!
-        coordinates: [Float]!
+        address: String!
     }
     
     input OptionInput {
@@ -137,6 +135,6 @@ const typeDefs = gql`
     input ImageInput {
         url: String!
     }
-`
+`;
 
 module.exports = typeDefs;
