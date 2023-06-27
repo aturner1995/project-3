@@ -65,9 +65,15 @@ export const QUERY_SERVICE = gql`
         username
         email
       }
+      comments {
+        _id
+        commentText
+        createdAt
+      }
     }
   }
-`
+`;
+
 
 export const QUERY_CATEGORY = gql`
   query categories {
@@ -204,6 +210,23 @@ export const QUERY_USER_PURCHASES = gql`
       }
       quantity
       total
+    }
+  }
+`;
+
+const GET_BOOKING_BY_SERVICE_ID = gql`
+  query GetBookingByServiceId($serviceId: ID!) {
+    bookingByServiceId(serviceId: $serviceId) {
+      id
+      name
+      number
+      date
+      time
+      description
+      service {
+        id
+        name
+      }
     }
   }
 `;

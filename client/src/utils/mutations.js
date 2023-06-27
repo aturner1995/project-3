@@ -69,3 +69,27 @@ export const CREATE_BOOKING = gql`
     }
   }
 `;
+
+export const ADD_COMMENT = gql`
+  mutation addComment($serviceId: ID!, $commentText: String!) {
+    addComment(serviceId: $serviceId, commentText: $commentText) {
+      comments {
+        _id
+        commentText
+        createdAt
+      }
+    }
+  }
+`;
+
+export const REMOVE_COMMENT = gql`
+  mutation removeComment($serviceId: ID!, $commentId: ID!) {
+    removeComment(serviceId: $serviceId, commentId: $commentId) {
+      comments {
+        _id
+        commentText
+        createdAt
+      }
+    }
+  }
+`;

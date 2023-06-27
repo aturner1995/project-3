@@ -15,6 +15,9 @@ import { QUERY_SERVICE } from "../utils/queries";
 import { CREATE_BOOKING } from "../utils/mutations";
 import { QUERY_CHECKOUT } from "../utils/queries";
 import ChatPopup from "../components/ChatPopup";
+import Comment from "../components/Comment";
+import { ProgressSpinner } from 'primereact/progressspinner';
+import {GET_BOOKING_BY_SERVICE_ID} from  "../utils/queries";
 
 
 const ProductDetails = () => {
@@ -43,6 +46,9 @@ const ProductDetails = () => {
 
   }, [dataCheckOut]);
 
+
+  
+
 const handleTabSelect = (index) => {
   setActiveTab(index);
   const selectedOption = service.options[index];
@@ -61,6 +67,7 @@ const handleContinueClick = () => {
     variables: { id },
   });
 
+  console.log(data);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -71,6 +78,12 @@ const handleContinueClick = () => {
   }
 
   const { service } = data;
+
+
+
+
+
+  
 
   const images = service.images.map((image) => ({
     itemImageSrc: image.url,
@@ -108,15 +121,24 @@ const handleContinueClick = () => {
       />
     );
   };
-
   const showToast = () => {
     toast.current.show({
       severity: "success",
-      summary: "Redirecting to payment portal...",
+      content: (
+        <div>
+          <div>Redirecting to payment portal...</div>
+          <div>
+            <ProgressSpinner
+              style={{ width: "20px", height: "20px", marginLeft: "10px" }}
+              strokeWidth="4"
+              animationDuration=".5s"
+            />
+          </div>
+        </div>
+      ),
       life: 3000,
     });
   };
-
   const bookService = async (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -233,8 +255,11 @@ const handleContinueClick = () => {
                 </Tab.Content>
               </Tab.Container>
             </Card.Body>
+            
           </Card>
+          
         </Col>
+        <Comment serviceId={service._id} />
       </Row>
       <Dialog
         visible={showBookingForm}
@@ -243,66 +268,73 @@ const handleContinueClick = () => {
         className="booking-modal"
         style={{ width: "50vw" }}
       >
-        <div className="booking-form">
-          <h2 className="booking-title">Book Now</h2>
-          <h4>Selected Price: {selectedPrice}</h4>
-          <form>
-            <div className="form-group">
-              <label htmlFor="name">Name</label>
-              <InputText
-                id="name"
-                placeholder="Name"
-                className="form-control"
-                ref={nameInput}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="number">Phone Number</label>
-              <InputText
-                id="number"
-                placeholder="Phone Number"
-                className="form-control"
-                ref={numberInput}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="date">Date</label>
-              <Calendar
-                id="date"
-                className="form-control"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="time">Time</label>
-              <InputText
-                id="time"
-                placeholder="Time"
-                className="form-control"
-                ref={timeInput}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="description">Additional Description</label>
-              <InputTextarea
-                id="description"
-                placeholder="Additional Description"
-                className="form-control"
-                rows={5}
-                ref={descriptionInput}
-              />
-            </div>
-            <Button
-              label="Book Now"
-              className="btn btn-primary"
-              onClick={bookService}
-            />
-          </form>
-        </div>
+       <div className="booking-form">
+  <h2 className="booking-title text-center">Book Now</h2>
+  <form>
+    <div className="form-group">
+      <label htmlFor="name">Name</label>
+      <InputText
+        id="name"
+        placeholder="Name"
+        className="p-inputtext p-component form-control"
+        ref={nameInput}
+      />
+    </div>
+    <div className="form-group">
+      <label htmlFor="number">Phone Number</label>
+      <InputText
+        id="number"
+        placeholder="Phone Number"
+        className="p-inputtext p-component form-control"
+        ref={numberInput}
+      />
+    </div>
+    <div className="form-group">
+      <label htmlFor="date">Date</label>
+      <Calendar
+        id="date"
+        className="p-inputtext p-component form-control"
+        value={`${selectedDate} `}
+        onChange={(e) => setSelectedDate(e.value)}
+      />
+    </div>
+    <div className="form-group">
+      <label htmlFor="time">Time</label>
+      <InputText
+        id="time"
+        placeholder="Time"
+        className="p-inputtext p-component form-control"
+        ref={timeInput}
+      />
+    </div>
+    <div className="form-group">
+      <label htmlFor="description">Additional Description</label>
+      <InputTextarea
+        id="description"
+        placeholder="Additional Description"
+        className="p-inputtextarea p-component form-control"
+        rows={5}
+        ref={descriptionInput}
+      />
+    </div>
+    <div className="form-group" style={{ textAlign: 'right', marginTop: '10px' }}>
+      <label htmlFor="price">Selected Price(CAD)</label>
+      <div style={{ backgroundColor: '#f2f2f2', padding: '10px', borderRadius: '4px', fontWeight: 'bold' }}>
+    ${selectedPrice}
+      </div>
+    </div>
+    <Button
+      label="Book Now"
+      className="p-button p-component btn btn-primary mt-4"
+      onClick={bookService}
+    />
+  </form>
+</div>
+
       </Dialog>
         <ChatPopup seller={data.service.user}/>
       <Toast ref={toast}></Toast>
+
     </Container>
   );
 };

@@ -9,7 +9,6 @@ db.once('open', async () => {
   await Category.deleteMany();
   await Service.deleteMany();
   await User.deleteMany();
-  await Listing.deleteMany();
   await Booking.deleteMany();
   await Purchase.deleteMany();
 

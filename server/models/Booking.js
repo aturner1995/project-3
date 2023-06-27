@@ -37,5 +37,3 @@ const Booking = model('Booking', bookingSchema);
 
 module.exports =  Booking
 
-
-module.exports = Booking;

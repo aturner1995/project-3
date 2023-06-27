@@ -1,5 +1,5 @@
 const { AuthenticationError } = require('apollo-server-express');
-const { User, Service, Category, Conversation, Chat, Booking, Order } = require('../models');
+const { User, Service, Category, Conversation, Chat, Booking, } = require('../models');
 require('dotenv').config({ debug: true })
 const signToken = require('../utils/auth').signToken;
 const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
@@ -191,7 +191,11 @@ const resolvers = {
                 console.error(error);
                 throw new Error('Failed to fetch chat messages.');
             }
-        },         
+        },     
+        bookingByServiceId: (parent, { serviceId }) => {
+
+            return Booking.find((booking) => booking.service.id === serviceId);
+          },    
     },
     Mutation: {
         addUser: async (parent, { username, email, password }) => {
@@ -247,6 +251,25 @@ const resolvers = {
                 throw new Error('Failed to delete service');
             }
         },
+        addComment: async (parent, { serviceId, commentText }) => {
+            return Service.findOneAndUpdate(
+              { _id: serviceId },
+              {
+                $addToSet: { comments: { commentText } },
+              },
+              {
+                new: true,
+                runValidators: true,
+              }
+            );
+          },
+          removeComment: async (parent, { serviceId, commentId }) => {
+            return Service.findOneAndUpdate(
+              { _id: serviceId},
+              { $pull: { comments: { _id: commentId } } },
+              { new: true }
+            );
+          },
 
         sendChatMessage: async (parent, { receiverId, message }, context) => {
             try {
