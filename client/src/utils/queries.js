@@ -126,8 +126,8 @@ export const GET_CONVERSATION = gql`
 `;
 
 export const GET_BOOKINGS = gql`
-  query GetBookings {
-    bookings {
+  query bookings($userId: ID!) {
+    bookings(userId: $userId) {
       id
       name
       number
@@ -135,8 +135,7 @@ export const GET_BOOKINGS = gql`
       time
       description
       service {
-        id
-        title
+        _id
       }
     }
   }
