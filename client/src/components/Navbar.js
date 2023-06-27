@@ -139,8 +139,9 @@ const AppNavbar = () => {
       <style type="text/css">
         {`
           .dropdown-menu {
-            background-color: #5373A1;
+            background-color: rgb(220,220,220);
           }
+          
           .dropdown-toggle {
             color: white;
           }
