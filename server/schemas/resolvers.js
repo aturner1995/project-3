@@ -86,37 +86,36 @@ const resolvers = {
         },
         service: async (parent, { _id }) => {
             try {
-              const service = await Service.findById(_id)
-                .populate('category')
-                .populate('images')
-                .populate('options')
-                .populate({
-                  path: 'user',
-                  select: '_id username email',
-                })
-                .populate({
-                  path: 'comments',
-                  populate: {
-                    path: 'user',
-                    select: '_id username',
-                  },
-                });
-          
-              if (!service) {
-                throw new Error('Service not found');
-              }
-          
-              return service;
+                const service = await Service.findById(_id)
+                    .populate('category')
+                    .populate('images')
+                    .populate('options')
+                    .populate({
+                        path: 'user',
+                        select: '_id username email',
+                    })
+                    .populate({
+                        path: 'comments',
+                        populate: {
+                            path: 'user',
+                            select: '_id username',
+                        },
+                    });
+
+                if (!service) {
+                    throw new Error('Service not found');
+                }
+
+                return service;
             } catch (error) {
-              throw new Error('Failed to fetch service');
+                throw new Error('Failed to fetch service');
             }
-          },
         },
         userServices: async (parent, { userId }) => {
             try {
                 const service = await Service.find({
                     user: userId
-                })
+                });
 
                 if (!service) {
                     throw new Error('No Services found');
@@ -242,17 +241,16 @@ const resolvers = {
                 console.error(error);
                 throw new Error('Failed to fetch chat messages.');
             }
-        },     
+        },
         bookingByServiceId: async (parent, { serviceId }) => {
             try {
-              const bookings = await Booking.find({ service: serviceId });
-              return bookings;
+                const bookings = await Booking.find({ service: serviceId });
+                return bookings;
             } catch (error) {
-              console.error(error);
-              throw new Error('Failed to fetch bookings by service ID');
+                console.error(error);
+                throw new Error('Failed to fetch bookings by service ID');
             }
-          }
-        },
+        }
     },
     Mutation: {
         addUser: async (parent, { username, email, password }) => {
@@ -328,24 +326,24 @@ const resolvers = {
         },
         addComment: async (parent, { serviceId, commentText, userId }) => {
             const comment = {
-              commentText,
-              user: userId,
+                commentText,
+                user: userId,
             };
-          
+
             return Service.findOneAndUpdate(
-              { _id: serviceId },
-              { $addToSet: { comments: comment } },
-              { new: true, runValidators: true }
+                { _id: serviceId },
+                { $addToSet: { comments: comment } },
+                { new: true, runValidators: true }
             );
-          },
-          removeComment: async (parent, { serviceId, commentId }) => {
+        },
+        removeComment: async (parent, { serviceId, commentId }) => {
             return Service.findOneAndUpdate(
-              { _id: serviceId },
-              { $pull: { comments: { _id: commentId } } },
-              { new: true }
+                { _id: serviceId },
+                { $pull: { comments: { _id: commentId } } },
+                { new: true }
             );
-          },
-          
+        },
+
 
         sendChatMessage: async (parent, { receiverId, message }, context) => {
             try {
