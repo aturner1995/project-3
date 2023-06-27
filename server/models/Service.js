@@ -1,4 +1,5 @@
 const { Schema, model } = require('mongoose');
+const dateFormat = require('../utils/dateFormat');
 
 const optionSchema = new Schema({
   title: {
@@ -58,8 +59,27 @@ const serviceSchema = new Schema(
         required: true,
       }
     },
+    comments: [
+      {
+        commentText: {
+          type: String,
+          required: true,
+          minlength: 1,
+          maxlength: 280,
+        },
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: 'User',
+          required: true,
+        },
+        createdAt: {
+          type: Date,
+          default: Date.now,
+          get: (timestamp) => dateFormat(timestamp),
+        },
+      },
+    ],
   },
-  // set this to use virtual below
   {
     toJSON: {
       virtuals: true,

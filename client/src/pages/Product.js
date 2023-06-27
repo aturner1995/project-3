@@ -15,7 +15,11 @@ import { QUERY_SERVICE } from "../utils/queries";
 import { CREATE_BOOKING } from "../utils/mutations";
 import { QUERY_CHECKOUT } from "../utils/queries";
 import ChatPopup from "../components/ChatPopup";
-
+import Comment from "../components/Comment";
+import { ProgressSpinner } from "primereact/progressspinner";
+import auth from "../utils/auth";
+import { Message } from 'primereact/message';
+import BookingStats from '../components/Bookingstats';
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -33,6 +37,7 @@ const ProductDetails = () => {
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [selectedPrice, setSelectedPrice] = useState(null);
   const [getCheckout, { data: dataCheckOut }] = useLazyQuery(QUERY_CHECKOUT);
+  const [showLoginError, setShowLoginError] = useState(false);
 
   useEffect(() => {
     if (dataCheckOut) {
@@ -40,22 +45,23 @@ const ProductDetails = () => {
         res.redirectToCheckout({ sessionId: dataCheckOut.checkout.session });
       });
     }
-
   }, [dataCheckOut]);
 
-const handleTabSelect = (index) => {
-  setActiveTab(index);
-  const selectedOption = service.options[index];
-  setSelectedPrice(selectedOption.price);
-};
+  const handleTabSelect = (index) => {
+    setActiveTab(index);
+    const selectedOption = service.options[index];
+    setSelectedPrice(selectedOption.price);
+  };
 
-const handleContinueClick = () => {
-  setShowBookingForm(true)
-  const selectedOption = service.options[activeTab];
-  setSelectedPrice(selectedOption.price);
-  setShowBookingForm(true);
-};
-
+  const handleContinueClick = () => {
+    if (auth.loggedIn()) {
+      setShowBookingForm(true);
+      const selectedOption = service.options[activeTab];
+      setSelectedPrice(selectedOption.price);
+    } else {
+      setShowLoginError(true);
+    }
+  };
 
   const { loading, error, data } = useQuery(QUERY_SERVICE, {
     variables: { id },
@@ -71,6 +77,10 @@ const handleContinueClick = () => {
   }
 
   const { service } = data;
+
+  console.log(service._id);
+
+  
 
   const images = service.images.map((image) => ({
     itemImageSrc: image.url,
@@ -112,11 +122,24 @@ const handleContinueClick = () => {
   const showToast = () => {
     toast.current.show({
       severity: "success",
-      summary: "Redirecting to payment portal...",
+      content: (
+        <div>
+          <div>Redirecting to payment portal...</div>
+          <div>
+            <ProgressSpinner
+              style={{ width: "20px", height: "20px", marginLeft: "10px" }}
+              strokeWidth="4"
+              animationDuration=".5s"
+            />
+          </div>
+        </div>
+      ),
       life: 3000,
     });
   };
 
+
+  
   const bookService = async (event) => {
     event.preventDefault();
     event.stopPropagation();
@@ -145,26 +168,28 @@ const handleContinueClick = () => {
       getCheckout({
         variables: { id, price: selectedPrice },
       });
-      
+
       showToast();
       console.log("Booking created:", data.createBooking);
       console.log("Total Price:", totalPrice);
-
-
-    
     } catch (error) {
       console.error("Error creating booking:", error);
     }
   };
 
   const items = [
-    { label: `Services`, url: "http://localhost:3000/search" },
+    { label: "Services", url: "http://localhost:3000/search" },
     { label: `${service.category.name}` },
   ];
   const home = { icon: "pi pi-home", url: "http://localhost:3000/" };
 
   return (
     <Container>
+{showLoginError && (
+  <div className="p-mb-4">
+    <Message severity="error" text="Please login/Signup to book the service" />
+  </div>
+)}
       <Row>
         <Col lg={7}>
           <BreadCrumb model={items} home={home} className="ms-0" />
@@ -234,6 +259,13 @@ const handleContinueClick = () => {
               </Tab.Container>
             </Card.Body>
           </Card>
+          <BookingStats serviceId={service._id} />
+        </Col>
+
+      </Row>
+      <Row>
+        <Col lg={12}>
+          <Comment serviceId={service._id} />
         </Col>
       </Row>
       <Dialog
@@ -244,15 +276,14 @@ const handleContinueClick = () => {
         style={{ width: "50vw" }}
       >
         <div className="booking-form">
-          <h2 className="booking-title">Book Now</h2>
-          <h4>Selected Price: {selectedPrice}</h4>
+          <h2 className="booking-title text-center">Book Now</h2>
           <form>
             <div className="form-group">
               <label htmlFor="name">Name</label>
               <InputText
                 id="name"
                 placeholder="Name"
-                className="form-control"
+                className="p-inputtext p-component form-control"
                 ref={nameInput}
               />
             </div>
@@ -261,7 +292,7 @@ const handleContinueClick = () => {
               <InputText
                 id="number"
                 placeholder="Phone Number"
-                className="form-control"
+                className="p-inputtext p-component form-control"
                 ref={numberInput}
               />
             </div>
@@ -269,7 +300,7 @@ const handleContinueClick = () => {
               <label htmlFor="date">Date</label>
               <Calendar
                 id="date"
-                className="form-control"
+                className="p-inputtext p-component form-control"
                 value={selectedDate}
                 onChange={(e) => setSelectedDate(e.value)}
               />
@@ -279,7 +310,7 @@ const handleContinueClick = () => {
               <InputText
                 id="time"
                 placeholder="Time"
-                className="form-control"
+                className="p-inputtext p-component form-control"
                 ref={timeInput}
               />
             </div>
@@ -288,20 +319,26 @@ const handleContinueClick = () => {
               <InputTextarea
                 id="description"
                 placeholder="Additional Description"
-                className="form-control"
+                className="p-inputtextarea p-component form-control"
                 rows={5}
                 ref={descriptionInput}
               />
             </div>
+            <div className="form-group" style={{ textAlign: 'right', marginTop: '10px' }}>
+              <label htmlFor="price">Selected Price (CAD)</label>
+              <div style={{ backgroundColor: '#f2f2f2', padding: '10px', borderRadius: '4px', fontWeight: 'bold' }}>
+                ${selectedPrice}
+              </div>
+            </div>
             <Button
               label="Book Now"
-              className="btn btn-primary"
+              className="p-button p-component btn btn-primary mt-4"
               onClick={bookService}
             />
           </form>
         </div>
       </Dialog>
-        <ChatPopup seller={data.service.user}/>
+      <ChatPopup seller={data.service.user} />
       <Toast ref={toast}></Toast>
     </Container>
   );

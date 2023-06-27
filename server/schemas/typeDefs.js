@@ -33,7 +33,15 @@ const typeDefs = gql`
         category: Category
         user: User
         location: Location
+        comments: [Comment!]!
     }
+    type Comment {
+        _id: ID
+        commentText: String
+        createdAt: String
+        user: User
+      }
+      
     type Location {
         type: String!
         coordinates: [Float]!
@@ -56,7 +64,7 @@ const typeDefs = gql`
         user: User
     }
     type Booking {
-        id: ID!
+        _id: ID!
         name: String!
         number: String!
         date: String!
@@ -87,6 +95,7 @@ const typeDefs = gql`
         chatMessages: [Conversation]
         checkout(id: ID!, price: Float): Checkout
         conversation(receiverId: ID!): [Conversation]
+        bookingByServiceId(serviceId: ID!): [Booking]
         userServices(userId: ID!): [Service]
         bookings(userId: ID!): [Booking]
         userPurchases(userId: ID!): [Purchase]
@@ -99,14 +108,9 @@ const typeDefs = gql`
         updateService(_id: ID!, input: ServiceInput): Service
         deleteService(_id: ID!): Service
         sendChatMessage(receiverId: ID!, message: String): Chat
-        createBooking(
-            name: String!
-            number: String!
-            date: String!
-            time: String!
-            description: String!
-            serviceId: ID!
-        ): Booking!
+        addComment(serviceId: ID!, commentText: String!, userId: ID!): Service
+        removeComment(serviceId: ID!, commentId: ID!): Service
+        createBooking(name: String!, number: String!, date: String!, time: String!, description: String!, serviceId: ID!): Booking!
     }
     
     input ServiceInput {

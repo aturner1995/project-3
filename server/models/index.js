@@ -7,4 +7,4 @@ const Chat = require('./Chat');
 const Purchase = require('./Purchase');
 
 
-module.exports = { User, Service, Category, Conversation, Booking, Chat, Purchase };
+module.exports = { User, Service, Category, Conversation, Booking, Chat, Purchase}
