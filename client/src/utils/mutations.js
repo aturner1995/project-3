@@ -57,7 +57,7 @@ export const CREATE_BOOKING = gql`
       description: $description
       serviceId: $serviceId
     ) {
-      id
+      _id
       name
       number
       date
@@ -71,12 +71,15 @@ export const CREATE_BOOKING = gql`
 `;
 
 export const ADD_COMMENT = gql`
-  mutation addComment($serviceId: ID!, $commentText: String!) {
-    addComment(serviceId: $serviceId, commentText: $commentText) {
+  mutation addComment($serviceId: ID!, $commentText: String!, $userId: ID!) {
+    addComment(serviceId: $serviceId, commentText: $commentText, userId: $userId) {
       comments {
         _id
         commentText
         createdAt
+        user {
+            username
+        }
       }
     }
   }
@@ -89,7 +92,11 @@ export const REMOVE_COMMENT = gql`
         _id
         commentText
         createdAt
+        user {
+username
+        }
       }
     }
   }
 `;
+

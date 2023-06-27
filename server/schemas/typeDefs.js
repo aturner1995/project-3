@@ -39,7 +39,9 @@ const typeDefs = gql`
         _id: ID
         commentText: String
         createdAt: String
+        user: User
       }
+      
     type Location {
       type: String!
       coordinates: [Float]!
@@ -62,7 +64,7 @@ const typeDefs = gql`
         user: User
     }
     type Booking {
-        id: ID!
+        _id: ID!
         name: String!
         number: String!
         date: String!
@@ -87,7 +89,7 @@ const typeDefs = gql`
         chatMessages: [Conversation]
         checkout(id: ID!, price: Float): Checkout
         conversation(receiverId: ID!): [Conversation]
-        bookingByServiceId(serviceId: ID!): Booking
+        bookingByServiceId(serviceId: ID!): [Booking]
 
     }
     type Mutation {
@@ -97,7 +99,7 @@ const typeDefs = gql`
         updateService(_id: ID!, input: ServiceInput): Service
         deleteService(_id: ID!): Service
         sendChatMessage(receiverId: ID!, message: String): Chat
-        addComment(serviceId: ID!, commentText: String!): Service
+        addComment(serviceId: ID!, commentText: String!, userId: ID!): Service
         removeComment(serviceId: ID!, commentId: ID!): Service
     }
     type Mutation {

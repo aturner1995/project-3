@@ -87,22 +87,32 @@ const resolvers = {
         },
         service: async (parent, { _id }) => {
             try {
-                const service = await Service.findById(_id)
-                    .populate('category')
-                    .populate('images')
-                    .populate('options')
-                    .populate('user');
-
-                if (!service) {
-                    throw new Error('Service not found');
-                }
-
-                return service;
+              const service = await Service.findById(_id)
+                .populate('category')
+                .populate('images')
+                .populate('options')
+                .populate({
+                  path: 'user',
+                  select: '_id username email',
+                })
+                .populate({
+                  path: 'comments',
+                  populate: {
+                    path: 'user',
+                    select: '_id username',
+                  },
+                });
+          
+              if (!service) {
+                throw new Error('Service not found');
+              }
+          
+              return service;
             } catch (error) {
-                throw new Error('Failed to fetch service');
+              throw new Error('Failed to fetch service');
             }
-        },
-
+          },
+          
         categories: async (parent, args, context) => {
             try {
                 const categories = await Category.find();
@@ -192,10 +202,18 @@ const resolvers = {
                 throw new Error('Failed to fetch chat messages.');
             }
         },     
-        bookingByServiceId: (parent, { serviceId }) => {
-
-            return Booking.find((booking) => booking.service.id === serviceId);
-          },    
+        bookingByServiceId: async (parent, { serviceId }) => {
+            try {
+              const bookings = await Booking.find({ service: serviceId });
+              return bookings;
+            } catch (error) {
+              console.error(error);
+              throw new Error('Failed to fetch bookings by service ID');
+            }
+          }
+          
+          
+           
     },
     Mutation: {
         addUser: async (parent, { username, email, password }) => {
@@ -251,25 +269,26 @@ const resolvers = {
                 throw new Error('Failed to delete service');
             }
         },
-        addComment: async (parent, { serviceId, commentText }) => {
+        addComment: async (parent, { serviceId, commentText, userId }) => {
+            const comment = {
+              commentText,
+              user: userId,
+            };
+          
             return Service.findOneAndUpdate(
               { _id: serviceId },
-              {
-                $addToSet: { comments: { commentText } },
-              },
-              {
-                new: true,
-                runValidators: true,
-              }
+              { $addToSet: { comments: comment } },
+              { new: true, runValidators: true }
             );
           },
           removeComment: async (parent, { serviceId, commentId }) => {
             return Service.findOneAndUpdate(
-              { _id: serviceId},
+              { _id: serviceId },
               { $pull: { comments: { _id: commentId } } },
               { new: true }
             );
           },
+          
 
         sendChatMessage: async (parent, { receiverId, message }, context) => {
             try {

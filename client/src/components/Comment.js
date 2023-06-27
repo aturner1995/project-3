@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useMutation, useQuery } from '@apollo/client';
 import { ADD_COMMENT, REMOVE_COMMENT } from "../utils/mutations";
-import { QUERY_SERVICE } from "../utils/queries";
+import { QUERY_SERVICE, QUERY_USER } from "../utils/queries";
 import { InputTextarea } from 'primereact/inputtextarea';
 import { Button } from 'primereact/button';
 import { Card } from 'primereact/card';
@@ -9,7 +9,7 @@ import { Divider } from 'primereact/divider';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTrashAlt, faClock } from '@fortawesome/free-solid-svg-icons';
 import { Toast } from 'primereact/toast';
-import { QUERY_USER } from '../utils/queries';
+import Auth from "../utils/auth";
 
 const Comment = ({ serviceId }) => {
   const [commentText, setCommentText] = useState('');
@@ -19,7 +19,6 @@ const Comment = ({ serviceId }) => {
   const [addComment] = useMutation(ADD_COMMENT);
   const [removeComment] = useMutation(REMOVE_COMMENT);
   const { loading: userLoading, data: userData } = useQuery(QUERY_USER);
-  const [userProfile, setUserProfile] = useState(null);
   const { loading, error, data } = useQuery(QUERY_SERVICE, {
     variables: { id: serviceId },
   });
@@ -32,28 +31,31 @@ const Comment = ({ serviceId }) => {
     }
   }, [data]);
 
-  useEffect(() => {
-    if (userData) {
-      setUserProfile(userData.user);
-    }
-  }, [userData]);
-
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
+
+    // Check if user is logged in
+    if (!Auth.loggedIn()) {
+      // Redirect to login page or show a message to log in
+      return;
+    }
+
     try {
       await addComment({
-        variables: { serviceId, commentText },
+        variables: { serviceId, commentText, userId: userData?.user?._id },
         refetchQueries: [{ query: QUERY_SERVICE, variables: { id: serviceId } }],
       });
+
       const newComment = {
         _id: Date.now(),
         commentText,
         createdAt: new Date().toLocaleString(),
         user: {
-          _id: userData.user._id,
-          username: userData.user.username
-        }
+          _id: userData?.user?._id,
+          username: userData?.user?.username,
+        },
       };
+
       setComments([...comments, newComment]);
       setCommentText('');
 
@@ -61,22 +63,27 @@ const Comment = ({ serviceId }) => {
         severity: 'success',
         summary: 'Review Added',
         detail: 'Your review has been added successfully.',
-        life: 3000
+        life: 3000,
       });
     } catch (error) {
       console.error(error);
-      console.log('Failed to add comment. Please try again.');
 
       toast.current.show({
         severity: 'error',
         summary: 'Review Error',
         detail: 'Failed to add comment. Please try again.',
-        life: 3000
+        life: 3000,
       });
     }
   };
 
   const handleRemoveComment = async (commentId) => {
+    // Check if user is logged in
+    if (!Auth.loggedIn()) {
+      // Redirect to login page or show a message to log in
+      return;
+    }
+
     try {
       await removeComment({
         variables: { serviceId, commentId },
@@ -88,22 +95,27 @@ const Comment = ({ serviceId }) => {
         severity: 'success',
         summary: 'Review Removed',
         detail: 'Your review has been removed successfully.',
-        life: 3000
+        life: 3000,
       });
     } catch (error) {
       console.error(error);
-      console.log('Failed to remove comment. Please try again.');
 
       toast.current.show({
         severity: 'error',
         summary: 'Review Error',
         detail: 'Failed to remove comment. Please try again.',
-        life: 3000
+        life: 3000,
       });
     }
   };
 
   const handleAddReviewClick = () => {
+    // Check if user is logged in
+    if (!Auth.loggedIn()) {
+      // Redirect to login page or show a message to log in
+      return;
+    }
+
     setShowAddReview(true);
   };
 
@@ -111,7 +123,7 @@ const Comment = ({ serviceId }) => {
     setShowAllReviews(true);
   };
 
-  if (loading || userLoading) return <p>Loading...</p>;
+  if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
 
   const displayedComments = showAllReviews ? comments : comments.slice(0, 3);
@@ -122,7 +134,7 @@ const Comment = ({ serviceId }) => {
 
       <h4 className="comment-heading">Reviews</h4>
 
-      {!showAddReview && (
+      {!showAddReview && Auth.loggedIn() && (
         <Button
           className="btn btn-primary mb-3"
           label="Add Review"
@@ -130,7 +142,7 @@ const Comment = ({ serviceId }) => {
         />
       )}
 
-      {showAddReview && (
+      {showAddReview && Auth.loggedIn() && (
         <form onSubmit={handleCommentSubmit} className="mb-3">
           <div className="form-group">
             <InputTextarea
@@ -157,23 +169,24 @@ const Comment = ({ serviceId }) => {
         <p className="comment-no-comments">No reviews yet. Be the first one to review!</p>
       ) : (
         displayedComments.map((comment) => (
-            <Card key={comment._id} className="comment-card mb-3">
+          <Card key={comment._id} className="comment-card mb-3">
             <div className="card-body">
               <div className="d-flex justify-content-between align-items-center">
-                  <span>
+                <span>
                   <FontAwesomeIcon icon={faClock} className="mr-1 me-2" />
-                  {comment.createdAt}
+                  {comment.createdAt} by {comment.user.username}
                 </span>
-                <Button
-                  className="p-button-rounded p-button-danger p-button-sm"
-                  icon={<FontAwesomeIcon icon={faTrashAlt} />}
-                  onClick={() => handleRemoveComment(comment._id)}
-                  tooltip="Remove Review"
-                  tooltipOptions={{ position: 'top' }}
-                />
+                {Auth.loggedIn() && comment.user._id === userData?.user?._id && (
+                  <Button
+                    className="p-button-rounded p-button-danger p-button-sm"
+                    icon={<FontAwesomeIcon icon={faTrashAlt} />}
+                    onClick={() => handleRemoveComment(comment._id)}
+                    tooltip="Remove Review"
+                    tooltipOptions={{ position: 'top' }}
+                  />
+                )}
               </div>
               <p className="card-text">{comment.commentText}</p>
-              <p className="card-text">By {userProfile.username}</p>
             </div>
           </Card>
         ))

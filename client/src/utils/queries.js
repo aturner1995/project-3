@@ -69,10 +69,16 @@ export const QUERY_SERVICE = gql`
         _id
         commentText
         createdAt
+        user {
+          _id
+          username
+        }
       }
     }
   }
 `;
+
+
 
 
 export const QUERY_CATEGORY = gql`
@@ -214,17 +220,17 @@ export const QUERY_USER_PURCHASES = gql`
   }
 `;
 
-const GET_BOOKING_BY_SERVICE_ID = gql`
+export const GET_BOOKING_BY_SERVICE_ID = gql`
   query GetBookingByServiceId($serviceId: ID!) {
     bookingByServiceId(serviceId: $serviceId) {
-      id
+      _id
       name
       number
       date
       time
       description
       service {
-        id
+        _id
         name
       }
     }

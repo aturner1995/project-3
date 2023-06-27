@@ -63,6 +63,11 @@ const serviceSchema = new Schema(
           minlength: 1,
           maxlength: 280,
         },
+        user: {
+          type: Schema.Types.ObjectId,
+          ref: 'User',
+          required: true,
+        },
         createdAt: {
           type: Date,
           default: Date.now,
