@@ -12,7 +12,6 @@ import {
 import { Button } from "primereact/button";
 import { ThemeContext } from "../utils/themeContext";
 import Auth from "../utils/auth";
-import Footer from "./Footer";
 import { motion } from "framer-motion";
 import LoginSignupIndex from "./login-signup/Login-Signup-index";
 

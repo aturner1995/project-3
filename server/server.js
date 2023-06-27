@@ -6,6 +6,7 @@ const path = require('path');
 const db = require('./config/connection');
 const http = require('http');
 const socketIo = require('socket.io');
+const bodyParser = require('body-parser');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -18,6 +19,8 @@ const server = new ApolloServer({
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+app.use(bodyParser.json({ limit: '5mb' }));
+app.use(bodyParser.urlencoded({ limit: '5mb', extended: true }));
 
 // if we're in production, serve client/build as static assets
 if (process.env.NODE_ENV === 'production') {

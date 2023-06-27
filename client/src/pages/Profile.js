@@ -9,6 +9,7 @@ import {
   QUERY_USER_LISTINGS,
   QUERY_USER_PURCHASES,
 } from "../utils/queries";
+import CreateTask from "../components/CreateTask";
 
 const Profile = () => {
   const [activeTab, setActiveTab] = useState("userInfo");
@@ -205,6 +206,9 @@ const Profile = () => {
             )}
           </>
         )}
+        <div className="text-center">
+          <CreateTask />
+        </div>
         <PopularServices />
       </div>
     </div>

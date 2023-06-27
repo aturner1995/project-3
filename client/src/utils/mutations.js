@@ -69,3 +69,28 @@ export const CREATE_BOOKING = gql`
     }
   }
 `;
+
+export const CREATE_SERVICE = gql`
+  mutation CreateService($input: ServiceInput!) {
+    createService(input: $input) {
+      _id
+      name
+      description
+      images {
+        url
+      }
+      options {
+        title
+        description
+        price
+      }
+      category {
+        _id
+      }
+      location {
+        type
+        coordinates
+      }
+    }
+  }
+`;
