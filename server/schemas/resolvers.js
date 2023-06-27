@@ -1,5 +1,5 @@
 const { AuthenticationError } = require('apollo-server-express');
-const { User, Service, Category, Conversation, Chat, Booking, Order } = require('../models');
+const { User, Service, Category, Conversation, Chat, Booking, Purchase } = require('../models');
 require('dotenv').config({ debug: true })
 const signToken = require('../utils/auth').signToken;
 const stripe = require('stripe')('sk_test_4eC39HqLyjWDarjtT1zdp7dc');
@@ -25,6 +25,7 @@ const resolvers = {
                     return { city, state: state.split('/')[0].trim(), country };
                 }
             } catch (err) {
+                console.error(error)
                 throw new Error('Error fetching geocoding data');
             }
         },
@@ -102,7 +103,51 @@ const resolvers = {
                 throw new Error('Failed to fetch service');
             }
         },
+        userServices: async (parent, { userId }) => {
+            try {
+                const service = await Service.find({
+                    user: userId
+                })
 
+                if (!service) {
+                    throw new Error('No Services found');
+                }
+
+                return service;
+            } catch (error) {
+                throw new Error('Failed to fetch service');
+            }
+        },
+        bookings: async (parent, { userId }) => {
+            try {
+                const booking = await Booking.find({
+                    user: userId
+                })
+
+                if (!booking) {
+                    throw new Error('No Bookings found');
+                }
+
+                return booking;
+            } catch (error) {
+                throw new Error('Failed to fetch service');
+            }
+        },
+        userPurchases: async (parent, { userId }) => {
+            try {
+                const purchase = await Purchase.find({
+                    user: userId
+                })
+
+                if (!purchase) {
+                    throw new Error('No Purchases found');
+                }
+
+                return purchase;
+            } catch (error) {
+                throw new Error('Failed to fetch service');
+            }
+        },
         categories: async (parent, args, context) => {
             try {
                 const categories = await Category.find();
@@ -155,8 +200,6 @@ const resolvers = {
                         },
                         quantity: 1,
                     }));
-
-
 
                 const session = await stripe.checkout.sessions.create({
                     payment_method_types: ['card'],
@@ -226,7 +269,7 @@ const resolvers = {
 
                 const { geometry } = data.results[0];
                 const { lat, lng } = geometry;
-     
+
                 const service = new Service({
                     name: input.name,
                     description: input.description,
@@ -234,12 +277,12 @@ const resolvers = {
                     options: input.options,
                     images: input.images,
                     location: {
-                      type: 'Point',
-                      coordinates: [lat, lng],
-                      address: input.location.address,
+                        type: 'Point',
+                        coordinates: [lat, lng],
+                        address: input.location.address,
                     },
                     user: context.user._id,
-                  });
+                });
 
                 const savedService = await service.save();
                 return savedService;
@@ -315,7 +358,7 @@ const resolvers = {
                 throw new Error('Failed to send chat message');
             }
         },
-        createBooking: async (_, { name, number, date, time, description, serviceId }) => {
+        createBooking: async (_, { name, number, date, time, description, serviceId }, context) => {
             console.log(name, number, date, time, description, serviceId)
             try {
                 const service = await Service.findById(serviceId);
@@ -330,6 +373,7 @@ const resolvers = {
                     time,
                     description,
                     service: serviceId,
+                    user: context.user._id
                 });
 
                 return booking;
