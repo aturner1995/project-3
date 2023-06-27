@@ -140,7 +140,7 @@ export const GET_CONVERSATION = gql`
 export const GET_BOOKINGS = gql`
   query bookings($userId: ID!) {
     bookings(userId: $userId) {
-      id
+      _id
       name
       number
       date
