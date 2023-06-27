@@ -10,7 +10,9 @@ import {
   QUERY_USER_LISTINGS,
   QUERY_USER_PURCHASES,
 } from "../utils/queries";
+import CreateTask from "../components/CreateTask";
 import Auth from "../utils/auth";
+
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -227,7 +229,9 @@ const Profile = () => {
             )}
           </>
         )}
-
+        <div className="text-center">
+          <CreateTask />
+        </div>
         {activeTab === "postService" && (
           <>
             <h2>Post a Service</h2>

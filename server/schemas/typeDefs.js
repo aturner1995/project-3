@@ -103,18 +103,17 @@ const typeDefs = gql`
       }
       
 
-    input ServiceInput {
+      input ServiceInput {
         name: String!
         description: String
         categoryId: ID
         options: [OptionInput]
         images: [ImageInput]
-        location: LocationInput
-    }
+        location: LocationInput!
+      }
 
     input LocationInput {
-        type: String!
-        coordinates: [Float]!
+        address: String!
     }
     
     input OptionInput {
