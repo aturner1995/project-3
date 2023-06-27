@@ -1,19 +1,23 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Form } from "react-bootstrap";
 import { CREATE_SERVICE } from "../utils/mutations";
 import { useMutation, useQuery } from '@apollo/client';
 import { QUERY_REVERSE_GEOCODE, QUERY_CATEGORY } from '../utils/queries';
 import { Button } from 'primereact/button';
+import { Toast } from "primereact/toast";
 
 const TaskForm = () => {
     // Define state variables
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
-    const [options, setOptions] = useState([]);
+    const [options, setOptions] = useState([
+        { title: "", description: "", price: "" } // Initial option
+    ]);
     const [images, setImages] = useState([]);
     const [selectedCategory, setSelectedCategory] = useState(null);
     const [latitude, setLatitude] = useState(null);
     const [longitude, setLongitude] = useState(null);
+    const toast = useRef(null);
     const [userAddress, setUserAddress] = useState('');
     const [createService] = useMutation(CREATE_SERVICE);
 
@@ -24,6 +28,7 @@ const TaskForm = () => {
                 (position) => {
                     setLatitude(position.coords.latitude);
                     setLongitude(position.coords.longitude);
+
                 },
                 (error) => {
                     console.error('Error getting geolocation:', error);
@@ -36,6 +41,7 @@ const TaskForm = () => {
 
     // Query reverse geocode based on latitude and longitude
     const { data } = useQuery(QUERY_REVERSE_GEOCODE, {
+        skip: !latitude || !longitude,
         variables: { latitude, longitude },
     });
 
@@ -113,6 +119,13 @@ const TaskForm = () => {
 
             // Handle success
             console.log("Created service:", data.createService);
+            if (toast.current) {
+                toast.current.show({
+                    severity: "success",
+                    summary: "Task Created!",
+                    life: 3000,
+                });
+            }
 
             // Reset form fields
             setTitle("");
@@ -185,7 +198,9 @@ const TaskForm = () => {
             )}
 
             <Form.Group>
-                <Form.Label>Options</Form.Label>
+                <div className="text-center mt-2">
+                    <h5>Options</h5>
+                </div>
                 {options.map((option, index) => (
                     <div key={index}>
                         <Form.Group>
@@ -220,15 +235,16 @@ const TaskForm = () => {
                             />
                         </Form.Group>
                         <Button
-                            variant="danger"
-                            size="sm"
+                            severity="danger"
+                            size="small"
+                            className="mt-2"
                             onClick={() => handleRemoveOption(index)}
                         >
                             Remove Option
                         </Button>
                     </div>
                 ))}
-                <Button variant="secondary" onClick={handleAddOption}>
+                <Button severity="secondary" onClick={handleAddOption} size="small" className="my-2">
                     Add Option
                 </Button>
             </Form.Group>
@@ -237,6 +253,7 @@ const TaskForm = () => {
                     Submit
                 </Button>
             </div>
+            <Toast ref={toast}></Toast>
         </Form>
     );
 };

@@ -235,7 +235,7 @@ const resolvers = {
                     images: input.images,
                     location: {
                       type: 'Point',
-                      coordinates: [lng, lat],
+                      coordinates: [lat, lng],
                       address: input.location.address,
                     },
                     user: context.user._id,

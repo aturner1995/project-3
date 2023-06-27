@@ -5,7 +5,6 @@ import {
   Nav,
   Container,
   Modal,
-  Tab,
   Image,
   NavDropdown,
 } from "react-bootstrap";
