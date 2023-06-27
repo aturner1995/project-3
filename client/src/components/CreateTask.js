@@ -23,7 +23,7 @@ const CreateTask = () => {
                 dialogClassName="custom-modal"
                 className="p-5"
             >
-                <TaskForm />
+                <TaskForm /> 
             </Modal>
         </>
     )
