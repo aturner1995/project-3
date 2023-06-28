@@ -18,7 +18,7 @@ const Comment = ({ serviceId }) => {
   const [showAllReviews, setShowAllReviews] = useState(false);
   const [addComment] = useMutation(ADD_COMMENT);
   const [removeComment] = useMutation(REMOVE_COMMENT);
-  const { loading: userLoading, data: userData } = useQuery(QUERY_USER);
+  const { data: userData } = useQuery(QUERY_USER);
   const { loading, error, data } = useQuery(QUERY_SERVICE, {
     variables: { id: serviceId },
   });

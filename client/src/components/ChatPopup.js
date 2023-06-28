@@ -18,11 +18,6 @@ const ChatPopup = ({ seller }) => {
         variables: { receiverId },
     });
     const conversation = data?.conversation || [];
-    console.log(conversation);
-
-    if (loggedIn) {
-        const loggedInUserId = AuthService.getProfile().data._id;
-    }
 
     useEffect(() => {
         const socket = io(); // Connect to the server-side WebSocket endpoint
@@ -40,7 +35,6 @@ const ChatPopup = ({ seller }) => {
 
     const handleSendMessage = async (receiverId, e) => {
         e.preventDefault();
-        console.log(receiverId, message)
         try {
             setSending(true); // Set sending to true when sending starts
             await sendMessage({
