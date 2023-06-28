@@ -277,7 +277,7 @@ const resolvers = {
         },
         createService: async (parent, { input }, context) => {
             try {
-                const encodedAddress = encodeURIComponent(input.address);
+                const encodedAddress = encodeURIComponent(input.location.address);
                 const response = await fetch(
                     `https://api.opencagedata.com/geocode/v1/json?q=${encodedAddress}&key=${process.env.OpenCage_API_KEY}&pretty=1`
                 );
