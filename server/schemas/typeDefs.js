@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server-express');
+const { gql } = require("apollo-server-express");
 
 const typeDefs = gql`
     type User {
@@ -40,6 +40,7 @@ const typeDefs = gql`
         commentText: String
         createdAt: String
         user: User
+        rating: Int
       }
       
     type Location {
@@ -108,7 +109,7 @@ const typeDefs = gql`
         updateService(_id: ID!, input: ServiceInput): Service
         deleteService(_id: ID!): Service
         sendChatMessage(receiverId: ID!, message: String): Chat
-        addComment(serviceId: ID!, commentText: String!, userId: ID!): Service
+        addComment(serviceId: ID!, commentText: String!, userId: ID!, rating: Int!): Service    
         removeComment(serviceId: ID!, commentId: ID!): Service
         createBooking(name: String!, number: String!, date: String!, time: String!, description: String!, serviceId: ID!): Booking!
     }
