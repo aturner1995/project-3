@@ -1,15 +1,12 @@
 const db = require('./connection');
 const { faker } = require('@faker-js/faker');
-// const faker = require('@faker-js/faker');
 
-// const faker = require('faker');
-const { User, Service, Category, Listing, Booking, Purchase } = require('../models');
+const { User, Service, Category, Listing, Purchase } = require('../models');
 
 db.once('open', async () => {
   await Category.deleteMany();
   await Service.deleteMany();
   await User.deleteMany();
-  await Booking.deleteMany();
   await Purchase.deleteMany();
 
   const categories = await Category.insertMany([
@@ -83,51 +80,9 @@ db.once('open', async () => {
 
   const createdServices = await Service.insertMany(services);
 
-  console.log(`${createdServices.length} services seeded`);
+  console.log(`${createdServices.length} services seeded`);  
 
-  const listings = [];
-
-  for (let i = 0; i < 10; i++) {
-    const randomServiceIndex = Math.floor(Math.random() * createdServices.length);
-    const randomService = createdServices[randomServiceIndex];
-    const randomUserIndex = Math.floor(Math.random() * createdUsers.length);
-    const randomUser = createdUsers[randomUserIndex];
-
-    const listing = {
-      name: randomService.name,
-      description: randomService.description,
-      category: randomService.category,
-      user: randomUser._id,
-      options: randomService.options,
-      images: randomService.images,
-      location: randomService.location
-    };
-
-    listings.push(listing);
-  }
-
-  const createdListings = await Listing.insertMany(listings);
-
-  console.log(`${createdListings.length} listings seeded`);
-
-  const bookings = [];
-
-for (let user of createdUsers) {
-  for (let service of createdServices) {
-    const booking = {
-      service: service._id,
-      user: user._id,
-      date: faker.date.future(),
-      status: 'pending'
-    };
-
-    bookings.push(booking);
-  }
-}
-
-const createdBookings = await Booking.insertMany(bookings);
-
-console.log(`${createdBookings.length} bookings seeded`);
+ 
 
 const purchases = [];
 
