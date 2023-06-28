@@ -5,6 +5,8 @@ import { useMutation, useQuery } from '@apollo/client';
 import { QUERY_REVERSE_GEOCODE, QUERY_CATEGORY } from '../utils/queries';
 import { Button } from 'primereact/button';
 import { Toast } from "primereact/toast";
+import ReactCrop from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 
 const TaskForm = () => {
     // Define state variables
@@ -21,6 +23,15 @@ const TaskForm = () => {
     const [userAddress, setUserAddress] = useState('');
     const [createService] = useMutation(CREATE_SERVICE);
     const [loading, setLoading] = useState(false);
+    const [croppedImage, setCroppedImage] = useState(null);
+    const [crop, setCrop] = useState({
+        unit: '%',
+        width: 16,
+        aspect: 16 / 9,
+    });
+    const [selectedImage, setSelectedImage] = useState(null);
+
+
 
     // Get user's geolocation on component mount
     useEffect(() => {
@@ -82,7 +93,6 @@ const TaskForm = () => {
         setOptions(updatedOptions);
     };
 
-    // Handle image upload
     // Handle image upload
     const handleImageUpload = (event) => {
         const files = Array.from(event.target.files);
@@ -278,12 +288,13 @@ const TaskForm = () => {
                             size="small"
                             className="mt-2"
                             onClick={() => handleRemoveOption(index)}
+                            outlined
                         >
                             Remove Option
                         </Button>
                     </div>
                 ))}
-                <Button severity="secondary" onClick={handleAddOption} size="small" className="my-2">
+                <Button severity="success" onClick={handleAddOption} size="small" className="my-2" outlined>
                     Add Option
                 </Button>
             </Form.Group>
