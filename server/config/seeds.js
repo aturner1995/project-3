@@ -3,7 +3,7 @@ const { faker } = require('@faker-js/faker');
 // const faker = require('@faker-js/faker');
 
 // const faker = require('faker');
-const { User, Service, Category, Listing, Booking, Purchase } = require('../models');
+const { User, Service, Category, Booking, Purchase } = require('../models');
 
 db.once('open', async () => {
   await Category.deleteMany();
@@ -25,19 +25,22 @@ db.once('open', async () => {
 
   console.log('Categories seeded');
 
+  const bcrypt = require('bcrypt');
+  const saltRounds = 10;
+  
   const users = [
     {
       username: 'Pamela',
       email: 'pamela@testmail.com',
-      password: 'password12345',
+      password: await bcrypt.hash('password12345', saltRounds)
     },
     {
       username: 'Elijah',
       email: 'eholt@testmail.com',
-      password: 'password12345',
+      password: await bcrypt.hash('password12345', saltRounds)
     },
   ];
-
+  
   const createdUsers = await User.insertMany(users);
 
   console.log('Users seeded');
@@ -85,45 +88,25 @@ db.once('open', async () => {
 
   console.log(`${createdServices.length} services seeded`);
 
-  const listings = [];
-
-  for (let i = 0; i < 10; i++) {
-    const randomServiceIndex = Math.floor(Math.random() * createdServices.length);
-    const randomService = createdServices[randomServiceIndex];
-    const randomUserIndex = Math.floor(Math.random() * createdUsers.length);
-    const randomUser = createdUsers[randomUserIndex];
-
-    const listing = {
-      name: randomService.name,
-      description: randomService.description,
-      category: randomService.category,
-      user: randomUser._id,
-      options: randomService.options,
-      images: randomService.images,
-      location: randomService.location
-    };
-
-    listings.push(listing);
-  }
-
-  const createdListings = await Listing.insertMany(listings);
-
-  console.log(`${createdListings.length} listings seeded`);
 
   const bookings = [];
 
-for (let user of createdUsers) {
-  for (let service of createdServices) {
-    const booking = {
-      service: service._id,
-      user: user._id,
-      date: faker.date.future(),
-      status: 'pending'
-    };
-
-    bookings.push(booking);
+  for (let user of createdUsers) {
+    for (let service of createdServices) {
+      const booking = {
+        service: service._id,
+        user: user._id,
+        date: faker.date.future(),
+        time: faker.date.between('00:00', '23:59').toLocaleTimeString(), 
+        name: faker.commerce.productName(), 
+        number: faker.datatype.uuid(), 
+        description: faker.lorem.sentence(),
+        status: 'pending'
+      };
+  
+      bookings.push(booking);
+    }
   }
-}
 
 const createdBookings = await Booking.insertMany(bookings);
 
