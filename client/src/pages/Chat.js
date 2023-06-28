@@ -8,6 +8,7 @@ import { Button } from 'primereact/button';
 import Form from 'react-bootstrap/Form';
 import AuthService from '../utils/auth';
 import { io } from 'socket.io-client';
+import moment from 'moment';
 
 const Chat = () => {
     const [message, setMessage] = useState('');
@@ -16,6 +17,7 @@ const Chat = () => {
     const chatMessages = data?.chatMessages || [];
     const [sending, setSending] = useState(false);
     const loggedInUserId = AuthService.getProfile().data._id;
+    const sortedChatMessages = [...chatMessages];
 
     const [sendMessage] = useMutation(SEND_CHAT_MESSAGE);
 
@@ -63,6 +65,22 @@ const Chat = () => {
         return <div>No messages to display</div>
     }
 
+    sortedChatMessages.sort((a, b) => {
+        const lastMessageA = a.messages[a.messages.length - 1];
+        const lastMessageB = b.messages[b.messages.length - 1];
+
+        if (lastMessageA.timestamp < lastMessageB.timestamp) {
+            return 1; // B should come before A
+        } else if (lastMessageA.timestamp > lastMessageB.timestamp) {
+            return -1; // A should come before B
+        } else {
+            return 0; // Preserve the existing order
+        }
+    });
+
+    console.log(sortedChatMessages)
+
+
     const handleChatItemClick = (index) => {
         setSelectedChat(index);
     };
@@ -71,7 +89,7 @@ const Chat = () => {
         <Container>
             <Row className='my-5'>
                 <Col xs={4} className='chat-list card'>
-                    {chatMessages.map((chat, index) => {
+                    {sortedChatMessages.map((chat, index) => {
                         const otherParticipant = chat.participants.find(
                             (participant) => participant._id !== loggedInUserId
                         );
@@ -97,7 +115,7 @@ const Chat = () => {
                 <Col xs={7} className='selected-chat mx-4'>
                     {selectedChat !== null && (
                         (() => {
-                            const otherParticipant = chatMessages[selectedChat].participants.find(
+                            const otherParticipant = sortedChatMessages[selectedChat].participants.find(
                                 (participant) => participant._id !== loggedInUserId
                             );
 
@@ -106,20 +124,23 @@ const Chat = () => {
                                     <h4>{otherParticipant.username}</h4>
                                     {/* Render the messages for the selected chat */}
                                     <div className='message-container'>
-                                        {chatMessages[selectedChat].messages.map((message) => (
-                                            <div
-                                                key={message._id}
-                                                className={`message-bubble ${message.sender._id === loggedInUserId ? 'right' : 'left'
-                                                    }`}
-                                            >
-                                                <p className='m-1'>{message.message}</p>
-                                            </div>
+                                        {sortedChatMessages[selectedChat].messages.map((message) => (
+                                            <>
+                                                <div
+                                                    key={message._id}
+                                                    className={`message-bubble ${message.sender._id === loggedInUserId ? 'right' : 'left'
+                                                        }`}
+                                                >
+                                                    <p className='m-1'>{message.message}</p>
+                                                </div>
+                                                <p className={`timestamp mx-1 ${message.sender._id === loggedInUserId ? 'right' : 'left'}`}>{moment(parseInt(message.timestamp)).format('YYYY-MM-DD HH:mm')}</p>
+                                            </>
                                         ))}
                                     </div>
                                     <Form
                                         onSubmit={(e) =>
                                             handleSendMessage(
-                                                chatMessages[selectedChat].participants[1]._id,
+                                                otherParticipant._id,
                                                 e
                                             )
                                         }
