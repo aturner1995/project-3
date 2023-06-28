@@ -33,10 +33,7 @@ const Comment = ({ serviceId }) => {
 
   const handleCommentSubmit = async (e) => {
     e.preventDefault();
-
-    // Check if user is logged in
     if (!Auth.loggedIn()) {
-      // Redirect to login page or show a message to log in
       return;
     }
 
@@ -78,9 +75,7 @@ const Comment = ({ serviceId }) => {
   };
 
   const handleRemoveComment = async (commentId) => {
-    // Check if user is logged in
     if (!Auth.loggedIn()) {
-      // Redirect to login page or show a message to log in
       return;
     }
 
@@ -110,9 +105,7 @@ const Comment = ({ serviceId }) => {
   };
 
   const handleAddReviewClick = () => {
-    // Check if user is logged in
     if (!Auth.loggedIn()) {
-      // Redirect to login page or show a message to log in
       return;
     }
 
@@ -138,6 +131,7 @@ const Comment = ({ serviceId }) => {
         <Button
           className="btn btn-primary mb-3"
           label="Add Review"
+          severity="success" 
           onClick={handleAddReviewClick}
         />
       )}
@@ -154,10 +148,11 @@ const Comment = ({ serviceId }) => {
               required
             />
           </div>
-          <Button type="submit" label="Submit" className="btn btn-primary mr-2 me-2 mt-2" />
+          <Button type="submit" label="Submit" className="btn btn-primary mr-2 me-2 mt-2" severity="success" />
           <Button
             className="btn btn-light"
             label="Cancel"
+            severity="success" 
             onClick={() => setShowAddReview(false)}
           />
         </form>
@@ -179,6 +174,7 @@ const Comment = ({ serviceId }) => {
                 {Auth.loggedIn() && comment.user._id === userData?.user?._id && (
                   <Button
                     className="p-button-rounded p-button-danger p-button-sm"
+
                     icon={<FontAwesomeIcon icon={faTrashAlt} />}
                     onClick={() => handleRemoveComment(comment._id)}
                     tooltip="Remove Review"
@@ -196,6 +192,7 @@ const Comment = ({ serviceId }) => {
         <Button
           className="btn btn-link"
           label="View More"
+          severity="success" 
           onClick={handleViewMoreReviewsClick}
         />
       )}
