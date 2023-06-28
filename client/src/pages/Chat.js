@@ -14,7 +14,6 @@ const Chat = () => {
     const [selectedChat, setSelectedChat] = useState(null);
     const { loading, error, data, refetch } = useQuery(GET_CHAT_MESSAGES);
     const chatMessages = data?.chatMessages || [];
-    console.log(chatMessages);
     const [sending, setSending] = useState(false);
     const loggedInUserId = AuthService.getProfile().data._id;
 

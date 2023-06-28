@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useQuery } from "@apollo/client";
 import { FaUser, FaList, FaClipboardList, FaShoppingCart, FaSignOutAlt } from "react-icons/fa";
 import { BsPersonWorkspace } from "react-icons/bs";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import PopularServices from '../components/PopularServices';
 import {
   QUERY_USER,
@@ -42,25 +42,25 @@ const Profile = () => {
 
   useEffect(() => {
     if (userData) {
-      setUserProfile(userData.user);
+      setUserProfile(userData?.user);
     }
   }, [userData]);
 
   useEffect(() => {
     if (listingsData) {
-      setUserListings(listingsData.userServices);
+      setUserListings(listingsData?.userServices);
     }
   }, [listingsData]);
 
   useEffect(() => {
     if (bookingsData) {
-      setUserBookings(bookingsData.bookings);
+      setUserBookings(bookingsData?.bookings);
     }
   }, [bookingsData]);
 
   useEffect(() => {
     if (purchasesData) {
-      setUserPurchases(purchasesData.userPurchases);
+      setUserPurchases(purchasesData?.userPurchases);
     }
   }, [purchasesData]);
 
@@ -116,7 +116,7 @@ const Profile = () => {
   return (
     <div style={tabStyles.container}>
       <div style={tabStyles.header}>
-        <h1 style={tabStyles.heading}>Welcome, {userProfile.username}!</h1>
+        <h1 style={tabStyles.heading}>Welcome, {userProfile?.username}!</h1>
       </div>
 
       <Row style={tabStyles.tabsContainer}>
@@ -150,10 +150,10 @@ const Profile = () => {
         </Col>
         <Col
           style={activeTab === "postService" ? { ...tabStyles.tab, ...tabStyles.activeTab } : tabStyles.tab}
-          onClick={() => (
-            setShowTaskForm(true),
-            handleTabClick("postService")
-            )}
+          onClick={() => {
+            setShowTaskForm(true);
+            handleTabClick("postService");
+          }}
         >
           <BsPersonWorkspace size={24} />
           <span>Post a Task</span>
@@ -186,7 +186,7 @@ const Profile = () => {
         {activeTab === "userInfo" && (
           <>
             <h2>User Information</h2>
-            <p>Email: {userProfile.email}</p>
+            <p>Email: {userProfile?.email}</p>
           </>
         )}
 

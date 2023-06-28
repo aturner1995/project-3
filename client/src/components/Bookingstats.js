@@ -1,7 +1,6 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_BOOKING_BY_SERVICE_ID } from '../utils/queries';
-import { ProgressBar } from 'react-bootstrap';
 
 const BookingStats = ({ serviceId }) => {
   const { loading, error, data } = useQuery(GET_BOOKING_BY_SERVICE_ID, {
@@ -20,8 +19,8 @@ const BookingStats = ({ serviceId }) => {
   const numberOfBookings = bookingByServiceId.length;
 
   const circleStyle = {
-    width: '150px',
-    height: '150px',
+    width: '75px',
+    height: '75px',
     borderRadius: '50%',
     backgroundColor: '#f8d7da',
     display: 'flex',
@@ -42,7 +41,6 @@ const BookingStats = ({ serviceId }) => {
           <div style={circleStyle}>
             <span>{numberOfBookings}</span>
           </div>
-          <h2 className='text-center'>Booking Statistics</h2>
           <p className='text-center'>{numberOfBookings} users booked this service recently.</p>
         </>
       )}
