@@ -27,6 +27,11 @@ const bookingSchema = new Schema(
       ref: 'Service',
       required: true,
     },
+    user: {
+      type: Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+    },
   },
   {
     timestamps: true,
@@ -37,5 +42,3 @@ const Booking = model('Booking', bookingSchema);
 
 module.exports =  Booking
 
-
-module.exports = Booking;

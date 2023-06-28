@@ -6,16 +6,11 @@ import { QUERY_REVERSE_GEOCODE } from '../utils/queries';
 import { Button } from 'primereact/button';
 import { useParams } from 'react-router-dom';
 import { MultiSelect } from 'primereact/multiselect';
-import { useLocation } from 'react-router-dom';
 import { Dropdown } from 'primereact/dropdown';
-import { QUERY_GEOCODE } from '../utils/queries';
 
-const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList, setUserSearchAddress, setDistance, isLoading }) => {
+const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList, setUserSearchAddress, setDistance, isLoading, setAddressSet }) => {
   const [latitude, setLatitude] = useState(null);
   const [longitude, setLongitude] = useState(null);
-  const [city, setCity] = useState('');
-  const [state, setState] = useState('');
-  const [country, setCountry] = useState('');
   const [userAddress, setUserAddress] = useState('');
   const [categories, setCategories] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -29,14 +24,14 @@ const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList,
       const selectedCategory = categoriesList.find(category => category.name === categoryName);
       if (selectedCategory) {
         setCategories([selectedCategory]);
-        setSelectedCategories(categories)
+        setSelectedCategories([selectedCategory]);
       }
     } else if (searchParams.query) {
       setSearchQuery(searchParams.query.split('=')[1]);
-      setUserSearchQuery(searchQuery)
+      setUserSearchQuery(searchParams.query.split('=')[1]);
     }
-
-  }, [searchParams]);
+  }, [searchParams, categoriesList, setSelectedCategories, setUserSearchQuery]);
+  
 
 
   useEffect(() => {
@@ -48,29 +43,32 @@ const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList,
         },
         (error) => {
           console.error('Error getting geolocation:', error);
+          setAddressSet(true);
         }
       );
     } else {
       console.error('Geolocation is not supported by this browser.');
+      setAddressSet(true);
     }
-  }, []);
+  }, [setAddressSet]);
+  
 
   const { data } = useQuery(QUERY_REVERSE_GEOCODE, {
+    skip: !latitude || !longitude,
     variables: { latitude, longitude },
   });
 
   useEffect(() => {
     if (data) {
       if (data.reverseGeocode) {
-        setCity(data.reverseGeocode.city);
-        setState(data.reverseGeocode.state);
-        setCountry(data.reverseGeocode.country);
         setUserAddress(
           `${data.reverseGeocode.city}, ${data.reverseGeocode.state}, ${data.reverseGeocode.country}`
         );
+        setUserSearchAddress(`${data.reverseGeocode.city}, ${data.reverseGeocode.state}, ${data.reverseGeocode.country}`);
+        setAddressSet(true);
       }
     }
-  }, [data]);
+  }, [data, setUserSearchAddress, setAddressSet]);  
 
   const handleSearchQueryChange = (e) => {
     setSearchQuery(e.target.value);
@@ -90,7 +88,8 @@ const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList,
     setUserSearchQuery(searchQuery);
     setSelectedCategories(categories);
     setUserSearchAddress(userAddress);
-    setDistance(selectedDistance)
+    setDistance(selectedDistance);
+    setAddressSet(true);
   };
 
 
@@ -137,7 +136,7 @@ const SearchForm = ({ setUserSearchQuery, setSelectedCategories, categoriesList,
             display="chip"
             placeholder="Select Category"
             className='mt-1'
-            maxselectedlabels={1}
+            maxSelectedLabels={1}
           />
         </Col>
         <Col xs={12} md={3} lg={3} className='pt-1 text-center d-flex align-items-center'>

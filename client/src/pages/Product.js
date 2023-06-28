@@ -3,36 +3,41 @@ import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useLazyQuery } from "@apollo/client";
 import { Card, Col, Container, Row, Tab, Nav } from "react-bootstrap";
 import { Button } from "primereact/button";
-import { InputText } from "primereact/inputtext";
-import { Calendar } from "primereact/calendar";
 import { Toast } from "primereact/toast";
 import { Galleria } from "primereact/galleria";
 import { BreadCrumb } from "primereact/breadcrumb";
-import { Dialog } from "primereact/dialog";
-import { InputTextarea } from "primereact/inputtextarea";
 import { loadStripe } from "@stripe/stripe-js";
 import { QUERY_SERVICE } from "../utils/queries";
 import { CREATE_BOOKING } from "../utils/mutations";
 import { QUERY_CHECKOUT } from "../utils/queries";
 import ChatPopup from "../components/ChatPopup";
-
+import Comment from "../components/Comment";
+import { ProgressSpinner } from "primereact/progressspinner";
+import auth from "../utils/auth";
+import { Message } from "primereact/message";
+import BookingStats from "../components/Bookingstats";
+import { Modal, Form } from "react-bootstrap";
+import { faUser, faPhone } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const ProductDetails = () => {
   const { id } = useParams();
   const toast = useRef(null);
   const nameInput = useRef(null);
   const numberInput = useRef(null);
+  const dateInput = useRef(null);
   const stripePromise = loadStripe("pk_test_TYooMQauvdEDq54NiTphI7jx");
   const timeInput = useRef(null);
   const descriptionInput = useRef(null);
   const [activeTab, setActiveTab] = useState(0);
-  const [createBooking, { loadingBooking, errorbooking }] = useMutation(
-    CREATE_BOOKING
-  );
+  const [createBooking, { loadingBooking, errorbooking }] =
+    useMutation(CREATE_BOOKING);
   const [selectedDate, setSelectedDate] = useState(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [selectedPrice, setSelectedPrice] = useState(null);
   const [getCheckout, { data: dataCheckOut }] = useLazyQuery(QUERY_CHECKOUT);
+  const [showLoginError, setShowLoginError] = useState(false);
+  
 
   useEffect(() => {
     if (dataCheckOut) {
@@ -40,37 +45,46 @@ const ProductDetails = () => {
         res.redirectToCheckout({ sessionId: dataCheckOut.checkout.session });
       });
     }
-
   }, [dataCheckOut]);
 
-const handleTabSelect = (index) => {
-  setActiveTab(index);
-  const selectedOption = service.options[index];
-  setSelectedPrice(selectedOption.price);
-};
+  const handleTabSelect = (index) => {
+    setActiveTab(index);
+    const selectedOption = service.options[index];
+    setSelectedPrice(selectedOption.price);
+  };
 
-const handleContinueClick = () => {
-  setShowBookingForm(true)
-  const selectedOption = service.options[activeTab];
-  setSelectedPrice(selectedOption.price);
-  setShowBookingForm(true);
-};
-
+  const handleContinueClick = () => {
+    if (auth.loggedIn()) {
+      setShowBookingForm(true);
+      const selectedOption = service.options[activeTab];
+      setSelectedPrice(selectedOption.price);
+    } else {
+      setShowLoginError(true);
+    }
+  };
 
   const { loading, error, data } = useQuery(QUERY_SERVICE, {
     variables: { id },
+    onCompleted: (data) => {
+      const { service } = data;
+      const selectedOption = service.options[activeTab];
+      setSelectedPrice(selectedOption.price);
+    },
   });
-
-
+  
   if (loading) {
     return <div>Loading...</div>;
   }
-
+  
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-
+  
   const { service } = data;
+
+  console.log(service)
+
+  console.log(service._id);
 
   const images = service.images.map((image) => ({
     itemImageSrc: image.url,
@@ -112,7 +126,18 @@ const handleContinueClick = () => {
   const showToast = () => {
     toast.current.show({
       severity: "success",
-      summary: "Redirecting to payment portal...",
+      content: (
+        <div>
+          <div>Redirecting to payment portal...</div>
+          <div>
+            <ProgressSpinner
+              style={{ width: "20px", height: "20px", marginLeft: "10px" }}
+              strokeWidth="4"
+              animationDuration=".5s"
+            />
+          </div>
+        </div>
+      ),
       life: 3000,
     });
   };
@@ -123,7 +148,7 @@ const handleContinueClick = () => {
     const name = nameInput.current.value;
     const number = numberInput.current.value;
     const time = timeInput.current.value;
-    const date = selectedDate ? selectedDate.toISOString() : null;
+    const date = dateInput.current.value;
     const description = descriptionInput.current.value;
 
     const selectedOption = service.options[activeTab];
@@ -145,26 +170,31 @@ const handleContinueClick = () => {
       getCheckout({
         variables: { id, price: selectedPrice },
       });
-      
+
       showToast();
       console.log("Booking created:", data.createBooking);
       console.log("Total Price:", totalPrice);
-
-
-    
     } catch (error) {
       console.error("Error creating booking:", error);
     }
   };
 
   const items = [
-    { label: `Services`, url: "http://localhost:3000/search" },
+    { label: "Services", url: "http://localhost:3000/search" },
     { label: `${service.category.name}` },
   ];
   const home = { icon: "pi pi-home", url: "http://localhost:3000/" };
 
   return (
     <Container>
+      {showLoginError && (
+        <div className="p-mb-4">
+          <Message
+            severity="error"
+            text="Please login/Signup to book the service"
+          />
+        </div>
+      )}
       <Row>
         <Col lg={7}>
           <BreadCrumb model={items} home={home} className="ms-0" />
@@ -234,74 +264,93 @@ const handleContinueClick = () => {
               </Tab.Container>
             </Card.Body>
           </Card>
+          <BookingStats serviceId={service._id} />
         </Col>
       </Row>
-      <Dialog
-        visible={showBookingForm}
+      <Row>
+        <Col lg={12}>
+          <Comment serviceId={service._id} />
+        </Col>
+      </Row>
+      <Modal
+        show={showBookingForm}
         onHide={() => setShowBookingForm(false)}
-        position="top"
-        className="booking-modal"
-        style={{ width: "50vw" }}
+        dialogClassName="booking-modal col-12 col-md-6"
       >
-        <div className="booking-form">
-          <h2 className="booking-title">Book Now</h2>
-          <h4>Selected Price: {selectedPrice}</h4>
-          <form>
-            <div className="form-group">
-              <label htmlFor="name">Name</label>
-              <InputText
-                id="name"
-                placeholder="Name"
-                className="form-control"
-                ref={nameInput}
+        <Modal.Header closeButton>
+          <Modal.Title className="text-center">
+            Book Now
+          </Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group>
+              <Form.Label>Name</Form.Label>
+              <div className="input-group align-items-center">
+                <div className="input-group-prepend">
+                  <span className="input-group-text">
+                    <FontAwesomeIcon icon={faUser} />
+                  </span>
+                </div>
+                <Form.Control type="text" placeholder="Name" ref={nameInput} />
+              </div>
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Phone Number</Form.Label>
+              <div className="input-group align-items-center">
+                <div className="input-group-prepend">
+                  <span className="input-group-text">
+                    <FontAwesomeIcon icon={faPhone} />
+                  </span>
+                </div>
+                <Form.Control
+                  type="text"
+                  placeholder="Phone Number"
+                  ref={numberInput}
+                />
+              </div>
+            </Form.Group>
+            <Form.Group className="m-2">
+              <Form.Label>Date</Form.Label>
+              <Form.Control
+                type="date"
+                ref={dateInput}
+                onChange={(e) => setSelectedDate(e.target.value)}
               />
-            </div>
-            <div className="form-group">
-              <label htmlFor="number">Phone Number</label>
-              <InputText
-                id="number"
-                placeholder="Phone Number"
-                className="form-control"
-                ref={numberInput}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="date">Date</label>
-              <Calendar
-                id="date"
-                className="form-control"
-                value={selectedDate}
-                onChange={(e) => setSelectedDate(e.value)}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="time">Time</label>
-              <InputText
-                id="time"
-                placeholder="Time"
-                className="form-control"
-                ref={timeInput}
-              />
-            </div>
-            <div className="form-group">
-              <label htmlFor="description">Additional Description</label>
-              <InputTextarea
-                id="description"
-                placeholder="Additional Description"
-                className="form-control"
+            </Form.Group>
+            <Form.Group className="m-2">
+              <Form.Label>Time</Form.Label>
+              <Form.Control type="time" placeholder="Time" ref={timeInput} />
+            </Form.Group>
+            <Form.Group>
+              <Form.Label>Additional Description</Form.Label>
+              <Form.Control
+                as="textarea"
                 rows={5}
+                placeholder="Additional Description"
                 ref={descriptionInput}
               />
-            </div>
-            <Button
-              label="Book Now"
-              className="btn btn-primary"
-              onClick={bookService}
-            />
-          </form>
-        </div>
-      </Dialog>
-        <ChatPopup seller={data.service.user}/>
+            </Form.Group>
+            <Form.Group style={{ textAlign: "right", marginTop: "10px" }}>
+              <Form.Label>Selected Price (CAD)</Form.Label>
+              <div
+                className="selected-price"
+                style={{
+                  backgroundColor: "#f2f2f2",
+                  padding: "10px",
+                  borderRadius: "4px",
+                  fontWeight: "bold",
+                }}
+              >
+                ${selectedPrice}
+              </div>
+            </Form.Group>
+
+            <Button label="Book now" severity="success" onClick={bookService} className="mt-3"/>
+          </Form>
+        </Modal.Body>
+      </Modal>
+      <ChatPopup seller={data.service.user} />
       <Toast ref={toast}></Toast>
     </Container>
   );

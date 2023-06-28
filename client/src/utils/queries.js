@@ -65,9 +65,22 @@ export const QUERY_SERVICE = gql`
         username
         email
       }
+      comments {
+        _id
+        commentText
+        createdAt
+        user {
+          _id
+          username
+        }
+        rating
+      }
     }
   }
-`
+`;
+
+
+
 
 export const QUERY_CATEGORY = gql`
   query categories {
@@ -126,17 +139,16 @@ export const GET_CONVERSATION = gql`
 `;
 
 export const GET_BOOKINGS = gql`
-  query GetBookings {
-    bookings {
-      id
+  query bookings($userId: ID!) {
+    bookings(userId: $userId) {
+      _id
       name
       number
       date
       time
       description
       service {
-        id
-        title
+        _id
       }
     }
   }
@@ -204,6 +216,23 @@ export const QUERY_USER_PURCHASES = gql`
       }
       quantity
       total
+    }
+  }
+`;
+
+export const GET_BOOKING_BY_SERVICE_ID = gql`
+  query GetBookingByServiceId($serviceId: ID!) {
+    bookingByServiceId(serviceId: $serviceId) {
+      _id
+      name
+      number
+      date
+      time
+      description
+      service {
+        _id
+        name
+      }
     }
   }
 `;

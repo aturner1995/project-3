@@ -13,7 +13,7 @@ export default function Login() {
   const [showAlert, setShowAlert] = useState(false);
 
   const [login, { error, data }] = useMutation(LOGIN_USER);
-
+console.log(error);
   const handleInputChange = (event) => {
     const { name, value } = event.target;
     setUserFormData({ ...userFormData, [name]: value });
@@ -48,7 +48,7 @@ export default function Login() {
 
   return (
     <>
-      {showAlert && <Alert variant="danger"></Alert>}
+      {showAlert && <Alert variant="danger">{error.message}</Alert>}
 
       <div className=" login m-5">
         <div className="">

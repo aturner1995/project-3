@@ -9,7 +9,6 @@ db.once('open', async () => {
   await Category.deleteMany();
   await Service.deleteMany();
   await User.deleteMany();
-  await Listing.deleteMany();
   await Booking.deleteMany();
   await Purchase.deleteMany();
 
@@ -73,6 +72,7 @@ db.once('open', async () => {
         { url: faker.image.imageUrl() }
       ],
       location: {
+        address: faker.address.streetAddress(), // Add the address field with a valid value
         type: 'Point',
         coordinates: [faker.address.longitude(), faker.address.latitude()]
       }

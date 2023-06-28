@@ -1,4 +1,4 @@
-const { gql } = require('apollo-server-express');
+const { gql } = require("apollo-server-express");
 
 const typeDefs = gql`
     type User {
@@ -33,10 +33,19 @@ const typeDefs = gql`
         category: Category
         user: User
         location: Location
+        comments: [Comment!]!
     }
+    type Comment {
+        _id: ID
+        commentText: String
+        createdAt: String
+        user: User
+        rating: Int
+      }
+      
     type Location {
-      type: String!
-      coordinates: [Float]!
+        type: String!
+        coordinates: [Float]!
     }    
     type Category {
         _id: ID
@@ -56,22 +65,28 @@ const typeDefs = gql`
         user: User
     }
     type Booking {
-        id: ID!
+        _id: ID!
         name: String!
         number: String!
         date: String!
         time: String!
         description: String!
         service: Service!
-      }
-    
-      type Checkout {
+    }
+    type Checkout {
         session: ID
-      }
+    }
+    type Purchase {
+        _id: ID!
+        user: User!
+        service: Service!
+        option: Option!
+        quantity: Int!
+        total: Float!
+        date: String!
+        status: String!
+    }
     
-
-
-
     type Query {
         user: User
         reverseGeocode(latitude: Float!, longitude: Float!): ReverseGeocode
@@ -81,8 +96,12 @@ const typeDefs = gql`
         chatMessages: [Conversation]
         checkout(id: ID!, price: Float): Checkout
         conversation(receiverId: ID!): [Conversation]
-
+        bookingByServiceId(serviceId: ID!): [Booking]
+        userServices(userId: ID!): [Service]
+        bookings(userId: ID!): [Booking]
+        userPurchases(userId: ID!): [Purchase]
     }
+    
     type Mutation {
         login(email: String!, password: String!): Auth
         addUser(username: String!, email: String!, password: String!): Auth
@@ -90,31 +109,22 @@ const typeDefs = gql`
         updateService(_id: ID!, input: ServiceInput): Service
         deleteService(_id: ID!): Service
         sendChatMessage(receiverId: ID!, message: String): Chat
+        addComment(serviceId: ID!, commentText: String!, userId: ID!, rating: Int!): Service    
+        removeComment(serviceId: ID!, commentId: ID!): Service
+        createBooking(name: String!, number: String!, date: String!, time: String!, description: String!, serviceId: ID!): Booking!
     }
-    type Mutation {
-        createBooking(
-          name: String!
-          number: String!
-          date: String!
-          time: String!
-          description: String!
-          serviceId: ID!
-        ): Booking!
-      }
-      
-
+    
     input ServiceInput {
         name: String!
         description: String
         categoryId: ID
         options: [OptionInput]
         images: [ImageInput]
-        location: LocationInput
+        location: LocationInput!
     }
-
+    
     input LocationInput {
-        type: String!
-        coordinates: [Float]!
+        address: String!
     }
     
     input OptionInput {
@@ -126,6 +136,6 @@ const typeDefs = gql`
     input ImageInput {
         url: String!
     }
-`
+`;
 
 module.exports = typeDefs;

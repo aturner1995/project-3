@@ -19,9 +19,12 @@
   },
   "dependencies": {
     "@stripe/stripe-js": "^1.54.1",
-    "primeicons": "^6.0.1",
-    "stripe": "^12.10.0",
     "faker": "^6.6.6",
-    "react-icons": "^4.10.1"
+    "primeicons": "^6.0.1",
+    "react-chartjs-2": "^5.2.0",
+    "react-icons": "^4.10.1",
+    "react-loading": "^2.0.3",
+    "stripe": "^12.10.0",
+    "tachyons-components": "^1.0.1"
   }
 }
