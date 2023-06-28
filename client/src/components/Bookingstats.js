@@ -1,7 +1,6 @@
 import React from 'react';
 import { useQuery } from '@apollo/client';
 import { GET_BOOKING_BY_SERVICE_ID } from '../utils/queries';
-import { Card } from 'primereact/card';
 import { Badge } from 'primereact/badge';
 import { FaCalendarAlt } from 'react-icons/fa';
 import 'react-datepicker/dist/react-datepicker.css';
@@ -23,19 +22,6 @@ const BookingStats = ({ serviceId }) => {
 
   const { bookingByServiceId } = data;
   const numberOfBookings = bookingByServiceId.length;
-
-  const containerStyle = {
-    display: 'flex',
-    justifyContent: 'space-between',
-    gap: '20px',
-  };
-
-  const cardStyle = {
-    borderRadius: '8px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-    padding: '20px',
-  };
-
   const circleStyle = {
     width: '75px',
     height: '75px',
@@ -59,49 +45,59 @@ const BookingStats = ({ serviceId }) => {
     const formattedDate = date.toLocaleDateString('en-US');
     return formattedDate;
   });
-  const formattedBookedDates = bookedDates.map(date => new Date(date));
+  const formattedBookedDates = bookedDates.map((date) => new Date(date));
+  
   return (
-    <div className="booking-stats mt-5" style={containerStyle}>
-      <div style={cardStyle}>
-        {numberOfBookings === 0 ? (
-          <p className="text-center">No bookings yet. Book this service now!</p>
-        ) : (
-          <>
-            <div style={circleStyle} className='mb-5'>
-              <Badge value={numberOfBookings} severity="danger" />
-            </div>
-            <p className="text-center">{numberOfBookings} users booked this service recently.</p>
-            <div className="booking-details">
-              {bookingByServiceId.map((booking) => (
-                <div key={booking._id} className="booking-item"></div>
-              ))}
-            </div>
-          </>
-        )}
-      </div>
-      
-
-      <div style={cardStyle}>
-        <div style={{ display: 'flex', alignItems: 'center', marginBottom: '20px' }}>
-          <FaCalendarAlt style={{ fontSize: '24px', marginRight: '10px' }} />
-          <h5>Booked Dates and Time</h5>
-        </div>
-        <div className="booked-dates" style={bookedDatesStyle}>
-          {bookingByServiceId.length === 0 ? (
-            <p className="text-center">No booked dates and times available.</p>
-          ) : (
-            <Calendar
-            value={formattedBookedDates}
-            tileContent={({ date }) =>
-              formattedBookedDates.some(
-                bookedDate => bookedDate.toDateString() === date.toDateString()
-              ) ? (
-                <div className="highlight" />
-              ) : null
-            }
-          />
+    <div className="booking-stats mt-5 d-flex">
+      <div className="row align-items-center">
+        <div className="col-lg-4 ">
           
-          )}
+            {numberOfBookings === 0 ? (
+              <p className="text-center">No bookings yet. Book this service now!</p>
+            ) : (
+              <>
+                <div style={circleStyle} className="mb-5">
+                  <Badge value={numberOfBookings} severity="danger" />
+                </div>
+                <p className="text-center">
+                  {numberOfBookings} users booked this service recently.
+                </p>
+                <div className="booking-details">
+                  {bookingByServiceId.map((booking) => (
+                    <div key={booking._id} className="booking-item"></div>
+                  ))}
+                </div>
+              </>
+            )}
+    
+        </div>
+
+        <div className="col-lg-8 ">
+     
+            <div className='d-flex justify-content-center '>
+              <FaCalendarAlt style={{ fontSize: '24px', marginRight: '10px' }} />
+              <h5 className=''>Booked Dates</h5>
+            </div>
+            <div className="booked-dates" style={bookedDatesStyle}>
+              {bookingByServiceId.length === 0 ? (
+                <p className="text-center">No booked dates and times available.</p>
+              ) : (
+                <div className='justify-content-center d-flex'>
+                <Calendar
+                  value={formattedBookedDates}
+      
+                  tileContent={({ date }) =>
+                    formattedBookedDates.some(
+                      (bookedDate) => bookedDate.toDateString() === date.toDateString()
+                    ) ? (
+                      <div className="highlight" />
+                    ) : null
+                  }
+                />
+                </div>
+              )}
+            </div>
+    
         </div>
       </div>
     </div>
