@@ -72,6 +72,7 @@ db.once('open', async () => {
         { url: faker.image.imageUrl() }
       ],
       location: {
+        address: faker.address.streetAddress(), // Add the address field with a valid value
         type: 'Point',
         coordinates: [faker.address.longitude(), faker.address.latitude()]
       }

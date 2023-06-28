@@ -324,26 +324,28 @@ const resolvers = {
                 throw new Error('Failed to delete service');
             }
         },
-        addComment: async (parent, { serviceId, commentText, userId }) => {
+        addComment: async (parent, { serviceId, commentText, userId, rating }) => {
             const comment = {
-                commentText,
-                user: userId,
+              commentText,
+              user: userId,
+              rating,
             };
-
+          
             return Service.findOneAndUpdate(
-                { _id: serviceId },
-                { $addToSet: { comments: comment } },
-                { new: true, runValidators: true }
+              { _id: serviceId },
+              { $addToSet: { comments: comment } },
+              { new: true, runValidators: true }
             );
-        },
-        removeComment: async (parent, { serviceId, commentId }) => {
+          },
+          
+          removeComment: async (parent, { serviceId, commentId }) => {
             return Service.findOneAndUpdate(
-                { _id: serviceId },
-                { $pull: { comments: { _id: commentId } } },
-                { new: true }
+              { _id: serviceId },
+              { $pull: { comments: { _id: commentId } } },
+              { new: true }
             );
-        },
-
+          },
+          
 
         sendChatMessage: async (parent, { receiverId, message }, context) => {
             try {

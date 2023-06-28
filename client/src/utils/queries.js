@@ -73,6 +73,7 @@ export const QUERY_SERVICE = gql`
           _id
           username
         }
+        rating
       }
     }
   }
