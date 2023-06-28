@@ -5,8 +5,6 @@ import { useMutation, useQuery } from '@apollo/client';
 import { QUERY_REVERSE_GEOCODE, QUERY_CATEGORY } from '../utils/queries';
 import { Button } from 'primereact/button';
 import { Toast } from "primereact/toast";
-import ReactCrop from 'react-image-crop';
-import 'react-image-crop/dist/ReactCrop.css';
 
 const TaskForm = () => {
     // Define state variables
@@ -23,15 +21,6 @@ const TaskForm = () => {
     const [userAddress, setUserAddress] = useState('');
     const [createService] = useMutation(CREATE_SERVICE);
     const [loading, setLoading] = useState(false);
-    const [croppedImage, setCroppedImage] = useState(null);
-    const [crop, setCrop] = useState({
-        unit: '%',
-        width: 16,
-        aspect: 16 / 9,
-    });
-    const [selectedImage, setSelectedImage] = useState(null);
-
-
 
     // Get user's geolocation on component mount
     useEffect(() => {
