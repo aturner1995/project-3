@@ -65,17 +65,24 @@ const ProductDetails = () => {
 
   const { loading, error, data } = useQuery(QUERY_SERVICE, {
     variables: { id },
+    onCompleted: (data) => {
+      const { service } = data;
+      const selectedOption = service.options[activeTab];
+      setSelectedPrice(selectedOption.price);
+    },
   });
-
+  
   if (loading) {
     return <div>Loading...</div>;
   }
-
+  
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-
+  
   const { service } = data;
+
+  console.log(service)
 
   console.log(service._id);
 
