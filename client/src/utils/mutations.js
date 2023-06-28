@@ -69,17 +69,17 @@ export const CREATE_BOOKING = gql`
     }
   }
 `;
-
 export const ADD_COMMENT = gql`
-  mutation addComment($serviceId: ID!, $commentText: String!, $userId: ID!) {
-    addComment(serviceId: $serviceId, commentText: $commentText, userId: $userId) {
+  mutation addComment($serviceId: ID!, $commentText: String!, $userId: ID!, $rating: Int!) {
+    addComment(serviceId: $serviceId, commentText: $commentText, userId: $userId, rating: $rating) {
       comments {
         _id
         commentText
         createdAt
         user {
-            username
+          username
         }
+        rating
       }
     }
   }
@@ -95,10 +95,12 @@ export const REMOVE_COMMENT = gql`
         user {
           username
         }
+        rating
       }
     }
   }
 `;
+
 
 export const CREATE_SERVICE = gql`
   mutation CreateService($input: ServiceInput!) {

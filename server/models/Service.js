@@ -19,7 +19,7 @@ const optionSchema = new Schema({
 const imageSchema = new Schema({
   url: {
     type: String,
-    required: true
+    required: true,
   },
 });
 
@@ -35,7 +35,7 @@ const serviceSchema = new Schema(
     category: {
       type: Schema.Types.ObjectId,
       ref: 'Category',
-      required: true
+      required: true,
     },
     user: {
       type: Schema.Types.ObjectId,
@@ -57,7 +57,7 @@ const serviceSchema = new Schema(
       address: {
         type: String,
         required: true,
-      }
+      },
     },
     comments: [
       {
@@ -76,6 +76,10 @@ const serviceSchema = new Schema(
           type: Date,
           default: Date.now,
           get: (timestamp) => dateFormat(timestamp),
+        },
+        rating: {
+          type: Number,
+          required: true,
         },
       },
     ],
