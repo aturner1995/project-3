@@ -1,12 +1,15 @@
 const db = require('./connection');
 const { faker } = require('@faker-js/faker');
+// const faker = require('@faker-js/faker');
 
-const { User, Service, Category, Listing, Purchase } = require('../models');
+// const faker = require('faker');
+const { User, Service, Category, Booking, Purchase } = require('../models');
 
 db.once('open', async () => {
   await Category.deleteMany();
   await Service.deleteMany();
   await User.deleteMany();
+  await Booking.deleteMany();
   await Purchase.deleteMany();
 
   const categories = await Category.insertMany([
@@ -22,19 +25,22 @@ db.once('open', async () => {
 
   console.log('Categories seeded');
 
+  const bcrypt = require('bcrypt');
+  const saltRounds = 10;
+  
   const users = [
     {
       username: 'Pamela',
       email: 'pamela@testmail.com',
-      password: 'password12345',
+      password: await bcrypt.hash('password12345', saltRounds)
     },
     {
       username: 'Elijah',
       email: 'eholt@testmail.com',
-      password: 'password12345',
+      password: await bcrypt.hash('password12345', saltRounds)
     },
   ];
-
+  
   const createdUsers = await User.insertMany(users);
 
   console.log('Users seeded');
@@ -80,9 +86,31 @@ db.once('open', async () => {
 
   const createdServices = await Service.insertMany(services);
 
-  console.log(`${createdServices.length} services seeded`);  
+  console.log(`${createdServices.length} services seeded`);
 
- 
+
+  const bookings = [];
+
+  for (let user of createdUsers) {
+    for (let service of createdServices) {
+      const booking = {
+        service: service._id,
+        user: user._id,
+        date: faker.date.future(),
+        time: faker.date.between('00:00', '23:59').toLocaleTimeString(), 
+        name: faker.commerce.productName(), 
+        number: faker.datatype.uuid(), 
+        description: faker.lorem.sentence(),
+        status: 'pending'
+      };
+  
+      bookings.push(booking);
+    }
+  }
+
+const createdBookings = await Booking.insertMany(bookings);
+
+console.log(`${createdBookings.length} bookings seeded`);
 
 const purchases = [];
 
