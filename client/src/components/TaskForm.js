@@ -88,14 +88,14 @@ const TaskForm = () => {
         const selectedImages = [];
 
         // Check file size for each selected image
-        const maxSize = 5 * 1024 * 1024; // 5MB
+        const maxSize = 1 * 1024 * 1024; // 1MB
         const oversizedFiles = files.filter((file) => file.size > maxSize);
 
         if (oversizedFiles.length > 0) {
             toast.current.show({
                 severity: "error",
                 summary: "Error",
-                detail: "Some files exceed the maximum file size (5MB). Please choose smaller files.",
+                detail: "Some files exceed the maximum file size (1MB). Please choose smaller files.",
                 life: 5000,
             });
             return;
