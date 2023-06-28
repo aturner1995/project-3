@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Form } from "react-bootstrap";
+import { Form, Spinner } from "react-bootstrap";
 import { CREATE_SERVICE } from "../utils/mutations";
 import { useMutation, useQuery } from '@apollo/client';
 import { QUERY_REVERSE_GEOCODE, QUERY_CATEGORY } from '../utils/queries';
@@ -20,6 +20,7 @@ const TaskForm = () => {
     const toast = useRef(null);
     const [userAddress, setUserAddress] = useState('');
     const [createService] = useMutation(CREATE_SERVICE);
+    const [loading, setLoading] = useState(false);
 
     // Get user's geolocation on component mount
     useEffect(() => {
@@ -82,9 +83,24 @@ const TaskForm = () => {
     };
 
     // Handle image upload
+    // Handle image upload
     const handleImageUpload = (event) => {
         const files = Array.from(event.target.files);
         const selectedImages = [];
+
+        // Check file size for each selected image
+        const maxSize = 5 * 1024 * 1024; // 5MB
+        const oversizedFiles = files.filter((file) => file.size > maxSize);
+
+        if (oversizedFiles.length > 0) {
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Some files exceed the maximum file size (5MB). Please choose smaller files.",
+                life: 5000,
+            });
+            return;
+        }
 
         files.slice(0, 5).forEach((file) => {
             const reader = new FileReader();
@@ -98,9 +114,28 @@ const TaskForm = () => {
         });
     };
 
+
     // Handle form submission
     const handleSubmit = async (event) => {
         event.preventDefault();
+
+        if (!selectedCategory) {
+            toast.current.show({
+                severity: "error",
+                summary: "Error",
+                detail: "Please select a category",
+                life: 3000,
+            });
+            return;
+        }
+
+        // Check if already loading
+        if (loading) {
+            return;
+        }
+
+        // Set loading state to true
+        setLoading(true);
 
         try {
             const input = {
@@ -119,22 +154,24 @@ const TaskForm = () => {
 
             // Handle success
             console.log("Created service:", data.createService);
-            if (toast.current) {
-                toast.current.show({
-                    severity: "success",
-                    summary: "Task Created!",
-                    life: 3000,
-                });
-            }
+
+            toast.current.show({
+                severity: "success",
+                summary: "Task Created!",
+                life: 3000,
+            });
 
             // Reset form fields
             setTitle("");
             setDescription("");
-            setOptions([]);
+            setOptions([{ title: "", description: "", price: "" }]);
             setImages([]);
         } catch (error) {
             // Handle error
             console.error("Failed to create service:", error);
+        } finally {
+            // Set loading state back to false
+            setLoading(false);
         }
     };
 
@@ -159,6 +196,7 @@ const TaskForm = () => {
                     as="textarea"
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
+                    required
                 />
             </Form.Group>
             <Form.Group controlId="address">
@@ -232,6 +270,7 @@ const TaskForm = () => {
                                 onChange={(e) =>
                                     handleOptionChange(index, "price", parseFloat(e.target.value))
                                 }
+                                required
                             />
                         </Form.Group>
                         <Button
@@ -249,8 +288,11 @@ const TaskForm = () => {
                 </Button>
             </Form.Group>
             <div className="text-center">
-                <Button severity='success' type="submit">
-                    Submit
+                <Button severity='success' type="submit" disabled={loading}>
+                    {loading ? <>
+                        <Spinner animation="border" size="sm" className="me-2" />
+                        Creating Task...
+                    </> : "Submit"}
                 </Button>
             </div>
             <Toast ref={toast}></Toast>
