@@ -421,7 +421,57 @@ const resolvers = {
                 throw new Error('Booking failed');
             }
         },
+
+        deleteService: async (_, { serviceId }, context) => {
+            if (!context.user) {
+              throw new AuthenticationError('You must be logged in to delete a service');
+            }
+     
+            try {
+     
+              const service = await Service.findById(serviceId);
+              if (!service) {
+                throw new Error('Service not found');
+              }
+     
+ 
+              if (service.userId !== context.user.id) {
+                throw new AuthenticationError('You are not authorized to delete this service');
+              }
+     
+   
+              await Service.findByIdAndDelete(serviceId);
+     
+              return service;
+            } catch (error) {
+              throw new Error('Failed to delete service');
+            }
+          },
+     
+          deleteBooking: async (_, { bookingId }, context) => {
+            console.log(bookingId);
+            if (!context.user) {
+              throw new AuthenticationError('You must be logged in to delete a booking');
+            }
+     
+            try {
+              const booking = await Booking.findById(bookingId);
+     
+      
+              if (!booking) {
+                throw new Error('Booking not found');
+              }
+     
+         
+              await Booking.findByIdAndDelete(bookingId);
+     
+              return booking;
+            } catch (error) {
+              throw new Error('Failed to delete booking');
+            }
+          },
     }
 }
+
 
 module.exports = resolvers;
