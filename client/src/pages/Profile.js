@@ -260,4 +260,7 @@ const Profile = () => {
   );
 };
 
+<button onClick={()=>
+handleDeleteListing(listing._id)}>Delete</button>
+
 export default Profile;
