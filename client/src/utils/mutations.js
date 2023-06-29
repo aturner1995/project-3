@@ -126,3 +126,21 @@ export const CREATE_SERVICE = gql`
     }
   }
 `;
+
+
+export const DELETE_SERVICE = gql`
+  mutation DeleteListing($serviceId: ID!) {
+    deleteListing(listingId: $serviceId) {
+      _id
+      name
+    }
+  }
+`;
+export const DELETE_BOOKING = gql`
+  mutation DeleteBooking($bookingId: ID!) {
+    deleteBooking(bookingId: $bookingId) {
+      _id
+      name
+    }
+  }
+`;

@@ -107,11 +107,13 @@ const typeDefs = gql`
         addUser(username: String!, email: String!, password: String!): Auth
         createService(input: ServiceInput): Service
         updateService(_id: ID!, input: ServiceInput): Service
-        deleteService(_id: ID!): Service
         sendChatMessage(receiverId: ID!, message: String): Chat
         addComment(serviceId: ID!, commentText: String!, userId: ID!, rating: Int!): Service    
         removeComment(serviceId: ID!, commentId: ID!): Service
         createBooking(name: String!, number: String!, date: String!, time: String!, description: String!, serviceId: ID!): Booking!
+        deleteService(ServiceId: ID!): Service
+        deleteBooking(bookingId: ID!): Booking
+
     }
     
     input ServiceInput {
@@ -136,6 +138,12 @@ const typeDefs = gql`
     input ImageInput {
         url: String!
     }
+
+
 `;
+
+
+
+
 
 module.exports = typeDefs;
