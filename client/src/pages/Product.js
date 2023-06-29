@@ -30,7 +30,7 @@ const ProductDetails = () => {
   const timeInput = useRef(null);
   const descriptionInput = useRef(null);
   const [activeTab, setActiveTab] = useState(0);
-  const [createBooking, { loadingBooking, errorbooking }] =
+  const [createBooking] =
     useMutation(CREATE_BOOKING);
   const [selectedDate, setSelectedDate] = useState(null);
   const [showBookingForm, setShowBookingForm] = useState(false);
@@ -180,10 +180,10 @@ const ProductDetails = () => {
   };
 
   const items = [
-    { label: "Services", url: "http://localhost:3000/search" },
+    { label: "Services", url: "/search" },
     { label: `${service.category.name}` },
   ];
-  const home = { icon: "pi pi-home", url: "http://localhost:3000/" };
+  const home = { icon: "pi pi-home", url: "/" };
 
   return (
     <Container>
