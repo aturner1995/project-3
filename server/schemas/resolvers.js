@@ -398,7 +398,6 @@ const resolvers = {
             }
         },
         createBooking: async (_, { name, number, date, time, description, serviceId }, context) => {
-            console.log(name, number, date, time, description, serviceId)
             try {
                 const service = await Service.findById(serviceId);
                 if (!service) {
@@ -449,7 +448,6 @@ const resolvers = {
           },
      
           deleteBooking: async (_, { bookingId }, context) => {
-            console.log(bookingId);
             if (!context.user) {
               throw new AuthenticationError('You must be logged in to delete a booking');
             }

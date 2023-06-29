@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useQuery } from "@apollo/client";
 import { FaUser, FaList, FaClipboardList, FaShoppingCart, FaSignOutAlt } from "react-icons/fa";
 import { BsPersonWorkspace } from "react-icons/bs";
@@ -18,7 +18,9 @@ import { motion } from "framer-motion";
 import { Modal, Row, Col } from "react-bootstrap";
 import { Button } from "primereact/button";
 import { Card } from "primereact/card";
-import { DELETE_SERVICE,DELETE_BOOKING } from "../utils/mutations";
+import { DELETE_SERVICE, DELETE_BOOKING } from "../utils/mutations";
+import { Toast } from "primereact/toast";
+
 const Profile = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("userInfo");
@@ -27,14 +29,15 @@ const Profile = () => {
   const [userBookings, setUserBookings] = useState([]);
   const [userPurchases, setUserPurchases] = useState([]);
   const [showTaskForm, setShowTaskForm] = useState(false);
+  const toast = useRef(null);
   const [deleteService] = useMutation(DELETE_SERVICE);
-const [deleteBooking] = useMutation(DELETE_BOOKING);
+  const [deleteBooking] = useMutation(DELETE_BOOKING);
   const { loading: userLoading, data: userData } = useQuery(QUERY_USER);
-  const { loading: listingsLoading, data: listingsData } = useQuery(QUERY_USER_SERVICES, {
+  const { loading: listingsLoading, data: listingsData, refetch: refetchListings } = useQuery(QUERY_USER_SERVICES, {
     skip: !userData?.user?._id,
     variables: { userId: userData?.user?._id },
   });
-  const { loading: bookingsLoading, data: bookingsData } = useQuery(GET_BOOKINGS, {
+  const { loading: bookingsLoading, data: bookingsData,refetch: refetchBookings } = useQuery(GET_BOOKINGS, {
     skip: !userData?.user?._id,
     variables: { userId: userData?.user?._id },
   });
@@ -110,15 +113,29 @@ const [deleteBooking] = useMutation(DELETE_BOOKING);
   const handleDeleteListing = (serviceId) => {
     deleteService({
       variables: { serviceId },
+    }).then(() => {
+      toast.current.show({
+        severity: "success",
+        summary: "Task Deleted",
+        life: 3000,
+      });
+      refetchListings(); // Refetch listings data after deleting
     });
   };
- 
+
   const handleDeleteBooking = (bookingId) => {
     deleteBooking({
       variables: { bookingId },
+    }).then(() => {
+      toast.current.show({
+        severity: "success",
+        summary: "Booking Deleted",
+        life: 3000,
+      });
+      refetchBookings(); // Refetch bookings data after deleting
     });
   };
- 
+
   return (
     <div style={tabStyles.container}>
       <div style={tabStyles.header}>
@@ -193,56 +210,56 @@ const [deleteBooking] = useMutation(DELETE_BOOKING);
             <p>Email: {userProfile?.email}</p>
           </>
         )}
-{activeTab === "listings" && (
-  <>
-    <h2>Listings</h2>
-    {userListings.length > 0 ? (
-      <div className="p-grid">
-        {userListings.map((listing) => (
-          <div key={listing._id} className="p-col-12 p-md-6 p-lg-3">
-            <Card title={listing.name} subTitle={listing.category.name}>
-              <p>Description: {listing.description}</p>
-              <p>Price: {listing.price}</p>
-              <Button
-                label="Delete"
-                icon="pi pi-trash"
-                className="p-button-danger"
-                onClick={() => handleDeleteListing(listing._id)}
-              />
-            </Card>
-          </div>
-        ))}
-      </div>
-    ) : (
-      <p>You do not have any listings.</p>
-    )}
-  </>
-)}
-{activeTab === "bookings" && (
-  <>
-    <h2>Bookings</h2>
-    {userBookings.length > 0 ? (
-      <div className="p-grid">
-        {userBookings.map((booking) => (
-          <div key={booking.id} className="p-col-12 p-md-6 p-lg-3">
-            <Card title={booking.name} subTitle={booking.date}>
-              <p>Time: {booking.time}</p>
-              <p>Description: {booking.description}</p>
-              <Button
-                label="Delete"
-                icon="pi pi-trash"
-                className="p-button-danger"
-                onClick={() => handleDeleteBooking(booking._id)}
-              />
-            </Card>
-          </div>
-        ))}
-      </div>
-    ) : (
-      <p>You do not have any bookings.</p>
-    )}
-  </>
-)}
+        {activeTab === "listings" && (
+          <>
+            <h2>Listings</h2>
+            {userListings.length > 0 ? (
+              <div className="p-grid">
+                {userListings.map((listing) => (
+                  <div key={listing._id} className="p-col-12 p-md-6 p-lg-3">
+                    <Card title={listing.name} subTitle={listing.category.name}>
+                      <p>Description: {listing.description}</p>
+                      <p>Price: {listing.price}</p>
+                      <Button
+                        label="Delete"
+                        icon="pi pi-trash"
+                        className="p-button-danger"
+                        onClick={() => handleDeleteListing(listing._id)}
+                      />
+                    </Card>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>You do not have any listings.</p>
+            )}
+          </>
+        )}
+        {activeTab === "bookings" && (
+          <>
+            <h2>Bookings</h2>
+            {userBookings.length > 0 ? (
+              <div className="p-grid">
+                {userBookings.map((booking) => (
+                  <div key={booking.id} className="p-col-12 p-md-6 p-lg-3">
+                    <Card title={booking.name} subTitle={booking.date}>
+                      <p>Time: {booking.time}</p>
+                      <p>Description: {booking.description}</p>
+                      <Button
+                        label="Delete"
+                        icon="pi pi-trash"
+                        className="p-button-danger"
+                        onClick={() => handleDeleteBooking(booking._id)}
+                      />
+                    </Card>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p>You do not have any bookings.</p>
+            )}
+          </>
+        )}
         {activeTab === "postService" && (
           <div className="text-center">
             <CreateTask />
@@ -250,6 +267,7 @@ const [deleteBooking] = useMutation(DELETE_BOOKING);
         )}
         <PopularServices />
       </div>
+      <Toast ref={toast}></Toast>
     </div>
   );
 };
