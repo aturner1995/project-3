@@ -11,6 +11,17 @@ h6 {
   font-family: 'Rubik Mono One', sans-serif;
 }
 
+
+#root {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.footer {
+  margin-top: auto;
+}
+
 .nav-img {
   height: 30px;
 }
