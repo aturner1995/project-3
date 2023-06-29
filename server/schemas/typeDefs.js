@@ -111,9 +111,8 @@ const typeDefs = gql`
         addComment(serviceId: ID!, commentText: String!, userId: ID!, rating: Int!): Service    
         removeComment(serviceId: ID!, commentId: ID!): Service
         createBooking(name: String!, number: String!, date: String!, time: String!, description: String!, serviceId: ID!): Booking!
-        deleteService(ServiceId: ID!): Service
+        deleteService(serviceId: ID!): Service
         deleteBooking(bookingId: ID!): Booking
-
     }
     
     input ServiceInput {

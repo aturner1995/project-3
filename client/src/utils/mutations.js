@@ -129,15 +129,15 @@ export const CREATE_SERVICE = gql`
 
 
 export const DELETE_SERVICE = gql`
-  mutation DeleteListing($serviceId: ID!) {
-    deleteListing(listingId: $serviceId) {
+  mutation deleteService($serviceId: ID!) {
+    deleteService(serviceId: $serviceId) {
       _id
       name
     }
   }
 `;
 export const DELETE_BOOKING = gql`
-  mutation DeleteBooking($bookingId: ID!) {
+  mutation deleteBooking($bookingId: ID!) {
     deleteBooking(bookingId: $bookingId) {
       _id
       name

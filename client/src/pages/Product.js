@@ -32,12 +32,12 @@ const ProductDetails = () => {
   const [activeTab, setActiveTab] = useState(0);
   const [createBooking] =
     useMutation(CREATE_BOOKING);
-  const [selectedDate, setSelectedDate] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date());
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [selectedPrice, setSelectedPrice] = useState(null);
   const [getCheckout, { data: dataCheckOut }] = useLazyQuery(QUERY_CHECKOUT);
   const [showLoginError, setShowLoginError] = useState(false);
-  
+
 
   useEffect(() => {
     if (dataCheckOut) {
@@ -71,15 +71,15 @@ const ProductDetails = () => {
       setSelectedPrice(selectedOption.price);
     },
   });
-  
+
   if (loading) {
     return <div>Loading...</div>;
   }
-  
+
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-  
+
   const { service } = data;
 
   console.log(service)
@@ -229,9 +229,8 @@ const ProductDetails = () => {
                   {service.options.map((option, index) => (
                     <Nav.Item key={index}>
                       <Nav.Link
-                        className={`options-tab ${
-                          activeTab === index ? "active" : ""
-                        }`}
+                        className={`options-tab ${activeTab === index ? "active" : ""
+                          }`}
                         eventKey={index}
                       >
                         {option.title}
@@ -346,7 +345,7 @@ const ProductDetails = () => {
               </div>
             </Form.Group>
 
-            <Button label="Book now" severity="success" onClick={bookService} className="mt-3"/>
+            <Button label="Book now" severity="success" onClick={bookService} className="mt-3" />
           </Form>
         </Modal.Body>
       </Modal>
